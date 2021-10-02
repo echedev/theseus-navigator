@@ -53,28 +53,28 @@ void main() {
     });
   });
   group('Parse destination', () {
-    test('No path parameters', () {
+    test('No path parameters', () async {
       final destination1 = TestDestinations.home;
       final destination2 = TestDestinations.about;
-      expect(parser.parseParameters('/home', destination1), destination1);
-      expect(parser.parseParameters('/settings/about', destination2), destination2);
+      expect(await parser.parseParameters('/home', destination1), destination1);
+      expect(await parser.parseParameters('/settings/about', destination2), destination2);
     });
-    test('1 path parameter', () {
+    test('1 path parameter', () async {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'id': '1'}));
-      expect(parser.parseParameters('/categories', destination1) == destination1, true);
-      expect(parser.parseParameters('/categories/1', destination1) == destination2, true);
-      expect(parser.parseParameters('/categories/2', destination1) == destination2, false);
+      expect(await parser.parseParameters('/categories', destination1) == destination1, true);
+      expect(await parser.parseParameters('/categories/1', destination1) == destination2, true);
+      expect(await parser.parseParameters('/categories/2', destination1) == destination2, false);
     });
-    test('Query parameters', () {
+    test('Query parameters', () async {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'q': 'query'}));
-      expect(parser.parseParameters('/categories?q=query', destination1) == destination2, true);
-      expect(parser.parseParameters('/categories?q=1', destination1) == destination2, false);
+      expect(await parser.parseParameters('/categories?q=query', destination1) == destination2, true);
+      expect(await parser.parseParameters('/categories?q=1', destination1) == destination2, false);
     });
-    test('Exception on not matching destination', () {
+    test('Exception on not matching destination', () async {
       final destination1 = TestDestinations.home;
-      expect(() => parser.parseParameters('/home1', destination1), throwsA(isA<DestinationNotMatchException>()));
+      expect(() async => await parser.parseParameters('/home1', destination1), throwsA(isA<DestinationNotMatchException>()));
     });
   });
   group('Generate destination URI', () {

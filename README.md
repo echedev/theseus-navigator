@@ -25,45 +25,46 @@ TheseusNavigator is responsible for managing the app navigation state within the
 
 The NavigationScheme is the entry point to navigation and orchestrates all destinations and navigators. It has a root navigator that manages top-level destinations, and optionally additional navigators to support nested/feature navigation.
 
-Here is an example of declaration of a simple navigation scheme:
-
+Here is a possible usage:
+- Define destinations and navigation scheme
 ```dart
-final navigationScheme = NavigationScheme(
-  destinations: [
-    GeneralDestination(
+final homeDestination = GeneralDestination(
       path: 'home',
       builder: (context, parameters) => HomeScreen(),
-    ),
-    GeneralDestination(
+    );
+final ordersDestination = GeneralDestination(
       path: 'orders',
       builder: (context, parameters) => OrdersScreen(),
-    ),
-    GeneralDestination(
+    );
+final settingsDestination = GeneralDestination(
       path: 'settings',
       builder: (context, parameters) => SettingsScreen(),
-    ),
+    ); 
+final navigationScheme = NavigationScheme(
+  destinations: [
+    homeDestination,
+    ordersDestination,
+    settingsDestination,
   ],
 );
-...
+```
+- Setup a Router with your navigation scheme
+```dart
 @override
 Widget build(BuildContext context) {
-  return NavigationSchemeProvider(
-   scheme: navigationScheme,
-   child: MaterialApp.router(
-    ...
+  return MaterialApp.router(
+    //...
     routerDelegate: TheseusRouterDelegate(navigationScheme: navigationScheme),
     routeInformationParser: TheseusRouterInformationParser(navigationScheme: navigationScheme),
-   ),
   ),
 }
 ```
-
-You can navigate to a destination by this way:
-
+- Somewhere in the app to navigate
 ```dart
-onTap: () => navigationScheme.goTo(navigationScheme.findDestination('orders')),
+onTap: () => navigationScheme.goTo(ordersDestination)
 ```
- 
+
+
 
 
 

@@ -30,7 +30,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   @override
   Widget build(BuildContext context) {
-    return NavigatorBuilder.build(context, navigationScheme.rootNavigator);
+    return navigationScheme.rootNavigator.build(context);
   }
 
   @override
@@ -55,9 +55,17 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   }
 }
 
-class NavigatorBuilder {
-  static Widget defaultWrapperBuilder(
-      BuildContext context, TheseusNavigator navigator) {
+// TODO: Add description
+abstract class NavigatorBuilder {
+  Widget build(BuildContext context, TheseusNavigator navigator);
+}
+
+// TODO: Add description
+class DefaultNavigatorBuilder implements NavigatorBuilder {
+  const DefaultNavigatorBuilder();
+
+  @override
+  Widget build(BuildContext context, TheseusNavigator navigator) {
     return Navigator(
       key: navigator.key,
       pages: navigator.stack
@@ -73,12 +81,6 @@ class NavigatorBuilder {
       },
     );
   }
-
-  static Widget build(BuildContext context, TheseusNavigator navigator) =>
-      navigator.wrapperBuilder == null
-          ? NavigatorBuilder.defaultWrapperBuilder(context, navigator)
-          : navigator.wrapperBuilder!(
-              context, navigator, NavigatorBuilder.build);
 }
 
 class _TheseusPage extends Page {
@@ -95,13 +97,17 @@ class _TheseusPage extends Page {
       case DestinationTransition.material:
         return MaterialPageRoute(
           settings: this,
-          builder: (context) => destination.build(context),
+          builder: (context) => destination.isFinalDestination
+              ? destination.build(context)
+              : destination.navigator!.build(context),
         );
       default:
         return PageRouteBuilder(
           settings: this,
           pageBuilder: (context, animation, secondaryAnimation) =>
-              destination.build(context),
+              destination.isFinalDestination
+                  ? destination.build(context)
+                  : destination.navigator!.build(context),
           transitionsBuilder: (context, animation, secondaryAnimation, child) =>
               child,
         );

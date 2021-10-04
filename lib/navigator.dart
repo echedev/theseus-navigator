@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:theseus_navigator/router_delegate.dart';
 import 'package:utils/utils.dart';
 
 import 'destination.dart';
@@ -29,9 +30,9 @@ import 'exceptions.dart';
 class TheseusNavigator with ChangeNotifier {
   TheseusNavigator({
     required this.destinations,
-    this.initialDestinationIndex = 0,
-    this.wrapperBuilder,
+    this.builder = const DefaultNavigatorBuilder(),
     this.debugLabel = '',
+    this.initialDestinationIndex = 0,
   }) {
     _stack.add(destinations[initialDestinationIndex]);
     key = GlobalKey<NavigatorState>(debugLabel: this.debugLabel);
@@ -40,6 +41,21 @@ class TheseusNavigator with ChangeNotifier {
   /// List of destinations, which this navigator operate of.
   ///
   final List<Destination> destinations;
+
+  /// An implementation of [NavigatorBuilder] that creates a wrapping widget tree around destinations.
+  ///
+  /// Defaults to [DefaultNavigatorBuilder] that wraps destinations to Flutter's
+  /// [Navigator] widget.
+  ///
+  ///
+  /// It can be used when you want, for example, to navigate destinations by
+  /// [TabBar], or [BottomNavigationBar].
+  ///
+  /// See also:
+  /// - [NavigatorBuilder]
+  /// - [DefaultNavigatorBuilder]
+  ///
+  final NavigatorBuilder builder;
 
   /// Index of the initial destination.
   ///
@@ -53,21 +69,12 @@ class TheseusNavigator with ChangeNotifier {
   ///
   final String? debugLabel;
 
-  /// A function to create custom wrapping widget tree around destinations.
-  ///
-  /// It can be used when you want, for example, to navigate destinations by
-  /// [TabBar], or [BottomNavigationBar].
-  ///
-  /// See also:
-  /// - [NavigationWrapperBuilder]
-  ///
-  final NavigatorWrapperBuilder? wrapperBuilder;
-
   /// Provides the global key for corresponding [Navigator] widget.
   ///
   late final GlobalKey<NavigatorState> key;
 
   bool _shouldClose = false;
+
   /// Whether the navigator should close.
   ///
   /// It is set to 'true' when user call [onBack] method when the only destination
@@ -98,6 +105,11 @@ class TheseusNavigator with ChangeNotifier {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  // TODO: Add description
+  Widget build(BuildContext context) {
+    return builder.build(context, this);
   }
 
   /// Opens specified destination.
@@ -180,15 +192,3 @@ class TheseusNavigator with ChangeNotifier {
     return result;
   }
 }
-
-/// The signature of function that builds the navigator's wrapper widget tree.
-///
-/// The [nestedNavigatorBuilder] function should be called to build a wrapper for
-/// nested navigators.
-///
-typedef NavigatorWrapperBuilder = Widget Function(
-  BuildContext context,
-  TheseusNavigator navigator,
-  Widget Function(BuildContext context, TheseusNavigator nestedNavigator)
-      nestedNavigatorBuilder,
-);

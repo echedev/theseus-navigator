@@ -29,7 +29,7 @@ class Destination<T extends DestinationParameters> {
     this.builder,
     this.isHome = false,
     this.navigator,
-    this.configuration = const DestinationConfiguration.normal(),
+    DestinationConfiguration? configuration,
     this.parameters,
     this.parser = const DefaultDestinationParser(),
   })  : assert(navigator != null || builder != null,
@@ -43,24 +43,31 @@ class Destination<T extends DestinationParameters> {
                     (parser is DefaultDestinationParser)) ||
                 ((T != DefaultDestinationParameters) &&
                     !(parser is DefaultDestinationParser)),
-            'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.');
+            'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
+    if (configuration == null) {
+      this.configuration = DestinationConfiguration.defaultMaterial();
+    }
+  }
 
   /// Path identifies the destination.
   ///
   /// Usually it follows the common url pattern with optional parameters.
   /// Example: `/categories/{id}`
+  ///
   final String path;
 
   /// Returns an underlay destination.
   ///
   /// Navigator will use this method to create the underlay destination for the
   /// current one, using its parameters.
+  ///
   final Destination? Function(Destination destination, T? parameters)?
       backwardDestination;
 
   /// A content builder.
   ///
   /// Returns a widget (basically a screen) that should be rendered for this destination.
+  ///
   final Widget Function(BuildContext context, T? parameters)? builder;
 
   /// Whether the destination is the home destination.
@@ -73,27 +80,33 @@ class Destination<T extends DestinationParameters> {
   ///
   /// Allows to implement nested navigation. When specified, the parent navigator
   /// use this child navigator to build content for this destination.
+  ///
   final TheseusNavigator? navigator;
 
   /// Defines a way of how this destination will appear.
-  final DestinationConfiguration configuration;
+  ///
+  late final DestinationConfiguration configuration;
 
   /// Optional parameters, that are used to build content.
+  ///
   final T? parameters;
 
   /// A destination parser.
   ///
   /// Used to parse the certain destination object from the URI string, based on
   /// the current destination, and to generate a URI string from the current destination.
+  ///
   final DestinationParser parser;
 
   bool get isFinalDestination => navigator == null;
 
   /// A full URI of the destination, with parameters placeholders replaced with
   /// actual parameter values.
+  ///
   String get uri => parser.uri(this);
 
   /// Check if the destination matches the provided URI string
+  ///
   bool isMatch(String uri) => parser.isMatch(uri, this);
 
   /// Parses the destination from the provided URI string.
@@ -101,13 +114,15 @@ class Destination<T extends DestinationParameters> {
   /// Returns a copy of the current destination with updated parameters, parsed
   /// from the URI.
   /// If the URI doesn't match this destination, throws an [DestinationNotMatchException].
+  ///
   Future<Destination<T>> parse(String uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
-  Widget build(BuildContext context) {
-    return builder!(context, parameters);
-  }
+  Widget build(BuildContext context) => isFinalDestination
+      ? builder!(context, parameters) : navigator!.build(context);
 
+  /// Returns a copy of this destination with a different configuration.
+  ///
   Destination<T> copyWithConfiguration(
           DestinationConfiguration configuration) =>
       copyWith(
@@ -115,6 +130,7 @@ class Destination<T extends DestinationParameters> {
       );
 
   /// Returns a copy of this destination with different parameters.
+  ///
   Destination<T> copyWithParameters(T parameters) => copyWith(
         parameters: parameters,
       );
@@ -134,6 +150,7 @@ class Destination<T extends DestinationParameters> {
       );
 
   /// Destinations are equal when their URI string are equal.
+  ///
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -149,7 +166,7 @@ class Destination<T extends DestinationParameters> {
 /// the destination.
 ///
 /// There are convenient factory constructors of commonly used configurations.
-/// [normal] - pushes the destination to the navigation stack with standard material animations.
+/// [defaultMaterial] - pushes the destination to the navigation stack with standard material animations.
 /// [quiet] - replace the previous destination with the current one without animations.
 ///
 /// See also:
@@ -160,10 +177,14 @@ class DestinationConfiguration {
   const DestinationConfiguration({
     required this.action,
     required this.transition,
-  });
+    this.transitionBuilder,
+  }) : assert(
+            transition == DestinationTransition.custom &&
+                transitionBuilder != null,
+            'You have to provide "transitionBuilder" for "custom" transition.');
 
-  const factory DestinationConfiguration.normal() =
-      _NormalDestinationConfiguration;
+  const factory DestinationConfiguration.defaultMaterial() =
+      _DefaultDestinationConfiguration;
 
   const factory DestinationConfiguration.quiet() =
       _QuietDestinationConfiguration;
@@ -171,10 +192,12 @@ class DestinationConfiguration {
   final DestinationAction action;
 
   final DestinationTransition transition;
+
+  final RouteTransitionsBuilder? transitionBuilder;
 }
 
-class _NormalDestinationConfiguration extends DestinationConfiguration {
-  const _NormalDestinationConfiguration()
+class _DefaultDestinationConfiguration extends DestinationConfiguration {
+  const _DefaultDestinationConfiguration()
       : super(
           action: DestinationAction.push,
           transition: DestinationTransition.material,
@@ -247,4 +270,4 @@ class DefaultDestinationParameters extends DestinationParameters {
   final Map<String, String> map;
 }
 
-typedef GeneralDestination = Destination<DefaultDestinationParameters>;
+typedef DestinationLight = Destination<DefaultDestinationParameters>;

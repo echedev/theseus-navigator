@@ -42,11 +42,11 @@ class TheseusNavigator with ChangeNotifier {
   ///
   final List<Destination> destinations;
 
-  /// An implementation of [NavigatorBuilder] that creates a wrapping widget tree around destinations.
+  /// An implementation of [NavigatorBuilder] that creates a wrapping widget tree
+  /// around destinations.
   ///
   /// Defaults to [DefaultNavigatorBuilder] that wraps destinations to Flutter's
   /// [Navigator] widget.
-  ///
   ///
   /// It can be used when you want, for example, to navigate destinations by
   /// [TabBar], or [BottomNavigationBar].

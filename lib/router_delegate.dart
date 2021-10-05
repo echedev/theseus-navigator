@@ -97,17 +97,21 @@ class _TheseusPage extends Page {
       case DestinationTransition.material:
         return MaterialPageRoute(
           settings: this,
-          builder: (context) => destination.isFinalDestination
-              ? destination.build(context)
-              : destination.navigator!.build(context),
+          builder: (context) => destination.build(context),
         );
+      case DestinationTransition.custom:
+        return PageRouteBuilder(
+          settings: this,
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              destination.build(context),
+          transitionsBuilder: destination.configuration.transitionBuilder!,
+        );
+      case DestinationTransition.none:
       default:
         return PageRouteBuilder(
           settings: this,
           pageBuilder: (context, animation, secondaryAnimation) =>
-              destination.isFinalDestination
-                  ? destination.build(context)
-                  : destination.navigator!.build(context),
+              destination.build(context),
           transitionsBuilder: (context, animation, secondaryAnimation, child) =>
               child,
         );

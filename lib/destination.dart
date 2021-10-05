@@ -14,7 +14,7 @@ import 'navigator.dart';
 /// The [parser] is used to parse destination from the URI and generate a URI string
 /// for the destination.
 ///
-/// Optional [backwardDestination] builder function can be used to implement custom
+/// Optional [upwardDestination] builder function can be used to implement custom
 /// logic of backward navigation from the current destination.
 ///
 /// See also:
@@ -25,7 +25,7 @@ import 'navigator.dart';
 class Destination<T extends DestinationParameters> {
   Destination({
     required this.path,
-    this.backwardDestination,
+    this.upwardDestination,
     this.builder,
     this.isHome = false,
     this.navigator,
@@ -62,7 +62,7 @@ class Destination<T extends DestinationParameters> {
   /// current one, using its parameters.
   ///
   final Destination? Function(Destination destination, T? parameters)?
-      backwardDestination;
+      upwardDestination;
 
   /// A content builder.
   ///

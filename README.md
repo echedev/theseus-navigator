@@ -268,9 +268,38 @@ final mainNavigator = TheseusNavigator(
 );
 ```
 
+#### Upward Navigation
 
-## Use cases
+Sometimes, on reverse navigation from the a destination that user accessed bypassing underlay destinations, we need to restore a missed destination hierarchy.
 
+For example, user open an app by a deep link that leads to a category screen somewhere in the categories hierarchy. On navigating back from this screen we would like to show the upper level category screen, and so on until the root of categories.
 
+TheseusNavigator support this behavior, when you define `upwardDestination` parameter for a destination.
 
+It might look like this:
+```dart
+final categoriesDestination = Destination<CategoryListParameters>(
+  path: 'categories',
+  builder: (context, params) => CategoryListScreen(
+      parentCategory: params?.category,
+  ),
+  upwardDestination: (destination, params) =>
+    destination.copyWithParameters(CategoryListParameters(
+      category: params?.category?.parent,
+    )),
+  parser: CategoryListParser(
+    categoryRepository: CategoryRepository(),
+  ),
+);
+```
 
+## Other
+###### Coming Updates
+- Handling return values from destinations
+- Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
+- Configurations for modal dialog and bottom sheet destinations
+
+###### Useful Links
+[Material Design - Understanding Navigation](https://material.io/design/navigation/understanding-navigation.html)
+
+[Routing packages research report](https://github.com/flutter/uxr/discussions/71#discussion-3525672)

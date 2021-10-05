@@ -1,6 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
+<a href=""><img src="https://img.shields.io/badge/pub-0.0.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 - Declarative navigation scheme
@@ -182,9 +183,9 @@ final categoriesDestination = Destination<CategoryListParameters>(
 
 The `DestinationConfiguration` contains attributes that are related to appearance of the destination when user navigates to or from it.
 
-`action` - defines how the navigation stack will be updated when navigate to the destination, can be `push` or `replace`.
+`action` - defines how the navigation stack will be updated when navigate to the destination, can be **push** or **replace**.
 
-`transition` - animations that would apply when destination content appears, can be `material`, `custom`, or `none`.
+`transition` - animations that would apply when destination content appears, can be **material**, **custom**, or **none**.
 
 In case of **custom** transition, you have to provide `transitionBuilder` as well.
 
@@ -209,7 +210,7 @@ It maintains the navigation stack of destinations and offers methods to update i
 
 TheseusNavigator is a `ChangeNotifier`, and notifies the `NavigationScheme` on any update of navigation stack.
 
-You can access to the top most destination in the stack using `currentDestination` property.
+You have an access to the whole navigation `stack`, and to the top most destination in the stack using `currentDestination` property.
 
 This example shows creation of the navigator that would wrap destinations with standard Flutter's `Navigator` widget:
 ```dart

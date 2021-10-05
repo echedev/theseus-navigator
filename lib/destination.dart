@@ -44,9 +44,9 @@ class Destination<T extends DestinationParameters> {
                 ((T != DefaultDestinationParameters) &&
                     !(parser is DefaultDestinationParser)),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    if (configuration == null) {
-      this.configuration = DestinationConfiguration.defaultMaterial();
-    }
+    this.configuration = configuration == null
+        ? DestinationConfiguration.defaultMaterial()
+        : configuration;
   }
 
   /// Path identifies the destination.
@@ -119,7 +119,8 @@ class Destination<T extends DestinationParameters> {
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
   Widget build(BuildContext context) => isFinalDestination
-      ? builder!(context, parameters) : navigator!.build(context);
+      ? builder!(context, parameters)
+      : navigator!.build(context);
 
   /// Returns a copy of this destination with a different configuration.
   ///
@@ -179,8 +180,9 @@ class DestinationConfiguration {
     required this.transition,
     this.transitionBuilder,
   }) : assert(
-            transition == DestinationTransition.custom &&
-                transitionBuilder != null,
+            (transition == DestinationTransition.custom &&
+                    transitionBuilder != null) ||
+                (transition != DestinationTransition.custom),
             'You have to provide "transitionBuilder" for "custom" transition.');
 
   const factory DestinationConfiguration.defaultMaterial() =

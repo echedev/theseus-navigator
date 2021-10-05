@@ -21,11 +21,11 @@ It might look like this:
 
 ![NavigationScheme](./assets/NavigationScheme.jpg)
 
-Destinations defines all possible UI endpoints in your app that users could reach using navigation.
+**Destinations** defines all possible UI endpoints in your app that users could reach using navigation.
 
-TheseusNavigator is responsible for managing the app navigation state within the scope of its destinations. It performs navigation actions, like `goTo(destination)` and `goBack()`, and builds the navigation stack.
+**TheseusNavigator** is responsible for managing the app navigation state within the scope of its destinations. It performs navigation actions, like `goTo(destination)` and `goBack()`, and builds the navigation stack.
 
-The NavigationScheme is the entry point to navigation and orchestrates all destinations and navigators. It has a root navigator that manages top-level destinations, and optionally additional navigators to support nested and/or feature navigation.
+The **NavigationScheme** is the entry point to navigation and orchestrates all destinations and navigators. It has a root navigator that manages top-level destinations, and optionally additional navigators to support nested and/or feature navigation.
 
 Here is an example of usage:
 - Define destinations and navigation scheme
@@ -229,6 +229,8 @@ final mainNavigator = TheseusNavigator(
 
 TheseusNavigator allows you to wrap destinations with your custom widget.
 
+This is required when you would like to navigate destinations through the `BottomNavigationBar`, `TabBar` or `Drawer`.
+
 To do this, you have to implement the `NavigatorBuilder` class:
 
 ```dart
@@ -237,20 +239,8 @@ class CustomNavigatorBuilder implements NavigatorBuilder {
 
   @override
   Widget build(BuildContext context, TheseusNavigator navigator) {
-    return Navigator(
-      key: navigator.key,
-      pages: navigator.stack
-          .map((destination) => _TheseusPage(
-                key: ValueKey(destination.uri),
-                destination: destination,
-              ))
-          .toList(),
-      onPopPage: (route, result) {
-        navigator.goBack();
-        route.didPop(result);
-        return true;
-      },
-    );
+    // Your implementation of wrapper widget is here.
+    // You have an access a navigator's stack and current destination.
   }
 }
 ```

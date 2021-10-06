@@ -84,7 +84,7 @@ final homeDestination = DestinationLight(
   //...
 );
 ```
-If the destination is "final", which means that it directly display some content, then you have to provide a `builder` function that returns a content widget.
+If the destination is *final*, that means that it directly display some content, then you have to provide a `builder` function that returns a content widget.
 
 Otherwise you should provide a `navigator` with its own destinations, which would build the content or contain another nested navigator.
 
@@ -104,8 +104,7 @@ The following specific URIs will match that destination path:
 `/categories?q=someQuery`  
 `/categories/1?q=someQuery`
 
- Two last URIs contains a query parameter, but still match the specified destination path.  
- Parsing destination and its parameters is explained later.
+ Two last URIs contains a query parameter  as well, but still match the specified destination path.
 
 #### Parameters
 

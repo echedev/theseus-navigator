@@ -14,11 +14,11 @@ class TestDestinations {
     builder: dummyBuilder,
   );
   static final categories = DestinationLight(
-    path: '/categories/{id}',
+    path: '/catalog/{id}',
     builder: dummyBuilder,
   );
   static final categoriesBrands = DestinationLight(
-    path: '/categories/{categoryId}/brands/{brandId}',
+    path: '/catalog/{categoryId}/brands/{brandId}',
     builder: dummyBuilder,
   );
 }

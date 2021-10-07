@@ -52,7 +52,7 @@ class Destination<T extends DestinationParameters> {
   /// Path identifies the destination.
   ///
   /// Usually it follows the common url pattern with optional parameters.
-  /// Example: `/categories/{id}`
+  /// Example: `/catalog/{id}`
   ///
   final String path;
 

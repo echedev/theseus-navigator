@@ -118,14 +118,14 @@ class TheseusNavigator with ChangeNotifier {
   /// the given destination will be either added to the navigation [stack], or
   /// will replace the current destination.
   ///
-  /// Also, missing backward destinations can be added to the stack, if the
+  /// Also, missing upward destinations can be added to the stack, if the
   /// current stack state doesn't match, and the [destination.upwardDestination]
   /// is defined. This mostly could happen when it is navigated as a deeplink.
   ///
   /// Throws [UnknownDestinationException] if the navigator's [destinations]
   /// doesn't contain given destination.
   ///
-  Future<void> goTo(Destination destination) async {
+  void goTo(Destination destination) {
     Log.d(_tag, 'goTo(): destination=${destination.uri}');
     if (_isValidDestination(destination)) {
       _updateStack(destination);
@@ -143,7 +143,7 @@ class TheseusNavigator with ChangeNotifier {
   /// If it was the only destination in the stack, it remains in the stack and
   /// [shouldClose] flag is set to 'true'.
   ///
-  Future<void> goBack() async {
+  void goBack() {
     Log.d(_tag, 'goBack(): localStack=${_stack.length}');
     if (_stack.length > 1) {
       _stack.removeLast();
@@ -158,22 +158,27 @@ class TheseusNavigator with ChangeNotifier {
       destinations.any((element) => element.isMatch(destination.uri));
 
   void _updateStack(Destination destination) {
-    if (destination.configuration.action == DestinationAction.replace) {
-      _stack.removeLast();
+    if (destination.configuration.reset) {
+      _stack.clear();
     }
-    final backwardStack = _buildUpwardStack(destination);
-    if (backwardStack.isNotEmpty) {
-      // Find first missing item of backward stack
-      int startBackwardFrom = 0;
-      for (int i = 0; i < backwardStack.length; i++) {
-        if (_stack.last == backwardStack[i]) {
-          startBackwardFrom = i + 1;
+    else {
+      if (destination.configuration.action == DestinationAction.replace) {
+        _stack.removeLast();
+      }
+    }
+    final upwardStack = _buildUpwardStack(destination);
+    if (upwardStack.isNotEmpty) {
+      // Find first missing item of upward stack
+      int startUpwardFrom = 0;
+      for (int i = 0; i < upwardStack.length; i++) {
+        if (_stack.last == upwardStack[i]) {
+          startUpwardFrom = i + 1;
         }
       }
-      // Add all missing backward destinations to the stack
-      if (startBackwardFrom < backwardStack.length) {
-        for (int i = startBackwardFrom; i < backwardStack.length; i++) {
-          _stack.addLast(backwardStack[i]);
+      // Add all missing upward destinations to the stack
+      if (startUpwardFrom < upwardStack.length) {
+        for (int i = startUpwardFrom; i < upwardStack.length; i++) {
+          _stack.addLast(upwardStack[i]);
         }
       }
     }

@@ -15,7 +15,7 @@ import 'navigator.dart';
 /// for the destination.
 ///
 /// Optional [upwardDestination] builder function can be used to implement custom
-/// logic of backward navigation from the current destination.
+/// logic of upward navigation from the current destination.
 ///
 /// See also:
 /// - [DestinationConfiguration]
@@ -178,6 +178,7 @@ class DestinationConfiguration {
   const DestinationConfiguration({
     required this.action,
     required this.transition,
+    this.reset = false,
     this.transitionBuilder,
   }) : assert(
             (transition == DestinationTransition.custom &&
@@ -195,7 +196,21 @@ class DestinationConfiguration {
 
   final DestinationTransition transition;
 
+  // TODO: Add description
+  final bool reset;
+
   final RouteTransitionsBuilder? transitionBuilder;
+
+  DestinationConfiguration copyWith({
+    // TODO: Add other properties
+    bool? reset,
+  }) =>
+      DestinationConfiguration(
+        action: this.action,
+        transition: this.transition,
+        reset: reset ?? this.reset,
+        transitionBuilder: this.transitionBuilder,
+      );
 }
 
 class _DefaultDestinationConfiguration extends DestinationConfiguration {

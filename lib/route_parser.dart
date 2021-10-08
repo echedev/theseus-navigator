@@ -33,4 +33,9 @@ class TheseusRouteInformationParser extends RouteInformationParser<Destination> 
     }
     return baseDestination.parse(uri);
   }
+
+  @override
+  RouteInformation restoreRouteInformation(Destination destination) {
+    return RouteInformation(location: destination.uri);
+  }
 }

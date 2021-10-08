@@ -41,8 +41,13 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   @override
   Future<void> setNewRoutePath(destination) async {
-    navigationScheme.goTo(destination);
+    return SynchronousFuture(navigationScheme.goTo(destination.copyWithConfiguration(
+      destination.configuration.copyWith(reset: true)
+    )));
   }
+
+  @override
+  Destination get currentConfiguration => navigationScheme.currentDestination;
 
   @override
   void dispose() {

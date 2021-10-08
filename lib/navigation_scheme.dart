@@ -28,9 +28,8 @@ class NavigationScheme with ChangeNotifier {
             'One of destinations must be a home destination.') {
     _rootNavigator = navigator ?? TheseusNavigator(destinations: destinations);
     _currentDestination = _rootNavigator.currentDestination;
-    _matchNavigators(_rootNavigator);
+    _initializeNavigator(_rootNavigator);
     _updateCurrentDestination();
-    _addNavigatorListeners();
   }
 
   late Destination _currentDestination;
@@ -40,9 +39,11 @@ class NavigationScheme with ChangeNotifier {
   ///
   Destination get currentDestination => _currentDestination;
 
-  final _navigators = <TheseusNavigator>{};
+  final _navigatorListeners = <TheseusNavigator, VoidCallback?>{};
 
   final _navigatorMatches = <Destination, TheseusNavigator>{};
+
+  final _navigatorOwners = <TheseusNavigator, Destination>{};
 
   late final TheseusNavigator _rootNavigator;
   /// The root navigator in the navigation scheme.
@@ -58,9 +59,6 @@ class NavigationScheme with ChangeNotifier {
   ///
   bool get shouldClose => _shouldClose;
 
-  // TODO: Do we really need the whole stack in the navigation scheme?
-  var _stack = <Destination>[];
-
   @override
   void dispose() {
     _removeNavigatorListeners();
@@ -75,19 +73,19 @@ class NavigationScheme with ChangeNotifier {
   /// Finds a proper navigator in the navigation scheme for a given destination.
   ///
   TheseusNavigator? findNavigator(Destination destination) =>
-      _navigatorMatches[destination];
+      _navigatorMatches[findDestination(destination.path)];
 
   /// Close the current destination.
   ///
   /// If the current destination is the last one, this initiates app close by
   /// setting [shouldClose] flag.
   ///
-  Future<void> goBack() {
+  void goBack() {
     final navigator = findNavigator(_currentDestination);
     if (navigator == null) {
       throw UnknownDestinationException(_currentDestination);
     }
-    return navigator.goBack();
+    navigator.goBack();
   }
 
   /// Opens the specified [destination].
@@ -96,36 +94,47 @@ class NavigationScheme with ChangeNotifier {
   /// If found, uses the navigator's [goTo] method to open the destination.
   /// Otherwise throws [UnknownDestinationException].
   ///
-  Future<void> goTo(Destination destination) async {
+  void goTo(Destination destination) {
     final navigator = findNavigator(destination);
     if (navigator == null) {
       throw UnknownDestinationException(destination);
     }
-    return navigator.goTo(destination);
+    navigator.goTo(destination);
   }
 
-  void _matchNavigators(TheseusNavigator navigator) {
-    _navigators.add(navigator);
+  void _initializeNavigator(TheseusNavigator navigator) {
+    // Add a listener of the navigator
+    final listener = () => _onNavigatorStackChanged(navigator);
+    _navigatorListeners[navigator] = listener;
+    navigator.addListener(listener);
+
     for (var destination in navigator.destinations) {
       _navigatorMatches[destination] = navigator;
       if (!destination.isFinalDestination) {
-        _matchNavigators(destination.navigator!);
+        // Set navigation owner
+        _navigatorOwners[destination.navigator!] = destination;
+        // Initialize nested navigator
+        _initializeNavigator(destination.navigator!);
       }
     }
   }
 
-  void _addNavigatorListeners() => _navigators
-      .forEach((navigator) => navigator.addListener(_onNavigatorStackChanged));
+  void _removeNavigatorListeners() => _navigatorListeners.keys.forEach(
+      (navigator) => navigator.removeListener(_navigatorListeners[navigator]!));
 
-  void _removeNavigatorListeners() => _navigators.forEach(
-      (navigator) => navigator.removeListener(_onNavigatorStackChanged));
-
-  void _onNavigatorStackChanged() {
-    _updateCurrentDestination();
+  void _onNavigatorStackChanged(TheseusNavigator navigator) {
+    final owner = _navigatorOwners[navigator];
+    if (owner != null) {
+      goTo(owner);
+    }
+    else {
+      _updateCurrentDestination();
+    }
   }
 
   void _updateCurrentDestination() {
     Destination newDestination = _rootNavigator.currentDestination;
+    // TODO: Do we need the tack here?
     List<Destination> newStack = List.from(_rootNavigator.stack);
     if (_rootNavigator.shouldClose) {
       _shouldClose = true;
@@ -143,7 +152,6 @@ class NavigationScheme with ChangeNotifier {
     }
     if (_currentDestination != newDestination || _shouldClose) {
       _currentDestination = newDestination;
-      _stack = newStack;
       notifyListeners();
     }
   }

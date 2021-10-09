@@ -14,7 +14,7 @@ import 'navigator.dart';
 /// The [parser] is used to parse destination from the URI and generate a URI string
 /// for the destination.
 ///
-/// Optional [upwardDestination] builder function can be used to implement custom
+/// Optional [upwardDestinationBuilder] builder function can be used to implement custom
 /// logic of upward navigation from the current destination.
 ///
 /// See also:
@@ -25,13 +25,13 @@ import 'navigator.dart';
 class Destination<T extends DestinationParameters> {
   Destination({
     required this.path,
-    this.upwardDestination,
     this.builder,
+    DestinationConfiguration? configuration,
     this.isHome = false,
     this.navigator,
-    DestinationConfiguration? configuration,
     this.parameters,
     this.parser = const DefaultDestinationParser(),
+    this.upwardDestinationBuilder,
   })  : assert(navigator != null || builder != null,
             'Either "builder" or "navigator" must be specified.'),
         assert(
@@ -56,19 +56,15 @@ class Destination<T extends DestinationParameters> {
   ///
   final String path;
 
-  /// Returns an underlay destination.
-  ///
-  /// Navigator will use this method to create the underlay destination for the
-  /// current one, using its parameters.
-  ///
-  final Destination? Function(Destination destination, T? parameters)?
-      upwardDestination;
-
   /// A content builder.
   ///
   /// Returns a widget (basically a screen) that should be rendered for this destination.
   ///
   final Widget Function(BuildContext context, T? parameters)? builder;
+
+  /// Defines a way of how this destination will appear.
+  ///
+  late final DestinationConfiguration configuration;
 
   /// Whether the destination is the home destination.
   ///
@@ -83,10 +79,6 @@ class Destination<T extends DestinationParameters> {
   ///
   final TheseusNavigator? navigator;
 
-  /// Defines a way of how this destination will appear.
-  ///
-  late final DestinationConfiguration configuration;
-
   /// Optional parameters, that are used to build content.
   ///
   final T? parameters;
@@ -97,6 +89,14 @@ class Destination<T extends DestinationParameters> {
   /// the current destination, and to generate a URI string from the current destination.
   ///
   final DestinationParser parser;
+
+  /// Function that returns an underlay destination.
+  ///
+  /// The TheseusNavigator use this method to create the underlay destination for the
+  /// current one, using its parameters.
+  ///
+  final Destination? Function(Destination<T> destination)?
+      upwardDestinationBuilder;
 
   bool get isFinalDestination => navigator == null;
 
@@ -118,9 +118,13 @@ class Destination<T extends DestinationParameters> {
   Future<Destination<T>> parse(String uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
+  /// TODO: Add description
   Widget build(BuildContext context) => isFinalDestination
       ? builder!(context, parameters)
       : navigator!.build(context);
+
+  /// TODO: Add description
+  Destination? get upwardDestination => upwardDestinationBuilder?.call(this);
 
   /// Returns a copy of this destination with a different configuration.
   ///
@@ -139,15 +143,15 @@ class Destination<T extends DestinationParameters> {
   Destination<T> copyWith({
     DestinationConfiguration? configuration,
     T? parameters,
-    DestinationTransition? transitionType,
   }) =>
       Destination<T>(
         path: this.path,
         builder: this.builder,
         navigator: this.navigator,
-        configuration: this.configuration,
+        configuration: configuration ?? this.configuration,
         parameters: parameters ?? this.parameters,
         parser: this.parser,
+        upwardDestinationBuilder: this.upwardDestinationBuilder,
       );
 
   /// Destinations are equal when their URI string are equal.

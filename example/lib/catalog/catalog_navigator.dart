@@ -4,17 +4,23 @@ import 'package:theseus_navigator/theseus_navigator.dart';
 import 'category.dart';
 import 'category_list_screen.dart';
 
-final catalogNavigator = TheseusNavigator(
-  destinations: [
-    CatalogDestinations.categories,
-  ]
-);
+final catalogNavigator = TheseusNavigator(destinations: [
+  CatalogDestinations.categories,
+]);
 
 class CatalogDestinations {
   static final categories = Destination<CategoriesDestinationParameters>(
     path: '/categories',
-    builder: (context, parameters) => CategoryListScreen(parentCategory: parameters?.parentCategory),
-    parser: CategoriesDestinationParser(categoryRepository: CategoryRepository()),
+    builder: (context, parameters) =>
+        CategoryListScreen(parentCategory: parameters?.parentCategory),
+    parser:
+        CategoriesDestinationParser(categoryRepository: CategoryRepository()),
+    upwardDestinationBuilder: (destination) =>
+        destination.parameters?.parentCategory == null
+            ? null
+            : destination.copyWithParameters(CategoriesDestinationParameters(
+                parentCategory:
+                    destination.parameters?.parentCategory!.parent)),
   );
 }
 
@@ -26,14 +32,17 @@ class CategoriesDestinationParameters extends DestinationParameters {
   final Category? parentCategory;
 }
 
-class CategoriesDestinationParser extends DestinationParser<CategoriesDestinationParameters> {
+class CategoriesDestinationParser
+    extends DestinationParser<CategoriesDestinationParameters> {
   CategoriesDestinationParser({required this.categoryRepository});
 
   final CategoryRepository categoryRepository;
 
   @override
-  Future<CategoriesDestinationParameters> toDestinationParameters(Map<String, String> map) async {
-    final category = await categoryRepository.getCategory(map['parentCategoryId'] ?? '');
+  Future<CategoriesDestinationParameters> toDestinationParameters(
+      Map<String, String> map) async {
+    final category =
+        await categoryRepository.getCategory(map['parentCategoryId'] ?? '');
     return CategoriesDestinationParameters(
       parentCategory: category,
     );
@@ -47,5 +56,4 @@ class CategoriesDestinationParser extends DestinationParser<CategoriesDestinatio
     }
     return result;
   }
-
 }

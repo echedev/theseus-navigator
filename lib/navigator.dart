@@ -119,7 +119,7 @@ class TheseusNavigator with ChangeNotifier {
   /// will replace the current destination.
   ///
   /// Also, missing upward destinations can be added to the stack, if the
-  /// current stack state doesn't match, and the [destination.upwardDestination]
+  /// current stack state doesn't match, and the [destination.upwardDestinationBuilder]
   /// is defined. This mostly could happen when it is navigated as a deeplink.
   ///
   /// Throws [UnknownDestinationException] if the navigator's [destinations]
@@ -160,8 +160,7 @@ class TheseusNavigator with ChangeNotifier {
   void _updateStack(Destination destination) {
     if (destination.configuration.reset) {
       _stack.clear();
-    }
-    else {
+    } else {
       if (destination.configuration.action == DestinationAction.replace) {
         _stack.removeLast();
       }
@@ -171,7 +170,7 @@ class TheseusNavigator with ChangeNotifier {
       // Find first missing item of upward stack
       int startUpwardFrom = 0;
       for (int i = 0; i < upwardStack.length; i++) {
-        if (_stack.last == upwardStack[i]) {
+        if (_stack.isNotEmpty && _stack.last == upwardStack[i]) {
           startUpwardFrom = i + 1;
         }
       }
@@ -187,12 +186,10 @@ class TheseusNavigator with ChangeNotifier {
 
   List<Destination> _buildUpwardStack(Destination destination) {
     final result = <Destination>[];
-    var upwardDestination = destination.upwardDestination
-        ?.call(destination, destination.parameters);
+    var upwardDestination = destination.upwardDestination;
     while (upwardDestination != null) {
       result.insert(0, upwardDestination);
-      upwardDestination = upwardDestination.upwardDestination
-          ?.call(upwardDestination, upwardDestination.parameters);
+      upwardDestination = upwardDestination.upwardDestination;
     }
     return result;
   }

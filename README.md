@@ -35,9 +35,9 @@ final homeDestination = DestinationLight(
       isHome: true,
       builder: (context, parameters) => HomeScreen(),
     );
-final ordersDestination = DestinationLight(
-      path: 'orders',
-      builder: (context, parameters) => OrdersScreen(),
+final catalogDestination = DestinationLight(
+      path: 'catalog',
+      builder: (context, parameters) => CatalogScreen(),
     );
 final settingsDestination = DestinationLight(
       path: 'settings',
@@ -46,7 +46,7 @@ final settingsDestination = DestinationLight(
 final navigationScheme = NavigationScheme(
   destinations: [
     homeDestination,
-    ordersDestination,
+    catalogDestination,
     settingsDestination,
   ],
 );
@@ -130,36 +130,36 @@ To use destination parameters of a certain type, you have to do the following:
 
 - Create a class that extends `DestinationParameters` like this:
 ```dart
-class CategoryListParameters extends DestinationParameters {
-  CategoryListParameters({
-    this.category,
+class CategoriesDestinationParameters extends DestinationParameters {
+  CategoriesDestinationParameters({
+    this.parentCategory,
   });
 
-  final Category? category;
+  final Category? parentCategory;
 }
 ```
 - Implement destination parser specific for your parameters type:
 ```dart
-class CategoryListParser extends DestinationParser<CategoryListParameters> {
-  CategoryListParser({
+class CategoriesDestinationParser extends DestinationParser<CategoriesDestinationParameters> {
+  CategoriesDestinationParser({
     required this.categoryRepository,
   });
 
   final CategoryRepository categoryRepository;
 
   @override
-  Future<CategoryListParameters> toDestinationParameters(Map<String, String> map) async {
-    final category = await categoryRepository.getCategory(map['parentId'] ?? '');
-    return CategoryListParameters(
-      category: category,
+  Future<CategoriesDestinationParameters> toDestinationParameters(Map<String, String> map) async {
+    final category = await categoryRepository.getCategory(map['parentCategoryId'] ?? '');
+    return CategoriesDestinationParameters(
+      parentCategory: category,
     );
   }
 
   @override
   Map<String, String> toMap(CategoryListParameters parameters) {
     final result = <String, String>{};
-    if (parameters.category != null) {
-      result['parentId'] = parameters.category!.id;
+    if (parameters.parentCategory != null) {
+      result['parentCategoryId'] = parameters.parentCategory!.id;
     }
     return result;
   }
@@ -167,12 +167,12 @@ class CategoryListParser extends DestinationParser<CategoryListParameters> {
 ```
 - After that you will create your destination like:
 ```dart
-final categoriesDestination = Destination<CategoryListParameters>(
+final categoriesDestination = Destination<CategoriesDestinationParameters>(
     path: 'categories',
     builder: (context, params) => CategoryListScreen(
-        parentCategory: params?.category,
+        parentCategory: params?.parentCategory,
     ),
-    parser: CategoryListParser(
+    parser: CategoriesDestinationParser(
       categoryRepository: CategoryRepository(),
     ),
   );
@@ -194,9 +194,9 @@ There are two pre-defined factory methods:
 `quite()` - replace the current destination with a new one without any animations.
 
 ```dart
-final ordersDestination = DestinationLight(
-  path: 'orders',
-  builder: (context, parameters) => OrdersScreen(),
+final catalogDestination = DestinationLight(
+  path: 'catalog',
+  builder: (context, parameters) => CatalogScreen(),
   configuration: const DestinationConfiguration.quiet(),
 );
 ```
@@ -216,7 +216,7 @@ This example shows creation of the navigator that would wrap destinations with s
 final mainNavigator = TheseusNavigator(
   destinations: [
     homeDestination,
-    ordersDestination,
+    catalogDestination,
     settingsDestination,
   ],
   debugLabel = 'Main',
@@ -249,7 +249,7 @@ Then you should specify this navigator `builder`:
 final mainNavigator = TheseusNavigator(
   destinations: [
     homeDestination,
-    ordersDestination,
+    catalogDestination,
     settingsDestination,
   ],
   builder: CustomNavigatorBuilder(),
@@ -259,7 +259,7 @@ final mainNavigator = TheseusNavigator(
 
 #### Upward Navigation
 
-Sometimes, on reverse navigation from the a destination that user accessed bypassing underlay destinations, we need to restore a missed destination hierarchy.
+Sometimes, on reverse navigation from a destination that user accessed bypassing underlay destinations, we need to restore a missed destination hierarchy.
 
 For example, user open an app by a deep link that leads to a category screen somewhere in the categories hierarchy. On navigating back from this screen we would like to show the upper level category screen, and so on until the root of categories.
 
@@ -272,11 +272,13 @@ final categoriesDestination = Destination<CategoryListParameters>(
   builder: (context, params) => CategoryListScreen(
       parentCategory: params?.category,
   ),
-  upwardDestination: (destination, params) =>
-    destination.copyWithParameters(CategoryListParameters(
-      category: params?.category?.parent,
-    )),
-  parser: CategoryListParser(
+  upwardDestinationBuilder: (destination) =>
+    destination.parameters?.parentCategory == null
+        ? null
+        : destination.copyWithParameters(CategoriesDestinationParameters(
+            parentCategory:
+                destination.parameters?.parentCategory!.parent)),
+  parser: CategoriesDestinationParser(
     categoryRepository: CategoryRepository(),
   ),
 );

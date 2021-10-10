@@ -1,8 +1,8 @@
-import 'package:example/catalog/category_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'category.dart';
 import 'catalog_navigator.dart';
+import 'category_repository.dart';
 
 class CategoryListScreen extends StatefulWidget {
   const CategoryListScreen({

@@ -1,8 +1,8 @@
-import 'package:example/catalog/category_repository.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'category.dart';
 import 'category_list_screen.dart';
+import 'category_repository.dart';
 
 final catalogNavigator = TheseusNavigator(destinations: [
   CatalogDestinations.categories,

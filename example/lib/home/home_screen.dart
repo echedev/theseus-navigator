@@ -1,4 +1,3 @@
-import 'package:example/catalog/category_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../catalog/index.dart';

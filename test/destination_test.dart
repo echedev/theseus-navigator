@@ -21,17 +21,17 @@ void main() {
     test('Matching URI', () {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'id': '1'}));
-      expect(destination1.isMatch('/categories/1'), true);
-      expect(destination1.isMatch('/categories'), true);
+      expect(destination1.isMatch('/catalog/1'), true);
+      expect(destination1.isMatch('/catalog'), true);
       expect(destination1.isMatch('/home'), false);
-      expect(destination2.isMatch('/categories/1'), true);
+      expect(destination2.isMatch('/catalog/1'), true);
     });
     test('Parsing URI', () async {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'id': '1'}));
       final destination3 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'id': '2'}));
-      expect(await destination1.parse('/categories/1') == destination2, true);
-      expect(await destination1.parse('/categories/1') == destination3, false);
+      expect(await destination1.parse('/catalog/1') == destination2, true);
+      expect(await destination1.parse('/catalog/1') == destination3, false);
     });
   });
 }

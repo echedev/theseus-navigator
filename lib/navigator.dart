@@ -1,10 +1,11 @@
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:utils/utils.dart';
+import 'package:theseus_navigator/router_delegate.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
+import 'utils/utils.dart';
 
 /// The [TheseusNavigator] manages the navigation state.
 ///
@@ -29,9 +30,9 @@ import 'exceptions.dart';
 class TheseusNavigator with ChangeNotifier {
   TheseusNavigator({
     required this.destinations,
-    this.initialDestinationIndex = 0,
-    this.wrapperBuilder,
+    this.builder = const DefaultNavigatorBuilder(),
     this.debugLabel = '',
+    this.initialDestinationIndex = 0,
   }) {
     _stack.add(destinations[initialDestinationIndex]);
     key = GlobalKey<NavigatorState>(debugLabel: this.debugLabel);
@@ -40,6 +41,21 @@ class TheseusNavigator with ChangeNotifier {
   /// List of destinations, which this navigator operate of.
   ///
   final List<Destination> destinations;
+
+  /// An implementation of [NavigatorBuilder] that creates a wrapping widget tree
+  /// around destinations.
+  ///
+  /// Defaults to [DefaultNavigatorBuilder] that wraps destinations to Flutter's
+  /// [Navigator] widget.
+  ///
+  /// It can be used when you want, for example, to navigate destinations by
+  /// [TabBar], or [BottomNavigationBar].
+  ///
+  /// See also:
+  /// - [NavigatorBuilder]
+  /// - [DefaultNavigatorBuilder]
+  ///
+  final NavigatorBuilder builder;
 
   /// Index of the initial destination.
   ///
@@ -53,21 +69,12 @@ class TheseusNavigator with ChangeNotifier {
   ///
   final String? debugLabel;
 
-  /// A function to create custom wrapping widget tree around destinations.
-  ///
-  /// It can be used when you want, for example, to navigate destinations by
-  /// [TabBar], or [BottomNavigationBar].
-  ///
-  /// See also:
-  /// - [NavigationWrapperBuilder]
-  ///
-  final NavigatorWrapperBuilder? wrapperBuilder;
-
   /// Provides the global key for corresponding [Navigator] widget.
   ///
   late final GlobalKey<NavigatorState> key;
 
   bool _shouldClose = false;
+
   /// Whether the navigator should close.
   ///
   /// It is set to 'true' when user call [onBack] method when the only destination
@@ -100,20 +107,25 @@ class TheseusNavigator with ChangeNotifier {
     super.dispose();
   }
 
+  // TODO: Add description
+  Widget build(BuildContext context) {
+    return builder.build(context, this);
+  }
+
   /// Opens specified destination.
   ///
   /// By calling calling this method, depending on [destination.configuration],
   /// the given destination will be either added to the navigation [stack], or
   /// will replace the current destination.
   ///
-  /// Also, missing backward destinations can be added to the stack, if the
-  /// current stack state doesn't match, and the [destination.backwardDestination]
+  /// Also, missing upward destinations can be added to the stack, if the
+  /// current stack state doesn't match, and the [destination.upwardDestinationBuilder]
   /// is defined. This mostly could happen when it is navigated as a deeplink.
   ///
   /// Throws [UnknownDestinationException] if the navigator's [destinations]
   /// doesn't contain given destination.
   ///
-  Future<void> goTo(Destination destination) async {
+  void goTo(Destination destination) {
     Log.d(_tag, 'goTo(): destination=${destination.uri}');
     if (_isValidDestination(destination)) {
       _updateStack(destination);
@@ -131,7 +143,7 @@ class TheseusNavigator with ChangeNotifier {
   /// If it was the only destination in the stack, it remains in the stack and
   /// [shouldClose] flag is set to 'true'.
   ///
-  Future<void> goBack() async {
+  void goBack() {
     Log.d(_tag, 'goBack(): localStack=${_stack.length}');
     if (_stack.length > 1) {
       _stack.removeLast();
@@ -146,49 +158,39 @@ class TheseusNavigator with ChangeNotifier {
       destinations.any((element) => element.isMatch(destination.uri));
 
   void _updateStack(Destination destination) {
-    if (destination.configuration.action == DestinationAction.replace) {
-      _stack.removeLast();
+    if (destination.configuration.reset) {
+      _stack.clear();
+    } else {
+      if (destination.configuration.action == DestinationAction.replace) {
+        _stack.removeLast();
+      }
     }
-    final backwardStack = _buildBackwardStack(destination);
-    if (backwardStack.isNotEmpty) {
-      // Find first missing item of backward stack
-      int startBackwardFrom = 0;
-      for (int i = 0; i < backwardStack.length; i++) {
-        if (_stack.last == backwardStack[i]) {
-          startBackwardFrom = i + 1;
+    final upwardStack = _buildUpwardStack(destination);
+    if (upwardStack.isNotEmpty) {
+      // Find first missing item of upward stack
+      int startUpwardFrom = 0;
+      for (int i = 0; i < upwardStack.length; i++) {
+        if (_stack.isNotEmpty && _stack.last == upwardStack[i]) {
+          startUpwardFrom = i + 1;
         }
       }
-      // Add all missing backward destinations to the stack
-      if (startBackwardFrom < backwardStack.length) {
-        for (int i = startBackwardFrom; i < backwardStack.length; i++) {
-          _stack.addLast(backwardStack[i]);
+      // Add all missing upward destinations to the stack
+      if (startUpwardFrom < upwardStack.length) {
+        for (int i = startUpwardFrom; i < upwardStack.length; i++) {
+          _stack.addLast(upwardStack[i]);
         }
       }
     }
     _stack.addLast(destination);
   }
 
-  List<Destination> _buildBackwardStack(Destination destination) {
+  List<Destination> _buildUpwardStack(Destination destination) {
     final result = <Destination>[];
-    var backwardDestination = destination.backwardDestination
-        ?.call(destination, destination.parameters);
-    while (backwardDestination != null) {
-      result.insert(0, backwardDestination);
-      backwardDestination = backwardDestination.backwardDestination
-          ?.call(backwardDestination, backwardDestination.parameters);
+    var upwardDestination = destination.upwardDestination;
+    while (upwardDestination != null) {
+      result.insert(0, upwardDestination);
+      upwardDestination = upwardDestination.upwardDestination;
     }
     return result;
   }
 }
-
-/// The signature of function that builds the navigator's wrapper widget tree.
-///
-/// The [nestedNavigatorBuilder] function should be called to build a wrapper for
-/// nested navigators.
-///
-typedef NavigatorWrapperBuilder = Widget Function(
-  BuildContext context,
-  TheseusNavigator navigator,
-  Widget Function(BuildContext context, TheseusNavigator nestedNavigator)
-      nestedNavigatorBuilder,
-);

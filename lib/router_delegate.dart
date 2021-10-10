@@ -30,7 +30,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   @override
   Widget build(BuildContext context) {
-    return NavigatorBuilder.build(context, navigationScheme.rootNavigator);
+    return navigationScheme.rootNavigator.build(context);
   }
 
   @override
@@ -41,8 +41,13 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   @override
   Future<void> setNewRoutePath(destination) async {
-    navigationScheme.goTo(destination);
+    return SynchronousFuture(navigationScheme.goTo(destination.copyWithConfiguration(
+      destination.configuration.copyWith(reset: true)
+    )));
   }
+
+  @override
+  Destination get currentConfiguration => navigationScheme.currentDestination;
 
   @override
   void dispose() {
@@ -55,9 +60,17 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   }
 }
 
-class NavigatorBuilder {
-  static Widget defaultWrapperBuilder(
-      BuildContext context, TheseusNavigator navigator) {
+// TODO: Add description
+abstract class NavigatorBuilder {
+  Widget build(BuildContext context, TheseusNavigator navigator);
+}
+
+// TODO: Add description
+class DefaultNavigatorBuilder implements NavigatorBuilder {
+  const DefaultNavigatorBuilder();
+
+  @override
+  Widget build(BuildContext context, TheseusNavigator navigator) {
     return Navigator(
       key: navigator.key,
       pages: navigator.stack
@@ -73,12 +86,6 @@ class NavigatorBuilder {
       },
     );
   }
-
-  static Widget build(BuildContext context, TheseusNavigator navigator) =>
-      navigator.wrapperBuilder == null
-          ? NavigatorBuilder.defaultWrapperBuilder(context, navigator)
-          : navigator.wrapperBuilder!(
-              context, navigator, NavigatorBuilder.build);
 }
 
 class _TheseusPage extends Page {
@@ -97,6 +104,14 @@ class _TheseusPage extends Page {
           settings: this,
           builder: (context) => destination.build(context),
         );
+      case DestinationTransition.custom:
+        return PageRouteBuilder(
+          settings: this,
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              destination.build(context),
+          transitionsBuilder: destination.configuration.transitionBuilder!,
+        );
+      case DestinationTransition.none:
       default:
         return PageRouteBuilder(
           settings: this,

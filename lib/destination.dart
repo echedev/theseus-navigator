@@ -14,8 +14,8 @@ import 'navigator.dart';
 /// The [parser] is used to parse destination from the URI and generate a URI string
 /// for the destination.
 ///
-/// Optional [backwardDestination] builder function can be used to implement custom
-/// logic of backward navigation from the current destination.
+/// Optional [upwardDestinationBuilder] builder function can be used to implement custom
+/// logic of upward navigation from the current destination.
 ///
 /// See also:
 /// - [DestinationConfiguration]
@@ -25,13 +25,13 @@ import 'navigator.dart';
 class Destination<T extends DestinationParameters> {
   Destination({
     required this.path,
-    this.backwardDestination,
     this.builder,
+    DestinationConfiguration? configuration,
     this.isHome = false,
     this.navigator,
-    this.configuration = const DestinationConfiguration.normal(),
     this.parameters,
     this.parser = const DefaultDestinationParser(),
+    this.upwardDestinationBuilder,
   })  : assert(navigator != null || builder != null,
             'Either "builder" or "navigator" must be specified.'),
         assert(
@@ -43,25 +43,28 @@ class Destination<T extends DestinationParameters> {
                     (parser is DefaultDestinationParser)) ||
                 ((T != DefaultDestinationParameters) &&
                     !(parser is DefaultDestinationParser)),
-            'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.');
+            'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
+    this.configuration = configuration == null
+        ? DestinationConfiguration.defaultMaterial()
+        : configuration;
+  }
 
   /// Path identifies the destination.
   ///
   /// Usually it follows the common url pattern with optional parameters.
-  /// Example: `/categories/{id}`
-  final String path;
-
-  /// Returns an underlay destination.
+  /// Example: `/catalog/{id}`
   ///
-  /// Navigator will use this method to create the underlay destination for the
-  /// current one, using its parameters.
-  final Destination? Function(Destination destination, T? parameters)?
-      backwardDestination;
+  final String path;
 
   /// A content builder.
   ///
   /// Returns a widget (basically a screen) that should be rendered for this destination.
+  ///
   final Widget Function(BuildContext context, T? parameters)? builder;
+
+  /// Defines a way of how this destination will appear.
+  ///
+  late final DestinationConfiguration configuration;
 
   /// Whether the destination is the home destination.
   ///
@@ -73,27 +76,37 @@ class Destination<T extends DestinationParameters> {
   ///
   /// Allows to implement nested navigation. When specified, the parent navigator
   /// use this child navigator to build content for this destination.
+  ///
   final TheseusNavigator? navigator;
 
-  /// Defines a way of how this destination will appear.
-  final DestinationConfiguration configuration;
-
   /// Optional parameters, that are used to build content.
+  ///
   final T? parameters;
 
   /// A destination parser.
   ///
   /// Used to parse the certain destination object from the URI string, based on
   /// the current destination, and to generate a URI string from the current destination.
+  ///
   final DestinationParser parser;
+
+  /// Function that returns an underlay destination.
+  ///
+  /// The TheseusNavigator use this method to create the underlay destination for the
+  /// current one, using its parameters.
+  ///
+  final Destination? Function(Destination<T> destination)?
+      upwardDestinationBuilder;
 
   bool get isFinalDestination => navigator == null;
 
   /// A full URI of the destination, with parameters placeholders replaced with
   /// actual parameter values.
+  ///
   String get uri => parser.uri(this);
 
   /// Check if the destination matches the provided URI string
+  ///
   bool isMatch(String uri) => parser.isMatch(uri, this);
 
   /// Parses the destination from the provided URI string.
@@ -101,13 +114,20 @@ class Destination<T extends DestinationParameters> {
   /// Returns a copy of the current destination with updated parameters, parsed
   /// from the URI.
   /// If the URI doesn't match this destination, throws an [DestinationNotMatchException].
+  ///
   Future<Destination<T>> parse(String uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
-  Widget build(BuildContext context) {
-    return builder!(context, parameters);
-  }
+  /// TODO: Add description
+  Widget build(BuildContext context) => isFinalDestination
+      ? builder!(context, parameters)
+      : navigator!.build(context);
 
+  /// TODO: Add description
+  Destination? get upwardDestination => upwardDestinationBuilder?.call(this);
+
+  /// Returns a copy of this destination with a different configuration.
+  ///
   Destination<T> copyWithConfiguration(
           DestinationConfiguration configuration) =>
       copyWith(
@@ -115,6 +135,7 @@ class Destination<T extends DestinationParameters> {
       );
 
   /// Returns a copy of this destination with different parameters.
+  ///
   Destination<T> copyWithParameters(T parameters) => copyWith(
         parameters: parameters,
       );
@@ -122,18 +143,19 @@ class Destination<T extends DestinationParameters> {
   Destination<T> copyWith({
     DestinationConfiguration? configuration,
     T? parameters,
-    DestinationTransition? transitionType,
   }) =>
       Destination<T>(
         path: this.path,
         builder: this.builder,
         navigator: this.navigator,
-        configuration: this.configuration,
+        configuration: configuration ?? this.configuration,
         parameters: parameters ?? this.parameters,
         parser: this.parser,
+        upwardDestinationBuilder: this.upwardDestinationBuilder,
       );
 
   /// Destinations are equal when their URI string are equal.
+  ///
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -149,7 +171,7 @@ class Destination<T extends DestinationParameters> {
 /// the destination.
 ///
 /// There are convenient factory constructors of commonly used configurations.
-/// [normal] - pushes the destination to the navigation stack with standard material animations.
+/// [defaultMaterial] - pushes the destination to the navigation stack with standard material animations.
 /// [quiet] - replace the previous destination with the current one without animations.
 ///
 /// See also:
@@ -160,10 +182,16 @@ class DestinationConfiguration {
   const DestinationConfiguration({
     required this.action,
     required this.transition,
-  });
+    this.reset = false,
+    this.transitionBuilder,
+  }) : assert(
+            (transition == DestinationTransition.custom &&
+                    transitionBuilder != null) ||
+                (transition != DestinationTransition.custom),
+            'You have to provide "transitionBuilder" for "custom" transition.');
 
-  const factory DestinationConfiguration.normal() =
-      _NormalDestinationConfiguration;
+  const factory DestinationConfiguration.defaultMaterial() =
+      _DefaultDestinationConfiguration;
 
   const factory DestinationConfiguration.quiet() =
       _QuietDestinationConfiguration;
@@ -171,10 +199,26 @@ class DestinationConfiguration {
   final DestinationAction action;
 
   final DestinationTransition transition;
+
+  // TODO: Add description
+  final bool reset;
+
+  final RouteTransitionsBuilder? transitionBuilder;
+
+  DestinationConfiguration copyWith({
+    // TODO: Add other properties
+    bool? reset,
+  }) =>
+      DestinationConfiguration(
+        action: this.action,
+        transition: this.transition,
+        reset: reset ?? this.reset,
+        transitionBuilder: this.transitionBuilder,
+      );
 }
 
-class _NormalDestinationConfiguration extends DestinationConfiguration {
-  const _NormalDestinationConfiguration()
+class _DefaultDestinationConfiguration extends DestinationConfiguration {
+  const _DefaultDestinationConfiguration()
       : super(
           action: DestinationAction.push,
           transition: DestinationTransition.material,
@@ -247,4 +291,4 @@ class DefaultDestinationParameters extends DestinationParameters {
   final Map<String, String> map;
 }
 
-typedef GeneralDestination = Destination<DefaultDestinationParameters>;
+typedef DestinationLight = Destination<DefaultDestinationParameters>;

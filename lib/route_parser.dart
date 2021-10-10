@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/navigator.dart';
-import 'package:utils/utils.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
 import 'navigation_scheme.dart';
+import 'utils/utils.dart';
 
 /// Implementation of [RouteInformationParser].
 ///
@@ -33,5 +32,10 @@ class TheseusRouteInformationParser extends RouteInformationParser<Destination> 
       throw UnknownUriException(uri);
     }
     return baseDestination.parse(uri);
+  }
+
+  @override
+  RouteInformation restoreRouteInformation(Destination destination) {
+    return RouteInformation(location: destination.uri);
   }
 }

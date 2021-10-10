@@ -289,6 +289,8 @@ final categoriesDestination = Destination<CategoryListParameters>(
 - Handling return values from destinations
 - Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
+- Redirections
+- Test coverage
 
 ###### Useful Links
 [Material Design - Understanding Navigation](https://material.io/design/navigation/understanding-navigation.html)

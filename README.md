@@ -287,6 +287,7 @@ final categoriesDestination = Destination<CategoryListParameters>(
 ## Other
 ###### Coming Updates
 - Handling return values from destinations
+- Handling navigation errors
 - Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
 - Redirections

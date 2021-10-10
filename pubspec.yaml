@@ -1,7 +1,8 @@
 name: theseus_navigator
-description: Theseus Navigator
+description: Theseus Navigator is based on Navigator 2.0 and offers declarative navigation scheme, easy API, supports deeplinks, nested navigators and more.
 version: 0.0.1
-homepage:
+homepage: https://github.com/echedev/theseus-navigator
+repository: https://github.com/echedev/theseus-navigator
 
 environment:
   sdk: ">=2.13.0 <3.0.0"
@@ -10,11 +11,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  collection: ^1.15.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  utils:
-    path: ./utils
 
 flutter:

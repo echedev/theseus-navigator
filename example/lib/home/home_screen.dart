@@ -13,16 +13,19 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('Home'),
-          ElevatedButton(
-              onPressed: () async {
-                navigationScheme.goTo(CatalogDestinations.categories.copyWith(
-                    parameters: CategoriesDestinationParameters(
-                        parentCategory:
-                            await CategoryRepository().getCategory('3')),
-                    configuration: CatalogDestinations.categories.configuration
-                        .copyWith(reset: true)));
-              },
-              child: Text('Category 3')),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: ElevatedButton(
+                onPressed: () async {
+                  navigationScheme.goTo(CatalogDestinations.categories.copyWith(
+                      parameters: CategoriesDestinationParameters(
+                          parentCategory:
+                              await CategoryRepository().getCategory('3')),
+                      configuration: CatalogDestinations.categories.configuration
+                          .copyWith(reset: true)));
+                },
+                child: Text('Category 3')),
+          ),
         ],
       ),
     );

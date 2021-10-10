@@ -29,4 +29,3 @@ class UnknownUriException implements Exception {
   /// A URI string.
   String uri;
 }
-

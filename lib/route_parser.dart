@@ -16,7 +16,8 @@ import 'utils/utils.dart';
 /// - [TheseusNavigator]
 /// - [Destination]
 ///
-class TheseusRouteInformationParser extends RouteInformationParser<Destination> {
+class TheseusRouteInformationParser
+    extends RouteInformationParser<Destination> {
   TheseusRouteInformationParser({
     required this.navigationScheme,
   });

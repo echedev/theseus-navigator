@@ -33,6 +33,7 @@ class NavigationScheme with ChangeNotifier {
   }
 
   late Destination _currentDestination;
+
   /// The current destination within the whole navigation scheme.
   ///
   /// To get a current top level destination, use [rootNavigator.currentDestination].
@@ -46,6 +47,7 @@ class NavigationScheme with ChangeNotifier {
   final _navigatorOwners = <TheseusNavigator, Destination>{};
 
   late final TheseusNavigator _rootNavigator;
+
   /// The root navigator in the navigation scheme.
   ///
   /// This navigator manages top level destinations.
@@ -53,6 +55,7 @@ class NavigationScheme with ChangeNotifier {
   TheseusNavigator get rootNavigator => _rootNavigator;
 
   bool _shouldClose = false;
+
   /// Whether the app should close.
   ///
   /// This flag is set on when user perform 'Back' action on top most destination.
@@ -126,8 +129,7 @@ class NavigationScheme with ChangeNotifier {
     final owner = _navigatorOwners[navigator];
     if (owner != null) {
       goTo(owner);
-    }
-    else {
+    } else {
       _updateCurrentDestination();
     }
   }

@@ -95,7 +95,8 @@ abstract class DestinationParser<T extends DestinationParameters> {
   /// Uses [toDestinationParameters] implementation to create the certain [DestinationParameters].
   /// Throws [DestinationNotMatchException] if the URI does mot match base destination.
   ///
-  Future<Destination<T>> parseParameters(String uri, Destination<T> baseDestination) async {
+  Future<Destination<T>> parseParameters(
+      String uri, Destination<T> baseDestination) async {
     if (!isMatch(uri, baseDestination)) {
       throw DestinationNotMatchException(uri, baseDestination);
     }

@@ -2,4 +2,5 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
-    package_api_docs: true
+    - package_api_docs
+    - public_member_api_docs

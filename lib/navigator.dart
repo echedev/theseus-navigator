@@ -28,6 +28,11 @@ import 'utils/utils.dart';
 /// - [NavigationScheme]
 ///
 class TheseusNavigator with ChangeNotifier {
+  /// Creates navigator.
+  ///
+  /// Add initial destination to the navigation stack and creates a [GlobalKey] for
+  /// a [Navigator] widget.
+  ///
   TheseusNavigator({
     required this.destinations,
     this.builder = const DefaultNavigatorBuilder(),
@@ -102,7 +107,8 @@ class TheseusNavigator with ChangeNotifier {
   ///
   List<Destination> get stack => _stack.toList();
 
-  // TODO: Add description
+  /// Builds a widget that wraps the destination's content.
+  ///
   Widget build(BuildContext context) {
     return builder.build(context, this);
   }

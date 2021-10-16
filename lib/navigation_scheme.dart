@@ -19,6 +19,8 @@ import 'navigator.dart';
 /// - [TheseusNavigator]
 ///
 class NavigationScheme with ChangeNotifier {
+  /// Creates navigation scheme.
+  ///
   NavigationScheme({
     List<Destination> destinations = const <Destination>[],
     TheseusNavigator? navigator,

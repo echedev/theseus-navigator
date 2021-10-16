@@ -22,6 +22,8 @@ import 'exceptions.dart';
 /// - [DefaultDestinationParser]
 ///
 abstract class DestinationParser<T extends DestinationParameters> {
+  /// Creates destination parser.
+  ///
   const DestinationParser();
 
   /// Creates a destination parameters object of type [T] from the given map.
@@ -202,6 +204,8 @@ abstract class DestinationParser<T extends DestinationParameters> {
 ///
 class DefaultDestinationParser
     extends DestinationParser<DefaultDestinationParameters> {
+  /// Creates default destination parser.
+  ///
   const DefaultDestinationParser() : super();
 
   @override

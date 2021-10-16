@@ -23,6 +23,8 @@ import 'navigator.dart';
 /// - [DestinationParser]
 ///
 class Destination<T extends DestinationParameters> {
+  /// Creates a destination.
+  ///
   Destination({
     required this.path,
     this.builder,
@@ -96,6 +98,11 @@ class Destination<T extends DestinationParameters> {
   final Destination? Function(Destination<T> destination)?
       upwardDestinationBuilder;
 
+  /// Whether this destination is final, i.e. it builds a content
+  ///
+  /// Final destinations must have a [builder] function provided.
+  /// Non-final destinations must have a [navigator], that manages its own destinations.
+  ///
   bool get isFinalDestination => navigator == null;
 
   /// A full URI of the destination, with parameters placeholders replaced with
@@ -138,6 +145,9 @@ class Destination<T extends DestinationParameters> {
         parameters: parameters,
       );
 
+  /// Creates a copy of this destination with the given fields replaced
+  /// with the new values.
+  ///
   Destination<T> copyWith({
     DestinationConfiguration? configuration,
     T? parameters,
@@ -177,6 +187,8 @@ class Destination<T extends DestinationParameters> {
 /// - [DestinationTransition]
 ///
 class DestinationConfiguration {
+  /// Creates configuration of a destination.
+  ///
   const DestinationConfiguration({
     required this.action,
     required this.transition,
@@ -188,21 +200,48 @@ class DestinationConfiguration {
                 (transition != DestinationTransition.custom),
             'You have to provide "transitionBuilder" for "custom" transition.');
 
+  /// Creates a configuration that pushes a destination to the top of navigation
+  /// stack with a standard Material animations.
+  ///
   const factory DestinationConfiguration.defaultMaterial() =
       _DefaultDestinationConfiguration;
 
+  /// Creates a configuration that replaces the current destination with a new one
+  /// with no animations.
+  ///
   const factory DestinationConfiguration.quiet() =
       _QuietDestinationConfiguration;
 
+  /// How the destination will update the navigation stack.
+  ///
+  /// See also:
+  ///  - [DestinationAction]
+  ///
   final DestinationAction action;
 
+  /// Visual effects that would be applied on updating the stack with the destination.
+  ///
+  /// See also:
+  /// - [DestinationTransition]
+  ///
   final DestinationTransition transition;
 
-  // TODO: Add description
+  /// Whether the stack would be cleared before adding the destination.
+  ///
   final bool reset;
 
+  /// Function that build custom destination transitions.
+  ///
+  /// It is required when the [transition] value is [DestinationTransition.custom].
+  ///
+  /// See also
+  /// - [RouteTransitionBuilder]
+  ///
   final RouteTransitionsBuilder? transitionBuilder;
 
+  /// Creates a copy of this configuration with the given fields replaced
+  /// with the new values.
+  ///
   DestinationConfiguration copyWith({
     // TODO: Add other properties
     bool? reset,
@@ -233,17 +272,33 @@ class _QuietDestinationConfiguration extends DestinationConfiguration {
 
 /// An action that is used to update the navigation stack with the destination.
 ///
-/// [push] - The destination will be added to the navigation stack. On back action,
-/// the destination will be removed from the stack and previous destination will be returned.
-/// [replace] - The previous destination will be removed from the navigation stack,
-/// and the current destination will be added. This means that user will not be
-/// able to return to previous destination by back action.
-///
-enum DestinationAction { push, replace }
+enum DestinationAction {
+  /// The destination will be added to the navigation stack.
+  /// On navigation back, the destination will be removed from the stack
+  /// and previous destination will be restored.
+  ///
+  push,
+  /// The previous destination will be removed from the navigation stack,
+  /// and the current destination will be added.
+  /// This means that user will not be able to return to previous destination
+  /// by back navigation.
+  ///
+  replace,
+}
 
 /// Defines transition animations from the previous destination to the current one.
 ///
-enum DestinationTransition { material, custom, none }
+enum DestinationTransition {
+  /// Standard Material animations.
+  ///
+  material,
+  /// Custom animations.
+  ///
+  custom,
+  /// No animations.
+  ///
+  none,
+}
 
 /// An interface for destination parameters.
 ///
@@ -276,6 +331,8 @@ enum DestinationTransition { material, custom, none }
 /// - [DestinationParser]
 ///
 abstract class DestinationParameters {
+  /// Creates destination parameters.
+  ///
   const DestinationParameters();
 }
 
@@ -284,9 +341,17 @@ abstract class DestinationParameters {
 /// Uses Map<String, String> to store parameter values.
 ///
 class DefaultDestinationParameters extends DestinationParameters {
+  /// Creates default destination parameters.
+  ///
   DefaultDestinationParameters([this.map = const <String, String>{}]);
 
+  /// Contains parameter values.
+  ///
+  /// The parameter name is a [MapEntry.key], and the value is [MapEntry.value].
+  ///
   final Map<String, String> map;
 }
 
+/// A shorten for destination without custom type parameters.
+///
 typedef DestinationLight = Destination<DefaultDestinationParameters>;

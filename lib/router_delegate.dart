@@ -16,12 +16,20 @@ import 'navigation_scheme.dart';
 ///
 class TheseusRouterDelegate extends RouterDelegate<Destination>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+  /// Creates router delegate.
+  ///
   TheseusRouterDelegate({
     required this.navigationScheme,
   }) {
     navigationScheme.addListener(_onCurrentDestinationChanged);
   }
 
+  /// A navigation scheme that contains destinations and navigators.
+  ///
+  /// This router delegate is listening the navigation scheme to identify when the
+  /// current destination is changes, and in turn, notifies its listeners when this
+  /// happens.
+  ///
   final NavigationScheme navigationScheme;
 
   @override
@@ -61,13 +69,23 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   }
 }
 
-// TODO: Add description
+/// Builds a widget that wraps a content for [TheseusNavigator].
+///
+/// See also:
+/// - [DefaultNavigatorBuilder]
+///
 abstract class NavigatorBuilder {
+  /// Returns a widget that wraps content of navigator's destinations.
+  ///
   Widget build(BuildContext context, TheseusNavigator navigator);
 }
 
-// TODO: Add description
+/// Implementation of [NavigatorBuilder] that wraps destination's content into
+/// [Navigator] widget.
+///
 class DefaultNavigatorBuilder implements NavigatorBuilder {
+  /// Creates default navigator builder.
+  ///
   const DefaultNavigatorBuilder();
 
   @override

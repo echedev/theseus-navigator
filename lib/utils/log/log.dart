@@ -34,8 +34,8 @@ class Log {
 
   static void _write(LogLevel type, Object tag, String? message) {
     // ignore: avoid_print
-    print('''${type.toStringFormatted()}, 
-      ${DateTime.now()}, ${_tagToString(tag)}: ${message ?? ""}''');
+    print(
+        '''${type.toStringFormatted()}, ${DateTime.now()}, ${_tagToString(tag)}: ${message ?? ""}''');
   }
 
   static String _tagToString(Object tag) =>

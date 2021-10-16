@@ -126,7 +126,7 @@ class TheseusNavigator with ChangeNotifier {
   /// Throws [UnknownDestinationException] if the navigator's [destinations]
   /// doesn't contain given destination.
   ///
-  void goTo(Destination destination) {
+  Future<void> goTo(Destination destination) async {
     Log.d(_tag, 'goTo(): destination=${destination.uri}');
     if (_isValidDestination(destination)) {
       _updateStack(destination);

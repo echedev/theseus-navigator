@@ -36,6 +36,7 @@ class TheseusRouteInformationParser
   }
 
   @override
+  // ignore: avoid_renaming_method_parameters
   RouteInformation restoreRouteInformation(Destination destination) {
     return RouteInformation(location: destination.uri);
   }

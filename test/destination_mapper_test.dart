@@ -5,7 +5,7 @@ import 'package:theseus_navigator/theseus_navigator.dart';
 import 'common.dart';
 
 void main() {
-  final parser = const DefaultDestinationParser();
+  const parser = DefaultDestinationParser();
 
   group('Path parameter', () {
     test('Segment is path parameter', () {

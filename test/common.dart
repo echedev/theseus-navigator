@@ -3,7 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 
 class TestDestinations {
-  static final dummyBuilder = (context, parameters) => Container();
+  static Widget dummyBuilder<T extends DestinationParameters>(
+          BuildContext context, T? parameters) =>
+      Container();
 
   static final home = DestinationLight(
     path: '/home',

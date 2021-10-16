@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href=""><img src="https://img.shields.io/badge/pub-0.0.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/covarage-37%25-green" alt="Coverage">
+<a href=""><img src="https://img.shields.io/badge/pub-0.0.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-37%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 - Declarative navigation scheme
@@ -287,8 +287,11 @@ final categoriesDestination = Destination<CategoryListParameters>(
 ## Other
 ###### Coming Updates
 - Handling return values from destinations
+- Handling navigation errors
 - Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
+- Redirections
+- Test coverage
 
 ###### Useful Links
 [Material Design - Understanding Navigation](https://material.io/design/navigation/understanding-navigation.html)

@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 
 class Log {
   static int _logLevel = 0;
-  
-  static set logLevel(LogLevel value) => _logLevel = LogLevel.values.indexOf(value);
+
+  static set logLevel(LogLevel value) =>
+      _logLevel = LogLevel.values.indexOf(value);
 
   static void d(Object tag, [String? message]) {
     if (kDebugMode || _logLevel == LogLevel.values.indexOf(LogLevel.d)) {
@@ -34,11 +35,13 @@ class Log {
     print('${type.toStringFormatted()}, ${DateTime.now()}, ${_tagToString(tag)}: ${message ?? ""}');
   }
 
-  static String _tagToString(Object tag) => tag is String ? tag : tag.toString();
+  static String _tagToString(Object tag) =>
+      tag is String ? tag : tag.toString();
 }
 
 enum LogLevel { d, e, w, i }
 
 extension _LogTypeExtension on LogLevel {
-  String toStringFormatted() => '[${toString().split('.').last.toUpperCase()}]';
+  String toStringFormatted() =>
+      '[${this.toString().split('.').last.toUpperCase()}]';
 }

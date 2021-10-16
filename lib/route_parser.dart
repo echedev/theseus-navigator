@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/navigator.dart';
-import 'package:utils/utils.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
 import 'navigation_scheme.dart';
+import 'utils/utils.dart';
 
 /// Implementation of [RouteInformationParser].
 ///
@@ -16,7 +16,8 @@ import 'navigation_scheme.dart';
 /// - [TheseusNavigator]
 /// - [Destination]
 ///
-class TheseusRouteInformationParser extends RouteInformationParser<Destination> {
+class TheseusRouteInformationParser
+    extends RouteInformationParser<Destination> {
   TheseusRouteInformationParser({
     required this.navigationScheme,
   });

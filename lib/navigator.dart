@@ -2,10 +2,10 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/router_delegate.dart';
-import 'package:utils/utils.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
+import 'utils/utils.dart';
 
 /// The [TheseusNavigator] manages the navigation state.
 ///

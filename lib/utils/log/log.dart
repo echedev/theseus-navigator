@@ -43,5 +43,5 @@ enum LogLevel { d, e, w, i }
 
 extension _LogTypeExtension on LogLevel {
   String toStringFormatted() =>
-      '[${this.toString().split('.').last.toUpperCase()}]';
+      '[${toString().split('.').last.toUpperCase()}]';
 }

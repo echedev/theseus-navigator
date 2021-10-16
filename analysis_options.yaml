@@ -1,1 +1,5 @@
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    package_api_docs: true

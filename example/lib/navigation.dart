@@ -36,7 +36,7 @@ class MainDestinations {
   static final home = DestinationLight(
     path: '/home',
     isHome: true,
-    builder: (context, parameters) => HomeScreen(),
+    builder: (context, parameters) => const HomeScreen(),
     configuration: DestinationConfiguration.quiet(),
   );
   static final catalog = DestinationLight(
@@ -46,7 +46,7 @@ class MainDestinations {
   );
   static final settings = DestinationLight(
     path: '/settings',
-    builder: (context, parameters) => SettingsScreen(),
+    builder: (context, parameters) => const SettingsScreen(),
     configuration: DestinationConfiguration.quiet(),
   );
 }

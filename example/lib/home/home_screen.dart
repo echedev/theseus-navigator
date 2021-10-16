@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Home'),
+          const Text('Home'),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: ElevatedButton(
@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
                       configuration: CatalogDestinations.categories.configuration
                           .copyWith(reset: true)));
                 },
-                child: Text('Category 3')),
+                child: const Text('Category 3')),
           ),
         ],
       ),

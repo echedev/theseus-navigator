@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({
+  const MainScreen({
     Key? key,
     required this.content,
     required this.onSelectBottomTab,
@@ -28,16 +28,16 @@ class _MainScreenState extends State<MainScreen> {
       builder: (context) => Scaffold(
         body: widget.content,
         bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
               icon: Icon(Icons.home_rounded),
               label: 'Home',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.list_rounded),
               label: 'Catalog',
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.more_horiz_rounded),
               label: 'Settings',
             ),

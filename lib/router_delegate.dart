@@ -40,6 +40,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   }
 
   @override
+  // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
     return SynchronousFuture(navigationScheme.goTo(destination.copyWithConfiguration(
       destination.configuration.copyWith(reset: true)
@@ -89,7 +90,7 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
 }
 
 class _TheseusPage extends Page {
-  _TheseusPage({
+  const _TheseusPage({
     required this.destination,
     required LocalKey key,
   }) : super(key: key);

@@ -103,8 +103,9 @@ class NavigationScheme with ChangeNotifier {
   }
 
   void _initializeNavigator(TheseusNavigator navigator) {
+    listener() => _onNavigatorStackChanged(navigator);
+
     // Add a listener of the navigator
-    final listener = () => _onNavigatorStackChanged(navigator);
     _navigatorListeners[navigator] = listener;
     navigator.addListener(listener);
 
@@ -119,8 +120,11 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
-  void _removeNavigatorListeners() => _navigatorListeners.keys.forEach(
-      (navigator) => navigator.removeListener(_navigatorListeners[navigator]!));
+  void _removeNavigatorListeners() {
+    for (var navigator in _navigatorListeners.keys) {
+      navigator.removeListener(_navigatorListeners[navigator]!);
+    }
+  }
 
   void _onNavigatorStackChanged(TheseusNavigator navigator) {
     final owner = _navigatorOwners[navigator];

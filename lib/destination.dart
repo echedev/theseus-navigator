@@ -42,11 +42,9 @@ class Destination<T extends DestinationParameters> {
             ((T == DefaultDestinationParameters) &&
                     (parser is DefaultDestinationParser)) ||
                 ((T != DefaultDestinationParameters) &&
-                    !(parser is DefaultDestinationParser)),
+                    parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    this.configuration = configuration == null
-        ? DestinationConfiguration.defaultMaterial()
-        : configuration;
+    this.configuration = configuration ?? DestinationConfiguration.defaultMaterial();
   }
 
   /// Path identifies the destination.
@@ -145,13 +143,13 @@ class Destination<T extends DestinationParameters> {
     T? parameters,
   }) =>
       Destination<T>(
-        path: this.path,
-        builder: this.builder,
-        navigator: this.navigator,
+        path: path,
+        builder: builder,
+        navigator: navigator,
         configuration: configuration ?? this.configuration,
         parameters: parameters ?? this.parameters,
-        parser: this.parser,
-        upwardDestinationBuilder: this.upwardDestinationBuilder,
+        parser: parser,
+        upwardDestinationBuilder: upwardDestinationBuilder,
       );
 
   /// Destinations are equal when their URI string are equal.
@@ -210,10 +208,10 @@ class DestinationConfiguration {
     bool? reset,
   }) =>
       DestinationConfiguration(
-        action: this.action,
-        transition: this.transition,
+        action: action,
+        transition: transition,
         reset: reset ?? this.reset,
-        transitionBuilder: this.transitionBuilder,
+        transitionBuilder: transitionBuilder,
       );
 }
 

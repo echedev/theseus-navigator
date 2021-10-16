@@ -35,7 +35,7 @@ class TheseusNavigator with ChangeNotifier {
     this.initialDestinationIndex = 0,
   }) {
     _stack.add(destinations[initialDestinationIndex]);
-    key = GlobalKey<NavigatorState>(debugLabel: this.debugLabel);
+    key = GlobalKey<NavigatorState>(debugLabel: debugLabel);
   }
 
   /// List of destinations, which this navigator operate of.
@@ -101,11 +101,6 @@ class TheseusNavigator with ChangeNotifier {
   /// the stack.
   ///
   List<Destination> get stack => _stack.toList();
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   // TODO: Add description
   Widget build(BuildContext context) {

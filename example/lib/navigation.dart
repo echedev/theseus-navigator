@@ -46,7 +46,8 @@ class MainNavigatorBuilder implements NavigatorBuilder {
     final content = currentDestination.build(context);
     return MainScreen(
       content: content,
-      onSelectBottomTab: (index) => navigator.goTo(navigator.destinations[index]),
+      onSelectBottomTab: (index) =>
+          navigator.goTo(navigator.destinations[index]),
       selectedIndex: navigator.destinations.indexOf(currentDestination),
     );
   }

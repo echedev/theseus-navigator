@@ -19,7 +19,6 @@ class CategoryListScreen extends StatefulWidget {
 }
 
 class _CategoryListScreenState extends State<CategoryListScreen> {
-
   final CategoryRepository categoryRepository = CategoryRepository();
 
   @override
@@ -36,32 +35,36 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: FutureBuilder<List<Category>>(
-          future: categoryRepository.getCategories(parent: widget.parentCategory),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView(
-                children: [
-                  ...snapshot.data!.map((category) => InkWell(
-                    onTap: () {
-                      catalogNavigator.goTo(CatalogDestinations.categories
-                          .copyWithParameters(CategoriesDestinationParameters(
-                            parentCategory: category,
-                          )));
-                    },
-                    child: Card(
-                      child: Container(
-                        height: 100.0,
-                        alignment: Alignment.center,
-                        child: Text(category.name),
-                      ),
-                    ),
-                  )).toList(),
-                ],
-              );
-            }
-            return Container();
-          }
-        ),
+            future:
+                categoryRepository.getCategories(parent: widget.parentCategory),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView(
+                  children: [
+                    ...snapshot.data!
+                        .map((category) => InkWell(
+                              onTap: () {
+                                catalogNavigator.goTo(CatalogDestinations
+                                    .categories
+                                    .copyWithParameters(
+                                        CategoriesDestinationParameters(
+                                  parentCategory: category,
+                                )));
+                              },
+                              child: Card(
+                                child: Container(
+                                  height: 100.0,
+                                  alignment: Alignment.center,
+                                  child: Text(category.name),
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  ],
+                );
+              }
+              return Container();
+            }),
       ),
     );
   }

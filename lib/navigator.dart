@@ -128,6 +128,11 @@ class TheseusNavigator with ChangeNotifier {
   ///
   Future<void> goTo(Destination destination) async {
     Log.d(_tag, 'goTo(): destination=${destination.uri}');
+    if (currentDestination == destination) {
+      Log.d(_tag, 'goTo(): The destination is already on top. No action required.');
+      notifyListeners();
+      return;
+    }
     if (_isValidDestination(destination)) {
       _updateStack(destination);
       _shouldClose = false;

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'destination_parser.dart';
 import 'navigator.dart';
+import 'redirection.dart';
 
 /// A class that contains all required information about navigation target.
 ///
@@ -17,10 +18,13 @@ import 'navigator.dart';
 /// Optional [upwardDestinationBuilder] builder function can be used to implement custom
 /// logic of upward navigation from the current destination.
 ///
+/// If [redirections] are specified, they will be applied on navigation to this destination.
+///
 /// See also:
 /// - [DestinationConfiguration]
 /// - [DestinationParameters]
 /// - [DestinationParser]
+/// - [Redirection]
 ///
 class Destination<T extends DestinationParameters> {
   /// Creates a destination.
@@ -33,6 +37,7 @@ class Destination<T extends DestinationParameters> {
     this.navigator,
     this.parameters,
     this.parser = const DefaultDestinationParser(),
+    this.redirections = const <Redirection>[],
     this.upwardDestinationBuilder,
   })  : assert(navigator != null || builder != null,
             'Either "builder" or "navigator" must be specified.'),
@@ -46,7 +51,8 @@ class Destination<T extends DestinationParameters> {
                 ((T != DefaultDestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    this.configuration = configuration ?? DestinationConfiguration.defaultMaterial();
+    this.configuration =
+        configuration ?? DestinationConfiguration.defaultMaterial();
   }
 
   /// Path identifies the destination.
@@ -89,6 +95,13 @@ class Destination<T extends DestinationParameters> {
   /// the current destination, and to generate a URI string from the current destination.
   ///
   final DestinationParser parser;
+
+  /// Destinations and conditions to redirect.
+  ///
+  /// When it is not empty, the navigator will check for each [Redirection] in the list,
+  /// if this destination is allowed to navigate to.
+  ///
+  final List<Redirection> redirections;
 
   /// Function that returns an underlay destination.
   ///
@@ -278,6 +291,7 @@ enum DestinationAction {
   /// and previous destination will be restored.
   ///
   push,
+
   /// The previous destination will be removed from the navigation stack,
   /// and the current destination will be added.
   /// This means that user will not be able to return to previous destination
@@ -292,9 +306,11 @@ enum DestinationTransition {
   /// Standard Material animations.
   ///
   material,
+
   /// Custom animations.
   ///
   custom,
+
   /// No animations.
   ///
   none,

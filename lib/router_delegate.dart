@@ -64,7 +64,19 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     super.dispose();
   }
 
-  void _onCurrentDestinationChanged() {
+  Future<void> _onCurrentDestinationChanged() async {
+    final destination = navigationScheme.currentDestination;
+    if (destination.redirections.isEmpty) {
+      notifyListeners();
+      return;
+    }
+    // Apply redirections if they are specified.
+    for (var redirection in destination.redirections) {
+      if (!(await redirection.validate(destination))) {
+        return SynchronousFuture(navigationScheme.goTo(redirection.destination));
+      }
+    }
+    // No one redirection was applied.
     notifyListeners();
   }
 }

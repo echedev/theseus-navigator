@@ -8,6 +8,7 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 - Strongly-typed parameters
 - Deep links
 - Nested and feature navigation
+- Redirections
 - Custom transitions
 
 It provides a simple API, does not require code generation and uses Flutter's Router / Navigator 2.0 under the hood.
@@ -284,13 +285,36 @@ final categoriesDestination = Destination<CategoryListParameters>(
 );
 ```
 
+## Redirections
+
+Sometimes we need to redirect user to another screen before displaying the requested content.
+
+The basic example is that some screen should be shown only for signed in users.
+
+The package provides `Redirection` class to support this behavior. You can specify a list of redirections for destinations that should be validated before navigation.
+```dart
+final settingsDestination = DestinationLight(
+      path: 'settings',
+      builder: (context, parameters) => SettingsScreen(),
+      redirections: [
+        Redirection(
+          validator: (destination) => SynchronousFuture(isLoggedIn),
+          destination: loginDestination,
+        )
+      ]
+    ); 
+```
+In the example above, when the iser navigates to Settings screen, first the `validator` function of specified redirection will be called. If it return *false*, then user will be redirected to the Login screen.
 ## Other
+
+###### Examples
+Please check the example app that has included in the package for more detailed code samples.
+
 ###### Coming Updates
 - Handling return values from destinations
 - Handling navigation errors
 - Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
-- Redirections
 - Test coverage
 
 ###### Useful Links

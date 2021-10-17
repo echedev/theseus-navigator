@@ -16,12 +16,20 @@ import 'navigation_scheme.dart';
 ///
 class TheseusRouterDelegate extends RouterDelegate<Destination>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+  /// Creates router delegate.
+  ///
   TheseusRouterDelegate({
     required this.navigationScheme,
   }) {
     navigationScheme.addListener(_onCurrentDestinationChanged);
   }
 
+  /// A navigation scheme that contains destinations and navigators.
+  ///
+  /// This router delegate is listening the navigation scheme to identify when the
+  /// current destination is changes, and in turn, notifies its listeners when this
+  /// happens.
+  ///
   final NavigationScheme navigationScheme;
 
   @override
@@ -40,6 +48,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   }
 
   @override
+  // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
     return SynchronousFuture(navigationScheme.goTo(
         destination.copyWithConfiguration(
@@ -55,18 +64,40 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     super.dispose();
   }
 
-  void _onCurrentDestinationChanged() {
+  Future<void> _onCurrentDestinationChanged() async {
+    final destination = navigationScheme.currentDestination;
+    if (destination.redirections.isEmpty) {
+      notifyListeners();
+      return;
+    }
+    // Apply redirections if they are specified.
+    for (var redirection in destination.redirections) {
+      if (!(await redirection.validate(destination))) {
+        return SynchronousFuture(navigationScheme.goTo(redirection.destination));
+      }
+    }
+    // No one redirection was applied.
     notifyListeners();
   }
 }
 
-// TODO: Add description
+/// Builds a widget that wraps a content for [TheseusNavigator].
+///
+/// See also:
+/// - [DefaultNavigatorBuilder]
+///
 abstract class NavigatorBuilder {
+  /// Returns a widget that wraps content of navigator's destinations.
+  ///
   Widget build(BuildContext context, TheseusNavigator navigator);
 }
 
-// TODO: Add description
+/// Implementation of [NavigatorBuilder] that wraps destination's content into
+/// [Navigator] widget.
+///
 class DefaultNavigatorBuilder implements NavigatorBuilder {
+  /// Creates default navigator builder.
+  ///
   const DefaultNavigatorBuilder();
 
   @override
@@ -89,7 +120,7 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
 }
 
 class _TheseusPage extends Page {
-  _TheseusPage({
+  const _TheseusPage({
     required this.destination,
     required LocalKey key,
   }) : super(key: key);

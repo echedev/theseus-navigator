@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/foundation.dart';
 
 class Log {
@@ -31,8 +33,9 @@ class Log {
   }
 
   static void _write(LogLevel type, Object tag, String? message) {
+    // ignore: avoid_print
     print(
-        '${type.toStringFormatted()}, ${DateTime.now()}, ${_tagToString(tag)}: ${message ?? ""}');
+        '''${type.toStringFormatted()}, ${DateTime.now()}, ${_tagToString(tag)}: ${message ?? ""}''');
   }
 
   static String _tagToString(Object tag) =>
@@ -42,6 +45,5 @@ class Log {
 enum LogLevel { d, e, w, i }
 
 extension _LogTypeExtension on LogLevel {
-  String toStringFormatted() =>
-      '[${this.toString().split('.').last.toUpperCase()}]';
+  String toStringFormatted() => '[${toString().split('.').last.toUpperCase()}]';
 }

@@ -19,6 +19,8 @@ import 'navigator.dart';
 /// - [TheseusNavigator]
 ///
 class NavigationScheme with ChangeNotifier {
+  /// Creates navigation scheme.
+  ///
   NavigationScheme({
     List<Destination> destinations = const <Destination>[],
     TheseusNavigator? navigator,
@@ -78,6 +80,20 @@ class NavigationScheme with ChangeNotifier {
   TheseusNavigator? findNavigator(Destination destination) =>
       _navigatorMatches[findDestination(destination.path)];
 
+  /// Opens the specified [destination].
+  ///
+  /// First, searches the navigation scheme for proper navigator for the destination.
+  /// If found, uses the navigator's [goTo] method to open the destination.
+  /// Otherwise throws [UnknownDestinationException].
+  ///
+  Future<void> goTo(Destination destination) {
+    final navigator = findNavigator(destination);
+    if (navigator == null) {
+      throw UnknownDestinationException(destination);
+    }
+    return SynchronousFuture(navigator.goTo(destination));
+  }
+
   /// Close the current destination.
   ///
   /// If the current destination is the last one, this initiates app close by
@@ -91,23 +107,10 @@ class NavigationScheme with ChangeNotifier {
     navigator.goBack();
   }
 
-  /// Opens the specified [destination].
-  ///
-  /// First, searches the navigation scheme for proper navigator for the destination.
-  /// If found, uses the navigator's [goTo] method to open the destination.
-  /// Otherwise throws [UnknownDestinationException].
-  ///
-  void goTo(Destination destination) {
-    final navigator = findNavigator(destination);
-    if (navigator == null) {
-      throw UnknownDestinationException(destination);
-    }
-    navigator.goTo(destination);
-  }
-
   void _initializeNavigator(TheseusNavigator navigator) {
+    listener() => _onNavigatorStackChanged(navigator);
+
     // Add a listener of the navigator
-    final listener = () => _onNavigatorStackChanged(navigator);
     _navigatorListeners[navigator] = listener;
     navigator.addListener(listener);
 
@@ -122,8 +125,11 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
-  void _removeNavigatorListeners() => _navigatorListeners.keys.forEach(
-      (navigator) => navigator.removeListener(_navigatorListeners[navigator]!));
+  void _removeNavigatorListeners() {
+    for (var navigator in _navigatorListeners.keys) {
+      navigator.removeListener(_navigatorListeners[navigator]!);
+    }
+  }
 
   void _onNavigatorStackChanged(TheseusNavigator navigator) {
     final owner = _navigatorOwners[navigator];

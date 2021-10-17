@@ -28,6 +28,11 @@ import 'utils/utils.dart';
 /// - [NavigationScheme]
 ///
 class TheseusNavigator with ChangeNotifier {
+  /// Creates navigator.
+  ///
+  /// Add initial destination to the navigation stack and creates a [GlobalKey] for
+  /// a [Navigator] widget.
+  ///
   TheseusNavigator({
     required this.destinations,
     this.builder = const DefaultNavigatorBuilder(),
@@ -35,7 +40,7 @@ class TheseusNavigator with ChangeNotifier {
     this.initialDestinationIndex = 0,
   }) {
     _stack.add(destinations[initialDestinationIndex]);
-    key = GlobalKey<NavigatorState>(debugLabel: this.debugLabel);
+    key = GlobalKey<NavigatorState>(debugLabel: debugLabel);
   }
 
   /// List of destinations, which this navigator operate of.
@@ -102,12 +107,8 @@ class TheseusNavigator with ChangeNotifier {
   ///
   List<Destination> get stack => _stack.toList();
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  // TODO: Add description
+  /// Builds a widget that wraps the destination's content.
+  ///
   Widget build(BuildContext context) {
     return builder.build(context, this);
   }
@@ -125,8 +126,13 @@ class TheseusNavigator with ChangeNotifier {
   /// Throws [UnknownDestinationException] if the navigator's [destinations]
   /// doesn't contain given destination.
   ///
-  void goTo(Destination destination) {
+  Future<void> goTo(Destination destination) async {
     Log.d(_tag, 'goTo(): destination=${destination.uri}');
+    if (currentDestination == destination) {
+      Log.d(_tag, 'goTo(): The destination is already on top. No action required.');
+      notifyListeners();
+      return;
+    }
     if (_isValidDestination(destination)) {
       _updateStack(destination);
       _shouldClose = false;

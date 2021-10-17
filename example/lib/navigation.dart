@@ -1,14 +1,33 @@
+// ignore_for_file: public_member_api_docs
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 
+import 'auth/index.dart';
 import 'catalog/index.dart';
 import 'home/index.dart';
 import 'main_screen.dart';
 import 'settings/index.dart';
 
 final navigationScheme = NavigationScheme(
-  navigator: mainNavigator,
+  destinations: [
+    TopLevelDestinations.main,
+    TopLevelDestinations.login,
+  ],
 );
+
+class TopLevelDestinations {
+  static final login = DestinationLight(
+    path: '/auth',
+    builder: (context, parameters) => const LoginScreen(),
+  );
+  static final main = DestinationLight(
+    path: '/',
+    isHome: true,
+    navigator: mainNavigator,
+  );
+}
 
 final mainNavigator = TheseusNavigator(
   destinations: [
@@ -17,6 +36,7 @@ final mainNavigator = TheseusNavigator(
     MainDestinations.settings,
   ],
   builder: MainNavigatorBuilder(),
+  debugLabel: 'Main',
 );
 
 class MainNavigatorBuilder implements NavigatorBuilder {
@@ -35,8 +55,7 @@ class MainNavigatorBuilder implements NavigatorBuilder {
 class MainDestinations {
   static final home = DestinationLight(
     path: '/home',
-    isHome: true,
-    builder: (context, parameters) => HomeScreen(),
+    builder: (context, parameters) => const HomeScreen(),
     configuration: DestinationConfiguration.quiet(),
   );
   static final catalog = DestinationLight(
@@ -46,7 +65,17 @@ class MainDestinations {
   );
   static final settings = DestinationLight(
     path: '/settings',
-    builder: (context, parameters) => SettingsScreen(),
+    builder: (context, parameters) => const SettingsScreen(),
     configuration: DestinationConfiguration.quiet(),
+    redirections: [
+      Redirections.login,
+    ],
+  );
+}
+
+class Redirections {
+  static final login = Redirection(
+    validator: (destination) => SynchronousFuture(isLoggedIn),
+    destination: TopLevelDestinations.login,
   );
 }

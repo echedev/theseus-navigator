@@ -1,4 +1,4 @@
-## \[0.0.5\] - *2021-10-17*
+## \[0.0.6\] - *2021-10-17*
 
 - Support redirections
 - Update docs

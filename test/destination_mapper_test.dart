@@ -57,24 +57,43 @@ void main() {
       final destination1 = TestDestinations.home;
       final destination2 = TestDestinations.about;
       expect(await parser.parseParameters('/home', destination1), destination1);
-      expect(await parser.parseParameters('/settings/about', destination2), destination2);
+      expect(await parser.parseParameters('/settings/about', destination2),
+          destination2);
     });
     test('1 path parameter', () async {
       final destination1 = TestDestinations.categories;
-      final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'id': '1'}));
-      expect(await parser.parseParameters('/catalog', destination1) == destination1, true);
-      expect(await parser.parseParameters('/catalog/1', destination1) == destination2, true);
-      expect(await parser.parseParameters('/catalog/2', destination1) == destination2, false);
+      final destination2 = destination1.copyWithParameters(
+          DefaultDestinationParameters(<String, String>{'id': '1'}));
+      expect(
+          await parser.parseParameters('/catalog', destination1) ==
+              destination1,
+          true);
+      expect(
+          await parser.parseParameters('/catalog/1', destination1) ==
+              destination2,
+          true);
+      expect(
+          await parser.parseParameters('/catalog/2', destination1) ==
+              destination2,
+          false);
     });
     test('Query parameters', () async {
       final destination1 = TestDestinations.categories;
-      final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'q': 'query'}));
-      expect(await parser.parseParameters('/catalog?q=query', destination1) == destination2, true);
-      expect(await parser.parseParameters('/catalog?q=1', destination1) == destination2, false);
+      final destination2 = destination1.copyWithParameters(
+          DefaultDestinationParameters(<String, String>{'q': 'query'}));
+      expect(
+          await parser.parseParameters('/catalog?q=query', destination1) ==
+              destination2,
+          true);
+      expect(
+          await parser.parseParameters('/catalog?q=1', destination1) ==
+              destination2,
+          false);
     });
     test('Exception on not matching destination', () async {
       final destination1 = TestDestinations.home;
-      expect(() async => await parser.parseParameters('/home1', destination1), throwsA(isA<DestinationNotMatchException>()));
+      expect(() async => await parser.parseParameters('/home1', destination1),
+          throwsA(isA<DestinationNotMatchException>()));
     });
   });
   group('Generate destination URI', () {
@@ -85,20 +104,29 @@ void main() {
       expect(parser.uri(destination2), '/settings/about');
     });
     test('1 path parameter with value', () {
-      final destination1 = TestDestinations.categories.copyWithParameters(DefaultDestinationParameters(<String, String>{'id': '1'}));
-      final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'q': 'query'}));
-      final destination3 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'q': 'query', 'id': '2'}));
+      final destination1 = TestDestinations.categories.copyWithParameters(
+          DefaultDestinationParameters(<String, String>{'id': '1'}));
+      final destination2 = destination1.copyWithParameters(
+          DefaultDestinationParameters(<String, String>{'q': 'query'}));
+      final destination3 = destination1.copyWithParameters(
+          DefaultDestinationParameters(
+              <String, String>{'q': 'query', 'id': '2'}));
       expect(parser.uri(destination1), '/catalog/1');
       expect(parser.uri(destination2), '/catalog?q=query');
       expect(parser.uri(destination3), '/catalog/2?q=query');
     });
     test('2 path parameters with values', () {
-      final destination1 = TestDestinations.categoriesBrands.copyWithParameters(DefaultDestinationParameters(<String, String>{'categoryId': '1', 'brandId': '2'}));
+      final destination1 = TestDestinations.categoriesBrands.copyWithParameters(
+          DefaultDestinationParameters(
+              <String, String>{'categoryId': '1', 'brandId': '2'}));
       expect(parser.uri(destination1), '/catalog/1/brands/2');
     });
     test('Query parameters', () {
-      final destination1 = TestDestinations.categories.copyWithParameters(DefaultDestinationParameters(<String, String>{'q': 'query'}));
-      final destination2 = destination1.copyWithParameters(DefaultDestinationParameters(<String, String>{'q': 'query', 'sort': 'name'}));
+      final destination1 = TestDestinations.categories.copyWithParameters(
+          DefaultDestinationParameters(<String, String>{'q': 'query'}));
+      final destination2 = destination1.copyWithParameters(
+          DefaultDestinationParameters(
+              <String, String>{'q': 'query', 'sort': 'name'}));
       expect(parser.uri(destination1), '/catalog?q=query');
       expect(parser.uri(destination2), '/catalog?q=query&sort=name');
     });

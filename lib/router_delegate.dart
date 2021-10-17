@@ -73,7 +73,8 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     // Apply redirections if they are specified.
     for (var redirection in destination.redirections) {
       if (!(await redirection.validate(destination))) {
-        return SynchronousFuture(navigationScheme.goTo(redirection.destination));
+        return SynchronousFuture(
+            navigationScheme.goTo(redirection.destination));
       }
     }
     // No one redirection was applied.

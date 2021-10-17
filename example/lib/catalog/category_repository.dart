@@ -25,6 +25,8 @@ class CategoryRepository {
   }
 
   Future<List<Category>> getCategories({Category? parent}) async {
-    return _categories.where((category) => category.parent?.id == parent?.id).toList();
+    return _categories
+        .where((category) => category.parent?.id == parent?.id)
+        .toList();
   }
 }

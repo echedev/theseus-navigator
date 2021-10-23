@@ -308,7 +308,7 @@ In the example above, when the iser navigates to Settings screen, first the `val
 ## Other
 
 ###### Examples
-Please check the example app that has included in the package for more detailed code samples.
+For more detailed code samples, please see the [example project](./example) which contains the working demo app.
 
 ###### Coming Updates
 - Handling return values from destinations

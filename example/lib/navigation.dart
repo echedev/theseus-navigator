@@ -12,12 +12,13 @@ import 'settings/index.dart';
 
 final navigationScheme = NavigationScheme(
   destinations: [
-    TopLevelDestinations.main,
-    TopLevelDestinations.login,
+    PrimaryDestinations.main,
+    PrimaryDestinations.login,
+    PrimaryDestinations.customTransition,
   ],
 );
 
-class TopLevelDestinations {
+class PrimaryDestinations {
   static final login = DestinationLight(
     path: '/auth',
     builder: (context, parameters) => const LoginScreen(),
@@ -26,6 +27,30 @@ class TopLevelDestinations {
     path: '/',
     isHome: true,
     navigator: mainNavigator,
+  );
+  static final customTransition = DestinationLight(
+    path: '/customTransition',
+    builder: (context, parameters) => const CustomTransitionScreen(),
+    configuration: DestinationConfiguration(
+      action: DestinationAction.push,
+      transition: DestinationTransition.custom,
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        final tween = Tween(begin: begin, end: end);
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: curve,
+        );
+
+        return SlideTransition(
+          position: tween.animate(curvedAnimation),
+          child: child,
+        );
+      }
+    ),
   );
 }
 
@@ -77,6 +102,6 @@ class MainDestinations {
 class Redirections {
   static final login = Redirection(
     validator: (destination) => SynchronousFuture(isLoggedIn),
-    destination: TopLevelDestinations.login,
+    destination: PrimaryDestinations.login,
   );
 }

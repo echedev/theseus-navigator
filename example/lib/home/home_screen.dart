@@ -17,6 +17,12 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          const InfoItem(
+            title: 'Primary destinations',
+            description:
+                '''This is default destination that is opened on app launch. Other primary destinations are accessible by bottom navigation bar. You can also provide your custom navigation builder, like Drawer etc.''',
+            isDarkStyle: true,
+          ),
           InfoItem(
             title: 'Deep link',
             description:

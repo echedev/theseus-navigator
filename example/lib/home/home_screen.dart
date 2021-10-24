@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
           InfoItem(
             title: 'Deep link',
             description:
-                '''Opens screen for specific category, deeply in the categories hierarchy. The bottom navigation bar will be switched to the "Catalog" tab, and the parent category screens will be added to the navigation stack''',
+                '''Opens screen for specific category, deeply in the categories hierarchy. The bottom navigation bar will be switched to the Catalog tab, and the parent category screens will be added to the navigation stack''',
             child: ElevatedButton(
                 onPressed: () async {
                   navigationScheme.goTo(CatalogDestinations.categories.copyWith(
@@ -47,6 +47,7 @@ class HomeScreen extends StatelessWidget {
               navigationScheme.goTo(PrimaryDestinations.customTransition);
             },
           ),
+          const SizedBox(height: 20.0,)
         ],
       ),
     );

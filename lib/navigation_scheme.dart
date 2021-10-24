@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'destination.dart';
 import 'exceptions.dart';
 import 'navigator.dart';
+import 'utils/utils.dart';
 
 /// Defines a navigation scheme of the app.
 ///
@@ -28,7 +29,11 @@ class NavigationScheme with ChangeNotifier {
             (destinations.isEmpty ? navigator!.destinations : destinations)
                 .any((destination) => destination.isHome),
             'One of destinations must be a home destination.') {
-    _rootNavigator = navigator ?? TheseusNavigator(destinations: destinations);
+    _rootNavigator = navigator ??
+        TheseusNavigator(
+          destinations: destinations,
+          debugLabel: 'Root',
+        );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
     _updateCurrentDestination();
@@ -55,6 +60,12 @@ class NavigationScheme with ChangeNotifier {
   /// This navigator manages top level destinations.
   ///
   TheseusNavigator get rootNavigator => _rootNavigator;
+
+  Destination? _redirectedFrom;
+
+  /// Stores the original destination in case of redirection.
+  ///
+  Destination? get redirectedFrom => _redirectedFrom;
 
   bool _shouldClose = false;
 
@@ -86,11 +97,14 @@ class NavigationScheme with ChangeNotifier {
   /// If found, uses the navigator's [goTo] method to open the destination.
   /// Otherwise throws [UnknownDestinationException].
   ///
-  Future<void> goTo(Destination destination) {
+  Future<void> goTo(Destination destination, {bool isRedirection = false}) {
     final navigator = findNavigator(destination);
     if (navigator == null) {
       throw UnknownDestinationException(destination);
     }
+    Log.d(runtimeType,
+        'goTo(): navigator=${navigator.debugLabel}, destination=${destination.uri}, isRedirection=$isRedirection');
+    _redirectedFrom = isRedirection ? _currentDestination : null;
     return SynchronousFuture(navigator.goTo(destination));
   }
 
@@ -132,8 +146,11 @@ class NavigationScheme with ChangeNotifier {
   }
 
   void _onNavigatorStackChanged(TheseusNavigator navigator) {
+    Log.d(runtimeType,
+        'onNavigatorStackChanged(): navigator=${navigator.debugLabel}');
     final owner = _navigatorOwners[navigator];
     if (owner != null) {
+      Log.d(runtimeType, 'onNavigatorStackChanged(): owner=${owner.uri}');
       goTo(owner);
     } else {
       _updateCurrentDestination();
@@ -160,6 +177,8 @@ class NavigationScheme with ChangeNotifier {
     }
     if (_currentDestination != newDestination || _shouldClose) {
       _currentDestination = newDestination;
+      Log.d(runtimeType,
+          'updateCurrentDestination(): currentDestination=${_currentDestination.uri}');
       notifyListeners();
     }
   }

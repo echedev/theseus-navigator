@@ -1,3 +1,5 @@
 // ignore_for_file: public_member_api_docs
 
-bool isLoggedIn = false;
+import 'package:flutter/foundation.dart';
+
+final isLoggedIn = ValueNotifier<bool>(false);

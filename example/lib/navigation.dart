@@ -32,25 +32,22 @@ class PrimaryDestinations {
     path: '/customTransition',
     builder: (context, parameters) => const CustomTransitionScreen(),
     configuration: DestinationConfiguration(
-      action: DestinationAction.push,
-      transition: DestinationTransition.custom,
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 1.0);
-        const end = Offset.zero;
-        const curve = Curves.ease;
-
-        final tween = Tween(begin: begin, end: end);
-        final curvedAnimation = CurvedAnimation(
-          parent: animation,
-          curve: curve,
-        );
-
-        return SlideTransition(
-          position: tween.animate(curvedAnimation),
-          child: child,
-        );
-      }
-    ),
+        action: DestinationAction.push,
+        transition: DestinationTransition.custom,
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+          final tween = Tween(begin: begin, end: end);
+          final curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: curve,
+          );
+          return SlideTransition(
+            position: tween.animate(curvedAnimation),
+            child: child,
+          );
+        }),
   );
 }
 
@@ -101,7 +98,7 @@ class MainDestinations {
 
 class Redirections {
   static final login = Redirection(
-    validator: (destination) => SynchronousFuture(isLoggedIn),
+    validator: (destination) => SynchronousFuture(isLoggedIn.value),
     destination: PrimaryDestinations.login,
   );
 }

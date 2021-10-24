@@ -151,13 +151,13 @@ class TheseusNavigator with ChangeNotifier {
   /// [shouldClose] flag is set to 'true'.
   ///
   void goBack() {
-    Log.d(_tag, 'goBack(): localStack=${_stack.length}');
     if (_stack.length > 1) {
       _stack.removeLast();
       _shouldClose = false;
     } else {
       _shouldClose = true;
     }
+    Log.d(_tag, 'goBack(): destination=${_stack.last.uri}');
     notifyListeners();
   }
 

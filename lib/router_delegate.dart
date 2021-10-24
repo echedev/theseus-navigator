@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'destination.dart';
 import 'navigator.dart';
 import 'navigation_scheme.dart';
+import 'utils/utils.dart';
 
 /// Implementation of [RouterDelegate].
 ///
@@ -21,6 +22,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   TheseusRouterDelegate({
     required this.navigationScheme,
   }) {
+    Log.d(runtimeType, 'TheseusRouterDelegate():');
     navigationScheme.addListener(_onCurrentDestinationChanged);
   }
 
@@ -66,15 +68,22 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   Future<void> _onCurrentDestinationChanged() async {
     final destination = navigationScheme.currentDestination;
+    Log.d(runtimeType,
+        'onCurrentDestinationChanged(): destination=${destination.uri}');
     if (destination.redirections.isEmpty) {
+      notifyListeners();
+      return;
+    }
+    // Ignore redirections if we returned back from the redirection
+    if (navigationScheme.redirectedFrom == destination) {
       notifyListeners();
       return;
     }
     // Apply redirections if they are specified.
     for (var redirection in destination.redirections) {
       if (!(await redirection.validate(destination))) {
-        return SynchronousFuture(
-            navigationScheme.goTo(redirection.destination));
+        return SynchronousFuture(navigationScheme.goTo(redirection.destination,
+            isRedirection: true));
       }
     }
     // No one redirection was applied.

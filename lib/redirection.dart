@@ -21,9 +21,13 @@ class Redirection {
   /// Creates a redirection.
   ///
   const Redirection({
-    this.validator,
     required this.destination,
+    this.validator,
   });
+
+  /// Destination to redirect.
+  ///
+  final Destination destination;
 
   /// Should implement a logic to validate a destination.
   ///
@@ -31,10 +35,6 @@ class Redirection {
   /// Otherwise returns false.
   ///
   final Future<bool> Function(Destination destination)? validator;
-
-  /// Destination to redirect.
-  ///
-  final Destination destination;
 
   /// Validates the destination.
   ///

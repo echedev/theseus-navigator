@@ -11,7 +11,7 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 - Redirections
 - Custom transitions
 
-<video src='./assets/TheseusNavigatorDemo.mov' width=180/>
+<video src='TheseusNavigatorDemo.mov' width=180/>
 
 It provides a simple API, does not require code generation and uses Flutter's Router / Navigator 2.0 under the hood.
 

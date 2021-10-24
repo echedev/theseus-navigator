@@ -4,19 +4,29 @@ import 'package:flutter/material.dart';
 
 import '../catalog/index.dart';
 import '../navigation.dart';
+import '../widgets/info_item.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+      ),
+      body: ListView(
         children: [
-          const Text('Home'),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+          const InfoItem(
+            title: 'Primary destinations',
+            description:
+                '''This is default destination that is opened on app launch. Other primary destinations are accessible by bottom navigation bar. You can also provide your custom navigation builder, like Drawer etc.''',
+            isDarkStyle: true,
+          ),
+          InfoItem(
+            title: 'Deep link',
+            description:
+                '''Opens screen for specific category, deeply in the categories hierarchy. The bottom navigation bar will be switched to the Catalog tab, and the parent category screens will be added to the navigation stack''',
             child: ElevatedButton(
                 onPressed: () async {
                   navigationScheme.goTo(CatalogDestinations.categories.copyWith(
@@ -29,6 +39,15 @@ class HomeScreen extends StatelessWidget {
                 },
                 child: const Text('Category 3')),
           ),
+          InfoItem(
+            title: 'Custom transition animations',
+            description:
+                '''Opens new screen with a custom transition animations''',
+            onTap: () {
+              navigationScheme.goTo(PrimaryDestinations.customTransition);
+            },
+          ),
+          const SizedBox(height: 20.0,)
         ],
       ),
     );

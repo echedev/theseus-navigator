@@ -11,6 +11,8 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 - Redirections
 - Custom transitions
 
+![Theseus Navigator Demo](./assets/TheseusNavigatorDemo.gif)
+
 It provides a simple API, does not require code generation and uses Flutter's Router / Navigator 2.0 under the hood.
 
 *Note: The package is still in progress. Any feedback, like missing features, better API suggestions, bug reports and other are appreciated.*
@@ -308,7 +310,7 @@ In the example above, when the iser navigates to Settings screen, first the `val
 ## Other
 
 ###### Examples
-Please check the example app that has included in the package for more detailed code samples.
+For more detailed code samples, please see the [example project](./example) which contains the working demo app.
 
 ###### Coming Updates
 - Handling return values from destinations

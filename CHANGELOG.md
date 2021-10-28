@@ -1,3 +1,8 @@
+## \[0.0.7\] - *2021-10-24*
+
+- Update redirection logic
+- Support various navigation cases in the demo app
+
 ## \[0.0.6\] - *2021-10-17*
 
 - Support redirections

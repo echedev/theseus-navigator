@@ -24,6 +24,14 @@ class MyApp extends StatelessWidget {
             secondary: Colors.amber,
             secondaryVariant: Colors.blue,
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.amber,
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Colors.blue,
+        ),
       ),
       routerDelegate: TheseusRouterDelegate(
         navigationScheme: navigationScheme,

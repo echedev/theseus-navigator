@@ -10,7 +10,7 @@ final catalogNavigator = TheseusNavigator(
   destinations: [
     CatalogDestinations.categories,
   ],
-  debugLabel: 'Catalog',
+  tag: 'Catalog',
 );
 
 class CatalogDestinations {

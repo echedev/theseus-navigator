@@ -6,6 +6,7 @@ import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'auth/index.dart';
 import 'catalog/index.dart';
+import 'error/index.dart';
 import 'home/index.dart';
 import 'main_screen.dart';
 import 'settings/index.dart';
@@ -16,6 +17,7 @@ final navigationScheme = NavigationScheme(
     PrimaryDestinations.login,
     PrimaryDestinations.customTransition,
   ],
+  errorDestination: PrimaryDestinations.error,
 );
 
 class PrimaryDestinations {
@@ -49,6 +51,10 @@ class PrimaryDestinations {
           );
         }),
   );
+  static final error = DestinationLight(
+    path: '/error',
+    builder: (context, parameters) => const ErrorScreen(),
+  );
 }
 
 final mainNavigator = TheseusNavigator(
@@ -58,7 +64,7 @@ final mainNavigator = TheseusNavigator(
     MainDestinations.settings,
   ],
   builder: MainNavigatorBuilder(),
-  debugLabel: 'Main',
+  tag: 'Main',
 );
 
 class MainNavigatorBuilder implements NavigatorBuilder {

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/navigator.dart';
@@ -34,7 +35,12 @@ class TheseusRouteInformationParser
     Log.d(runtimeType, 'parseRouteInformation(): $uri');
     final baseDestination = navigationScheme.findDestination(uri);
     if (baseDestination == null) {
-      throw UnknownUriException(uri);
+      if (navigationScheme.errorDestination != null) {
+        return SynchronousFuture(navigationScheme.errorDestination!);
+      }
+      else {
+        throw UnknownUriException(uri);
+      }
     }
     return baseDestination.parse(uri);
   }

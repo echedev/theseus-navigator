@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:theseus_navigator/theseus_navigator.dart';
 
 import '../catalog/index.dart';
 import '../navigation.dart';
@@ -46,6 +47,19 @@ class HomeScreen extends StatelessWidget {
             onTap: () {
               navigationScheme.goTo(PrimaryDestinations.customTransition);
             },
+          ),
+          InfoItem(
+            title: 'Error handling',
+            description:
+            '''When trying to navigate to nonexistent destination, user will be redirected to the error screen if the "errorDestination" is specified.''',
+            child: ElevatedButton(
+                onPressed: () async {
+                  navigationScheme.goTo(DestinationLight(
+                    path: '/nonexistent',
+                    builder: (context, parameters) => const HomeScreen(),
+                  ));
+                },
+                child: const Text('Nonexistent screen')),
           ),
           const SizedBox(height: 20.0,)
         ],

@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
           const InfoItem(
             title: 'Primary destinations',
             description:
-                '''This is default destination that is opened on app launch. Other primary destinations are accessible by bottom navigation bar. You can also provide your custom navigation builder, like Drawer etc.''',
+                '''This is default destination that is opened on app launch. Other primary destinations in this demo app are accessible by bottom navigation bar. You can also provide your custom navigation builder, like Drawer etc.''',
             isDarkStyle: true,
           ),
           InfoItem(
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
           InfoItem(
             title: 'Error handling',
             description:
-            '''When trying to navigate to nonexistent destination, user will be redirected to the error screen if the "errorDestination" is specified.''',
+                '''When trying to navigate to nonexistent destination, user will be redirected to the error screen if the "errorDestination" is specified.''',
             child: ElevatedButton(
                 onPressed: () async {
                   navigationScheme.goTo(DestinationLight(
@@ -61,7 +61,9 @@ class HomeScreen extends StatelessWidget {
                 },
                 child: const Text('Nonexistent screen')),
           ),
-          const SizedBox(height: 20.0,)
+          const SizedBox(
+            height: 20.0,
+          )
         ],
       ),
     );

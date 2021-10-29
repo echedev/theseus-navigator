@@ -30,19 +30,28 @@ class TheseusRouteInformationParser
   final NavigationScheme navigationScheme;
 
   @override
-  Future<Destination> parseRouteInformation(RouteInformation routeInformation) {
+  Future<Destination> parseRouteInformation(
+      RouteInformation routeInformation) async {
     final uri = routeInformation.location ?? '';
     Log.d(runtimeType, 'parseRouteInformation(): $uri');
     final baseDestination = navigationScheme.findDestination(uri);
     if (baseDestination == null) {
       if (navigationScheme.errorDestination != null) {
         return SynchronousFuture(navigationScheme.errorDestination!);
-      }
-      else {
+      } else {
         throw UnknownUriException(uri);
       }
     }
-    return baseDestination.parse(uri);
+    try {
+      final result = await baseDestination.parse(uri);
+      return result;
+    } catch (error) {
+      if (navigationScheme.errorDestination != null) {
+        return SynchronousFuture(navigationScheme.errorDestination!);
+      } else {
+        throw UnknownUriException(uri);
+      }
+    }
   }
 
   @override

@@ -307,7 +307,28 @@ final settingsDestination = DestinationLight(
       ]
     ); 
 ```
-In the example above, when the iser navigates to Settings screen, first the `validator` function of specified redirection will be called. If it return *false*, then user will be redirected to the Login screen.
+In the example above, when the user navigates to Settings screen, first the `validator` function of specified redirection will be called. If it return *false*, then user will be redirected to the Login screen.
+
+## Error handling
+
+If the `errorDestination` is specified in the **NavigationScheme**, user wil be redirected to this destination when trying to navigate to nonexistent screen.
+
+```dart
+final navigationScheme = NavigationScheme(
+  destinations: [
+    //...
+  ],
+  errorDestination: DestinationLight(
+    path: '/error',
+    builder: (context, parameters) => ErrorScreen(),
+  )
+);
+```
+
+The following errors are currently supported:
+- Navigation to a destination that is not in the **NavigationScheme** (requested destination path does not match any destination in the scheme)
+- The requested destination is found in the scheme, but its parameters could not be resolved by the destination's `parser`.
+
 ## Other
 
 ###### Examples
@@ -315,7 +336,6 @@ For more detailed code samples, please see the [example project](./example) whic
 
 ###### Coming Updates
 - Handling return values from destinations
-- Handling navigation errors
 - Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
 - Test coverage

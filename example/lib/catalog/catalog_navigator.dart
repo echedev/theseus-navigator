@@ -46,11 +46,19 @@ class CategoriesDestinationParser
   @override
   Future<CategoriesDestinationParameters> toDestinationParameters(
       Map<String, String> map) async {
-    final category =
-        await categoryRepository.getCategory(map['parentCategoryId'] ?? '');
-    return CategoriesDestinationParameters(
-      parentCategory: category,
-    );
+    final parentCategoryId = map['parentCategoryId'];
+    if (parentCategoryId == null) {
+      return CategoriesDestinationParameters();
+    } else {
+      final category = await categoryRepository.getCategory(parentCategoryId);
+      if (category != null) {
+        return CategoriesDestinationParameters(
+          parentCategory: category,
+        );
+      } else {
+        throw UnknownDestinationException();
+      }
+    }
   }
 
   @override

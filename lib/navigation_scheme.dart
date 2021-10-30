@@ -100,10 +100,14 @@ class NavigationScheme with ChangeNotifier {
 
   /// Find a destination that match a given URI.
   ///
+  /// Returns 'null' if no destination matching the URI was found.
+  ///
   Destination? findDestination(String uri) => _navigatorMatches.keys
       .firstWhereOrNull((destination) => destination.isMatch(uri));
 
   /// Finds a proper navigator in the navigation scheme for a given destination.
+  ///
+  /// Returns 'null' if no navigator found.
   ///
   TheseusNavigator? findNavigator(Destination destination) =>
       _navigatorMatches[findDestination(destination.path)];

@@ -10,17 +10,39 @@ class TestDestinations {
   static final home = DestinationLight(
     path: '/home',
     builder: dummyBuilder,
+    isHome: true,
   );
   static final about = DestinationLight(
     path: '/settings/about',
     builder: dummyBuilder,
   );
+  static final catalog = DestinationLight(
+    path: '/catalog',
+    navigator: TestNavigators.catalog,
+  );
   static final categories = DestinationLight(
-    path: '/catalog/{id}',
+    path: '/categories/{id}',
     builder: dummyBuilder,
   );
   static final categoriesBrands = DestinationLight(
-    path: '/catalog/{categoryId}/brands/{brandId}',
+    path: '/categories/{categoryId}/brands/{brandId}',
     builder: dummyBuilder,
+  );
+  static final login = DestinationLight(
+    path: '/login',
+    builder: dummyBuilder,
+  );
+  static final error = DestinationLight(
+    path: '/error',
+    builder: dummyBuilder,
+  );
+}
+
+class TestNavigators {
+  static final catalog = TheseusNavigator(
+    destinations: [
+      TestDestinations.categories,
+      TestDestinations.categoriesBrands,
+    ],
   );
 }

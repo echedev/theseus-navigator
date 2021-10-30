@@ -28,7 +28,7 @@ class InfoItem extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
         child: Card(
-          color: isDarkStyle ? Theme.of(context).primaryColor : null,
+          color: isDarkStyle ? Theme.of(context).colorScheme.primary : null,
           child: InkWell(
             child: Container(
               padding: const EdgeInsets.all(16.0),

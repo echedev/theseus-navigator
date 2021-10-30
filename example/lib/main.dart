@@ -17,10 +17,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Theseus Navigator Demo',
       theme: Theme.of(context).copyWith(
-        primaryColor: Colors.blueGrey,
-        accentColor: Colors.amber,
         toggleableActiveColor: Colors.amber,
         dividerColor: Colors.transparent,
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: Colors.blueGrey,
+            secondary: Colors.amber,
+            secondaryVariant: Colors.blue,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.amber,
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Colors.blue,
+        ),
       ),
       routerDelegate: TheseusRouterDelegate(
         navigationScheme: navigationScheme,

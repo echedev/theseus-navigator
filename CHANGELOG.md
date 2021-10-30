@@ -1,3 +1,8 @@
+## \[0.0.8\] - *2021-10-29*
+
+- Handle navigation errors
+- Add more tests
+
 ## \[0.0.7\] - *2021-10-24*
 
 - Update redirection logic

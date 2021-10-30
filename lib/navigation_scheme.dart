@@ -15,6 +15,9 @@ import 'utils/utils.dart';
 /// Until the custom [navigator] is provided, the NavigatorScheme creates a default
 /// root navigator, that manages top level destinations.
 ///
+/// In case of some navigation error, user will be redirected to [errorDestination],
+/// if it is specified. Otherwise an exception will be thrown.
+///
 /// See also:
 /// - [Destination]
 /// - [TheseusNavigator]
@@ -24,20 +27,34 @@ class NavigationScheme with ChangeNotifier {
   ///
   NavigationScheme({
     List<Destination> destinations = const <Destination>[],
+    this.errorDestination,
     TheseusNavigator? navigator,
-  }) : assert(
+  })  : assert(
             (destinations.isEmpty ? navigator!.destinations : destinations)
                 .any((destination) => destination.isHome),
-            'One of destinations must be a home destination.') {
+            'One of destinations must be a home destination.'),
+        assert(
+            errorDestination == null ||
+                navigator == null ||
+                (navigator.destinations
+                    .any((destination) => destination == errorDestination)),
+            'When "errorDestination" and custom "navigator" are specified, you must include the "errorDestination" to the "navigator"s destinations') {
     _rootNavigator = navigator ??
         TheseusNavigator(
-          destinations: destinations,
-          debugLabel: 'Root',
+          destinations: <Destination>[
+            ...destinations,
+            if (errorDestination != null) errorDestination!
+          ],
+          tag: 'Root',
         );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
     _updateCurrentDestination();
   }
+
+  /// The destination to redirect in case of error.
+  ///
+  final Destination? errorDestination;
 
   late Destination _currentDestination;
 
@@ -83,10 +100,14 @@ class NavigationScheme with ChangeNotifier {
 
   /// Find a destination that match a given URI.
   ///
+  /// Returns 'null' if no destination matching the URI was found.
+  ///
   Destination? findDestination(String uri) => _navigatorMatches.keys
       .firstWhereOrNull((destination) => destination.isMatch(uri));
 
   /// Finds a proper navigator in the navigation scheme for a given destination.
+  ///
+  /// Returns 'null' if no navigator found.
   ///
   TheseusNavigator? findNavigator(Destination destination) =>
       _navigatorMatches[findDestination(destination.path)];
@@ -100,10 +121,11 @@ class NavigationScheme with ChangeNotifier {
   Future<void> goTo(Destination destination, {bool isRedirection = false}) {
     final navigator = findNavigator(destination);
     if (navigator == null) {
-      throw UnknownDestinationException(destination);
+      _handleError(destination);
+      return SynchronousFuture(null);
     }
     Log.d(runtimeType,
-        'goTo(): navigator=${navigator.debugLabel}, destination=${destination.uri}, isRedirection=$isRedirection');
+        'goTo(): navigator=${navigator.tag}, destination=${destination.uri}, isRedirection=$isRedirection');
     _redirectedFrom = isRedirection ? _currentDestination : null;
     return SynchronousFuture(navigator.goTo(destination));
   }
@@ -116,13 +138,14 @@ class NavigationScheme with ChangeNotifier {
   void goBack() {
     final navigator = findNavigator(_currentDestination);
     if (navigator == null) {
-      throw UnknownDestinationException(_currentDestination);
+      _handleError(_currentDestination);
+      return;
     }
     navigator.goBack();
   }
 
   void _initializeNavigator(TheseusNavigator navigator) {
-    listener() => _onNavigatorStackChanged(navigator);
+    listener() => _onNavigatorStateChanged(navigator);
 
     // Add a listener of the navigator
     _navigatorListeners[navigator] = listener;
@@ -139,18 +162,29 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
+  void _handleError(Destination? destination) {
+    if (errorDestination != null) {
+      goTo(errorDestination!, isRedirection: true);
+    } else {
+      throw UnknownDestinationException(destination);
+    }
+  }
+
   void _removeNavigatorListeners() {
     for (var navigator in _navigatorListeners.keys) {
       navigator.removeListener(_navigatorListeners[navigator]!);
     }
   }
 
-  void _onNavigatorStackChanged(TheseusNavigator navigator) {
-    Log.d(runtimeType,
-        'onNavigatorStackChanged(): navigator=${navigator.debugLabel}');
+  void _onNavigatorStateChanged(TheseusNavigator navigator) {
+    Log.d(runtimeType, 'onNavigatorStateChanged(): navigator=${navigator.tag}');
+    if (navigator.hasError) {
+      Log.e(runtimeType, 'onNavigatorStateChanged(): error=${navigator.error}');
+      _handleError(navigator.error!.destination);
+    }
     final owner = _navigatorOwners[navigator];
     if (owner != null) {
-      Log.d(runtimeType, 'onNavigatorStackChanged(): owner=${owner.uri}');
+      Log.d(runtimeType, 'onNavigatorStateChanged(): owner=${owner.uri}');
       goTo(owner);
     } else {
       _updateCurrentDestination();

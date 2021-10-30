@@ -19,10 +19,10 @@ class DestinationNotMatchException implements Exception {
 class UnknownDestinationException implements Exception {
   /// Creates exception object.
   ///
-  UnknownDestinationException(this.destination);
+  UnknownDestinationException([this.destination]);
 
   /// A destination that is not found in the navigation scheme.
-  Destination destination;
+  Destination? destination;
 }
 
 /// Is thrown when no destination found in the navigation scheme for given URI.

@@ -21,11 +21,12 @@ import 'utils/utils.dart';
 /// in the provided list of destinations.
 ///
 /// [TheseusNavigator] implements [ChangeNotifier] and notifies its listener when
-/// the [currentDestination]/[stack] is changed.
+/// the [currentDestination]/[stack] is changed, or some error was happened.
 ///
 /// See also:
 /// - [Destination]
 /// - [NavigationScheme]
+/// - [TheseusNavigatorError]
 ///
 class TheseusNavigator with ChangeNotifier {
   /// Creates navigator.
@@ -36,11 +37,12 @@ class TheseusNavigator with ChangeNotifier {
   TheseusNavigator({
     required this.destinations,
     this.builder = const DefaultNavigatorBuilder(),
-    this.debugLabel = '',
     this.initialDestinationIndex = 0,
+    this.notifyOnError = true,
+    this.tag = '',
   }) {
     _stack.add(destinations[initialDestinationIndex]);
-    key = GlobalKey<NavigatorState>(debugLabel: debugLabel);
+    key = GlobalKey<NavigatorState>(debugLabel: tag);
   }
 
   /// List of destinations, which this navigator operate of.
@@ -70,13 +72,32 @@ class TheseusNavigator with ChangeNotifier {
   ///
   final int initialDestinationIndex;
 
-  /// The debug label.
+  /// Whether to notify listeners on errors in navigation actions.
   ///
-  final String? debugLabel;
+  /// Defaults to true. Basically the [NavigationScheme] handles the errors.
+  /// When set to false, the exception will be thrown on errors instead of notifying listeners.
+  ///
+  final bool notifyOnError;
+
+  /// An identifier of this navigator.
+  ///
+  /// It is used in the debug logs to identify entries related to this navigator.
+  ///
+  final String? tag;
 
   /// Provides the global key for corresponding [Navigator] widget.
   ///
   late final GlobalKey<NavigatorState> key;
+
+  TheseusNavigatorError? _error;
+
+  /// Error details
+  ///
+  TheseusNavigatorError? get error => _error;
+
+  /// Whether an error was happened on [goTo()] or [goBack()] actions.
+  ///
+  bool get hasError => _error != null;
 
   bool _shouldClose = false;
 
@@ -91,7 +112,7 @@ class TheseusNavigator with ChangeNotifier {
 
   final _stack = Queue<Destination>();
 
-  String get _tag => '$runtimeType::$debugLabel';
+  String get _tag => '$runtimeType::$tag';
 
   /// The current destination of the navigator.
   ///
@@ -128,6 +149,7 @@ class TheseusNavigator with ChangeNotifier {
   ///
   Future<void> goTo(Destination destination) async {
     Log.d(_tag, 'goTo(): destination=${destination.uri}');
+    _error = null;
     if (currentDestination == destination) {
       Log.d(_tag,
           'goTo(): The destination is already on top. No action required.');
@@ -139,7 +161,12 @@ class TheseusNavigator with ChangeNotifier {
       _shouldClose = false;
       notifyListeners();
     } else {
-      throw UnknownDestinationException(destination);
+      if (notifyOnError) {
+        _error = TheseusNavigatorError(destination: destination);
+        notifyListeners();
+      } else {
+        throw UnknownDestinationException(destination);
+      }
     }
   }
 
@@ -200,4 +227,20 @@ class TheseusNavigator with ChangeNotifier {
     }
     return result;
   }
+}
+
+/// Contains navigation error details
+///
+class TheseusNavigatorError {
+  /// Creates an error object
+  TheseusNavigatorError({
+    this.destination,
+  });
+
+  /// A destination related to this error
+  ///
+  final Destination? destination;
+
+  @override
+  String toString() => '$runtimeType={destination: $destination}';
 }

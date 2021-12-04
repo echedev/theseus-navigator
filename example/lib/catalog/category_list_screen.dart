@@ -25,6 +25,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
   @override
   void initState() {
     super.initState();
+    print('${widget.runtimeType}, initState(): parentCategory=${widget.parentCategory}');
   }
 
   @override

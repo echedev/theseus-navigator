@@ -1,3 +1,8 @@
+## \[0.0.9\] - *2021-12-04*
+
+- Add web support in the example project
+- Fix a bug when navigating history in the web browser
+
 ## \[0.0.8\] - *2021-10-29*
 
 - Handle navigation errors

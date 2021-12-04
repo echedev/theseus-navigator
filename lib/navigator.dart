@@ -148,7 +148,8 @@ class TheseusNavigator with ChangeNotifier {
   /// doesn't contain given destination.
   ///
   Future<void> goTo(Destination destination) async {
-    Log.d(_tag, 'goTo(): destination=${destination.uri}');
+    Log.d(_tag,
+        'goTo(): destination=${destination.uri}, reset=${destination.configuration.reset}');
     _error = null;
     if (currentDestination == destination) {
       Log.d(_tag,

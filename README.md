@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.0.8-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.0.9-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -17,6 +17,8 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 It provides a simple API, does not require code generation and uses Flutter's Router / Navigator 2.0 under the hood.
 
 *Note: The package is still in progress. Any feedback, like missing features, better API suggestions, bug reports and other are appreciated.*
+
+You can check all supported features in the [Theseus Navigator Demo app](https://theseus-navigator.eche.dev/).
 
 ## Overview
 

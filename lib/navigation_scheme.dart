@@ -186,9 +186,9 @@ class NavigationScheme with ChangeNotifier {
     if (owner != null) {
       Log.d(runtimeType, 'onNavigatorStateChanged(): owner=${owner.uri}');
       if (navigator.currentDestination.configuration.reset) {
-        goTo(owner.copyWithConfiguration(owner.configuration.copyWith(reset: true)));
-      }
-      else {
+        goTo(owner
+            .copyWithConfiguration(owner.configuration.copyWith(reset: true)));
+      } else {
         goTo(owner);
       }
     } else {

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../catalog/index.dart';
 import '../navigation.dart';
@@ -18,6 +19,17 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: OutlinedButton(
+              child: const Text('Open Theseus Navigator package in Pub.dev'),
+              style: OutlinedButton.styleFrom(
+                primary: Theme.of(context).colorScheme.secondary,
+                side: BorderSide(width: 2.0, color: Theme.of(context).colorScheme.secondary),
+              ),
+              onPressed: _openPubDev,
+            ),
+          ),
           const InfoItem(
             title: 'Primary destinations',
             description:
@@ -67,5 +79,9 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _openPubDev() async {
+    if (!await launch('https://pub.dev/packages/theseus_navigator')) throw 'Could not launch url';
   }
 }

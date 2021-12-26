@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +47,17 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   @override
   Future<bool> popRoute() async {
+    Log.d(runtimeType, 'popRoute():');
     navigationScheme.goBack();
+    if (navigationScheme.shouldClose) {
+      if (Platform.isAndroid) {
+        return false;
+      }
+      else {
+        navigationScheme.goTo(navigationScheme.currentDestination);
+        return true;
+      }
+    }
     return true;
   }
 
@@ -74,6 +86,11 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     final destination = navigationScheme.currentDestination;
     Log.d(runtimeType,
         'onCurrentDestinationChanged(): destination=${destination.uri}');
+    // Ignore closing app request here. It is processed in the 'popRoute()' method.
+    if (navigationScheme.shouldClose) {
+      return;
+    }
+    // This is a 'happy path', just notifying Router to update the UI
     if (destination.redirections.isEmpty) {
       notifyListeners();
       return;

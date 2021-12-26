@@ -99,6 +99,14 @@ class TheseusNavigator with ChangeNotifier {
   ///
   bool get hasError => _error != null;
 
+  bool _gotBack = false;
+
+  /// Whether the back action was performed.
+  ///
+  /// It is 'true' if the last navigation method call was the [goBack()].
+  ///
+  bool get gotBack => _gotBack;
+
   bool _shouldClose = false;
 
   /// Whether the navigator should close.
@@ -151,6 +159,8 @@ class TheseusNavigator with ChangeNotifier {
     Log.d(_tag,
         'goTo(): destination=${destination.uri}, reset=${destination.configuration.reset}');
     _error = null;
+    _gotBack = false;
+    _shouldClose = false;
     if (currentDestination == destination) {
       Log.d(_tag,
           'goTo(): The destination is already on top. No action required.');
@@ -159,12 +169,12 @@ class TheseusNavigator with ChangeNotifier {
     }
     if (_isValidDestination(destination)) {
       _updateStack(destination);
-      _shouldClose = false;
       notifyListeners();
     } else {
       if (notifyOnError) {
         _error = TheseusNavigatorError(destination: destination);
         notifyListeners();
+        return;
       } else {
         throw UnknownDestinationException(destination);
       }
@@ -175,17 +185,19 @@ class TheseusNavigator with ChangeNotifier {
   ///
   /// The current destination is removed from the navigation [stack].
   ///
-  /// If it was the only destination in the stack, it remains in the stack and
+  /// If it is the only destination in the stack, it remains in the stack and
   /// [shouldClose] flag is set to 'true'.
   ///
   void goBack() {
+    _gotBack = true;
     if (_stack.length > 1) {
       _stack.removeLast();
       _shouldClose = false;
     } else {
       _shouldClose = true;
     }
-    Log.d(_tag, 'goBack(): destination=${_stack.last.uri}');
+    Log.d(_tag,
+        'goBack(): destination=${_stack.last.uri}, shouldClose=$_shouldClose');
     notifyListeners();
   }
 

@@ -37,18 +37,21 @@ void main() {
         await navigator.goTo(TestDestinations.catalog);
         expect(navigator.currentDestination, TestDestinations.catalog);
         expect(navigator.stack.length, 2);
+        expect(navigator.gotBack, false);
       });
       test('Navigate to another 2 destinations with "push" action', () async {
         await navigator.goTo(TestDestinations.catalog);
         await navigator.goTo(TestDestinations.about);
         expect(navigator.currentDestination, TestDestinations.about);
         expect(navigator.stack.length, 3);
+        expect(navigator.gotBack, false);
       });
       test('Navigate to another destination with "push" action and return back', () async {
         await navigator.goTo(TestDestinations.catalog);
         navigator.goBack();
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
+        expect(navigator.gotBack, true);
         expect(navigator.shouldClose, false);
       });
       test('Navigate to another 2 destinations with "push" action and return back to initial destination', () async {
@@ -58,17 +61,20 @@ void main() {
         navigator.goBack();
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
+        expect(navigator.gotBack, true);
         expect(navigator.shouldClose, false);
       });
       test('Navigate to the same destination will not change the stack', () async {
         await navigator.goTo(TestDestinations.home);
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
+        expect(navigator.gotBack, false);
       });
       test('Navigate back from the last destination in the stack should set close flag', () {
         navigator.goBack();
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
+        expect(navigator.gotBack, true);
         expect(navigator.shouldClose, true);
       });
     });

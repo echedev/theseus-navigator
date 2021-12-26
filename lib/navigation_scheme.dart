@@ -126,14 +126,15 @@ class NavigationScheme with ChangeNotifier {
     }
     Log.d(runtimeType,
         'goTo(): navigator=${navigator.tag}, destination=${destination.uri}, isRedirection=$isRedirection');
+    _shouldClose = false;
     _redirectedFrom = isRedirection ? _currentDestination : null;
     return SynchronousFuture(navigator.goTo(destination));
   }
 
   /// Close the current destination.
   ///
-  /// If the current destination is the last one, this initiates app close by
-  /// setting [shouldClose] flag.
+  /// If the current destination is the last one, this requests closing the app by
+  /// setting the [shouldClose] flag.
   ///
   void goBack() {
     final navigator = findNavigator(_currentDestination);
@@ -177,19 +178,34 @@ class NavigationScheme with ChangeNotifier {
   }
 
   void _onNavigatorStateChanged(TheseusNavigator navigator) {
-    Log.d(runtimeType, 'onNavigatorStateChanged(): navigator=${navigator.tag}');
+    Log.d(runtimeType, 'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, gotBack=${navigator.gotBack}, shouldClose=${navigator.shouldClose}');
     if (navigator.hasError) {
-      Log.e(runtimeType, 'onNavigatorStateChanged(): error=${navigator.error}');
       _handleError(navigator.error!.destination);
     }
     final owner = _navigatorOwners[navigator];
     if (owner != null) {
       Log.d(runtimeType, 'onNavigatorStateChanged(): owner=${owner.uri}');
-      if (navigator.currentDestination.configuration.reset) {
-        goTo(owner
-            .copyWithConfiguration(owner.configuration.copyWith(reset: true)));
-      } else {
-        goTo(owner);
+      if (navigator.gotBack) {
+        if (navigator.shouldClose) {
+          final parentNavigator = findNavigator(owner);
+          if (parentNavigator == null) {
+            _handleError(owner);
+            return;
+          }
+          parentNavigator.goBack();
+        }
+        else {
+          _updateCurrentDestination();
+        }
+      }
+      else {
+        if (navigator.currentDestination.configuration.reset) {
+          goTo(owner
+              .copyWithConfiguration(
+              owner.configuration.copyWith(reset: true)));
+        } else {
+          goTo(owner);
+        }
       }
     } else {
       _updateCurrentDestination();
@@ -198,26 +214,25 @@ class NavigationScheme with ChangeNotifier {
 
   void _updateCurrentDestination() {
     Destination newDestination = _rootNavigator.currentDestination;
-    // TODO: Do we need the tack here?
+    // TODO: Do we need the stack here?
     List<Destination> newStack = List.from(_rootNavigator.stack);
     if (_rootNavigator.shouldClose) {
       _shouldClose = true;
+      Log.d(runtimeType,
+          'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');
+      notifyListeners();
+      return;
     } else {
-      var parentNavigator = _rootNavigator;
+      _shouldClose = false;
       while (!newDestination.isFinalDestination) {
-        if (newDestination.navigator!.shouldClose) {
-          parentNavigator.goBack();
-          return;
-        }
         newStack.addAll(newDestination.navigator!.stack);
-        parentNavigator = newDestination.navigator!;
         newDestination = newDestination.navigator!.currentDestination;
       }
     }
-    if (_currentDestination != newDestination || _shouldClose) {
+    if (_currentDestination != newDestination) {
       _currentDestination = newDestination;
       Log.d(runtimeType,
-          'updateCurrentDestination(): currentDestination=${_currentDestination.uri}');
+          'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');
       notifyListeners();
     }
   }

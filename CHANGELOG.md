@@ -1,3 +1,7 @@
+## \[0.0.10\] - *2021-12-26*
+
+- Update back navigation logic
+
 ## \[0.0.9\] - *2021-12-04*
 
 - Add web support in the example project

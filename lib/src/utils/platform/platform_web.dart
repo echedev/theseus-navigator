@@ -3,4 +3,3 @@
 import 'platform.dart';
 
 PlatformType get currentPlatform => PlatformType.web;
-

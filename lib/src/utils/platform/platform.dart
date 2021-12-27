@@ -18,12 +18,4 @@ abstract class Platform {
   static bool get isFuchsia => currentPlatform == PlatformType.fuchsia;
 }
 
-enum PlatformType {
-  web,
-  windows,
-  linux,
-  macOS,
-  android,
-  fuchsia,
-  iOS
-}
+enum PlatformType { web, windows, linux, macOS, android, fuchsia, iOS }

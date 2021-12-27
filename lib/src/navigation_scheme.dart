@@ -178,7 +178,8 @@ class NavigationScheme with ChangeNotifier {
   }
 
   void _onNavigatorStateChanged(TheseusNavigator navigator) {
-    Log.d(runtimeType, 'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, gotBack=${navigator.gotBack}, shouldClose=${navigator.shouldClose}');
+    Log.d(runtimeType,
+        'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, gotBack=${navigator.gotBack}, shouldClose=${navigator.shouldClose}');
     if (navigator.hasError) {
       _handleError(navigator.error!.destination);
     }
@@ -193,15 +194,12 @@ class NavigationScheme with ChangeNotifier {
             return;
           }
           parentNavigator.goBack();
-        }
-        else {
+        } else {
           _updateCurrentDestination();
         }
-      }
-      else {
+      } else {
         if (navigator.currentDestination.configuration.reset) {
-          goTo(owner
-              .copyWithConfiguration(
+          goTo(owner.copyWithConfiguration(
               owner.configuration.copyWith(reset: true)));
         } else {
           goTo(owner);

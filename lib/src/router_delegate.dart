@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -52,8 +50,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     if (navigationScheme.shouldClose) {
       if (Platform.isAndroid) {
         return false;
-      }
-      else {
+      } else {
         navigationScheme.goTo(navigationScheme.currentDestination);
         return true;
       }

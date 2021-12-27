@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:theseus_navigator/navigator.dart';
+import 'package:theseus_navigator/src/navigator.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';

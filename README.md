@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.0.11-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.0.12-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 

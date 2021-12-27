@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:theseus_navigator/router_delegate.dart';
+import 'package:theseus_navigator/src/router_delegate.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';

@@ -1,6 +1,7 @@
-## \[0.0.10\] - *2021-12-26*
+## \[0.0.10\] - *2021-12-27*
 
 - Update back navigation logic
+- Fix package layout
 
 ## \[0.0.9\] - *2021-12-04*
 

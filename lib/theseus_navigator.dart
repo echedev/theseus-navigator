@@ -1,10 +1,10 @@
 library theseus_navigator;
 
-export 'destination.dart';
-export 'destination_parser.dart';
-export 'exceptions.dart';
-export 'navigation_scheme.dart';
-export 'navigator.dart';
-export 'redirection.dart';
-export 'router_delegate.dart';
-export 'route_parser.dart';
+export 'src/destination.dart';
+export 'src/destination_parser.dart';
+export 'src/exceptions.dart';
+export 'src/navigation_scheme.dart';
+export 'src/navigator.dart';
+export 'src/redirection.dart';
+export 'src/router_delegate.dart';
+export 'src/route_parser.dart';

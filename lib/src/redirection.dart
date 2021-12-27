@@ -1,7 +1,5 @@
-import 'package:theseus_navigator/router_delegate.dart';
-import 'package:theseus_navigator/utils/log/log.dart';
-
 import 'destination.dart';
+import 'utils/log/log.dart';
 
 /// Defines a redirection.
 ///

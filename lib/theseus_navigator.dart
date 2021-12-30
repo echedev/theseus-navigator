@@ -8,3 +8,4 @@ export 'src/navigator.dart';
 export 'src/redirection.dart';
 export 'src/router_delegate.dart';
 export 'src/route_parser.dart';
+export 'src/widgets/index.dart';

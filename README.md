@@ -270,29 +270,31 @@ The package includes `BottomNavigationBuilder` which is an implementation of the
 Adding the bottom navigation to your app is simple as following:
 
 ```dart
-final mainNavigator = TheseusNavigator(
-  destinations: [
-    homeDestination,
-    catalogDestination,
-    settingsDestination,
-  ],
-  builder: BottomNavigationBuilder(
-    bottomNavigationItems: const <BottomNavigationBarItem>[
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home_rounded),
-        label: 'Home',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.list_rounded),
-        label: 'Catalog',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.more_horiz_rounded),
-        label: 'Settings',
-      ),
+final navigationScheme = NavigationScheme(
+  navigator: TheseusNavigator(
+    destinations: [
+      homeDestination,
+      catalogDestination,
+      settingsDestination,
     ],
-  ),
-  tag = 'Main',
+    builder: BottomNavigationBuilder(
+      bottomNavigationItems: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_rounded),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.list_rounded),
+          label: 'Catalog',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.more_horiz_rounded),
+          label: 'Settings',
+        ),
+      ],
+    ),
+    tag = 'Main',
+  ), 
 );
 ```
 The styling of the `BottomNavigationBar` widget is supported by using optional `parameters` argument of the `BottomNavigationBuilder`.

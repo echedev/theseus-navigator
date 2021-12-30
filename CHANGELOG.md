@@ -1,3 +1,7 @@
+## \[0.0.13\] - *2021-12-30*
+
+- Add `BottomNavigationBuilder`
+
 ## \[0.0.12\] - *2021-12-27*
 
 - Update back navigation logic

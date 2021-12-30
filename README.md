@@ -259,9 +259,43 @@ final mainNavigator = TheseusNavigator(
     settingsDestination,
   ],
   builder: CustomNavigatorBuilder(),
-  debugLabel = 'Main',
+  tag = 'Main',
 );
 ```
+
+###### Bottom navigation
+
+The package includes `BottomNavigationBuilder` which is an implementation of the `NavigatorBuilder` that uses Flutter's `Scaffold` with `BottomNavigationBar` to wrap the current destination content and to switch between destinations.
+
+Adding the bottom navigation to your app is simple as following:
+
+```dart
+final mainNavigator = TheseusNavigator(
+  destinations: [
+    homeDestination,
+    catalogDestination,
+    settingsDestination,
+  ],
+  builder: BottomNavigationBuilder(
+    bottomNavigationItems: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.list_rounded),
+        label: 'Catalog',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.more_horiz_rounded),
+        label: 'Settings',
+      ),
+    ],
+  ),
+  tag = 'Main',
+);
+```
+The styling of the `BottomNavigationBar` widget is supported by using optional `parameters` argument of the `BottomNavigationBuilder`.
 
 #### Upward Navigation
 
@@ -338,7 +372,7 @@ For more detailed code samples, please see the [example project](./example) whic
 
 ###### Coming Updates
 - Handling return values from destinations
-- Navigator builders for `BottomNavigationBar`, `TabBar` and `Drawer`
+- Navigator builders for `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
 - Test coverage
 

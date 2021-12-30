@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 
@@ -8,7 +9,6 @@ import 'auth/index.dart';
 import 'catalog/index.dart';
 import 'error/index.dart';
 import 'home/index.dart';
-import 'main_screen.dart';
 import 'settings/index.dart';
 
 final navigationScheme = NavigationScheme(
@@ -63,23 +63,24 @@ final mainNavigator = TheseusNavigator(
     MainDestinations.catalog,
     MainDestinations.settings,
   ],
-  builder: MainNavigatorBuilder(),
+  builder: BottomNavigationBuilder(
+    bottomNavigationItems: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.list_rounded),
+        label: 'Catalog',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.more_horiz_rounded),
+        label: 'Settings',
+      ),
+    ],
+  ),
   tag: 'Main',
 );
-
-class MainNavigatorBuilder implements NavigatorBuilder {
-  @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
-    final currentDestination = navigator.currentDestination;
-    final content = currentDestination.build(context);
-    return MainScreen(
-      content: content,
-      onSelectBottomTab: (index) =>
-          navigator.goTo(navigator.destinations[index]),
-      selectedIndex: navigator.destinations.indexOf(currentDestination),
-    );
-  }
-}
 
 class MainDestinations {
   static final home = DestinationLight(

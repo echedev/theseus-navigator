@@ -7,8 +7,9 @@ import 'index.dart';
 /// A [NavigatorBuilder] that allows to switch between destinations using
 /// [BottomNavigationBar].
 ///
-/// It builds a wrapper widget, which is a [Scaffold] with a body set to the current
-/// destination's content, and a Flutter's [BottomNavigationBar] widget specified.
+/// It builds a wrapper widget, which is a [Scaffold] with a [Scaffold.body] set
+/// to the current destination's content, and [Scaffold.bottomNavigationBar]
+/// specified.
 ///
 /// The [bottomNavigationItems] must correspond to the navigator's destinations.
 ///
@@ -141,7 +142,11 @@ class _BottomNavigationWrapperState extends State<_BottomNavigationWrapper> {
 
 /// Contains parameters to customize the [BottomNavigationBar].
 ///
+/// It includes all the same arguments as the [BottomNavigationBar()], excepting
+/// the 'items', 'onTap' and 'currentIndex', which are managed by the [BottomNavigationBuilder].
+///
 /// See also:
+/// - [BottomNavigationBuilder]
 /// - [BottomNavigationBar]
 ///
 class BottomNavigationBarParameters {

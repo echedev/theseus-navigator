@@ -26,7 +26,7 @@ class BottomNavigationBuilder implements NavigatorBuilder {
   ///
   BottomNavigationBuilder({
     required this.bottomNavigationItems,
-    required this.parameters,
+    this.parameters = const BottomNavigationBarParameters(),
   });
 
   /// A list of [BottomNavigationBarItems], that corresponds to the navigator's
@@ -147,7 +147,7 @@ class _BottomNavigationWrapperState extends State<_BottomNavigationWrapper> {
 class BottomNavigationBarParameters {
   /// Create a [BottomNavigationBarParameters] instance.
   ///
-  BottomNavigationBarParameters({
+  const BottomNavigationBarParameters({
     this.elevation,
     this.type,
     this.fixedColor,

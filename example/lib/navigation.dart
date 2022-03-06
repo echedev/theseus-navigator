@@ -2,7 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'auth/index.dart';

@@ -12,7 +12,7 @@ class CustomTransitionScreen extends StatelessWidget {
         title: const Text('Custom Transition'),
       ),
       body: Container(
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).colorScheme.secondary,
       ),
     );
   }

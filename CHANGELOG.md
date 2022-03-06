@@ -1,3 +1,7 @@
+## \[0.0.14\] - *2022-03-06*
+
+- Fix Dart Analyzer issues
+
 ## \[0.0.13\] - *2021-12-30*
 
 - Add `BottomNavigationBuilder`

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Colors.blueGrey,
             secondary: Colors.amber,
-            secondaryVariant: Colors.blue,
+            secondaryContainer: Colors.blue,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

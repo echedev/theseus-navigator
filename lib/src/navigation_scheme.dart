@@ -105,7 +105,7 @@ class NavigationScheme with ChangeNotifier {
   Destination? findDestination(String uri) => _navigatorMatches.keys
       .firstWhereOrNull((destination) => destination.isMatch(uri));
 
-  /// Finds a proper navigator in the navigation scheme for a given destination.
+  /// Returns a proper navigator in the navigation scheme for a given destination.
   ///
   /// Returns 'null' if no navigator found.
   ///

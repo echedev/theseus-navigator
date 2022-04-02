@@ -56,7 +56,7 @@ class Destination<T extends DestinationParameters> {
   }
 
   /// Creates a destination that provides a navigator with nested destinations.
-  /// 
+  ///
   Destination.intermediate({
     required this.path,
     this.isHome = false,

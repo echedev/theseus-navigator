@@ -54,12 +54,16 @@ class TheseusNavigator with ChangeNotifier {
   /// Defaults to [DefaultNavigatorBuilder] that wraps destinations to Flutter's
   /// [Navigator] widget.
   ///
+  /// Also a [BottomNavigationBuilder] implementation is available, which allow
+  /// to switch destination using Flutter's [BottomNavigationBar] widget.
+  ///
   /// It can be used when you want, for example, to navigate destinations by
   /// [TabBar], or [BottomNavigationBar].
   ///
   /// See also:
   /// - [NavigatorBuilder]
   /// - [DefaultNavigatorBuilder]
+  /// - [BottomNavigationBuilder]
   ///
   final NavigatorBuilder builder;
 
@@ -166,7 +170,7 @@ class TheseusNavigator with ChangeNotifier {
       notifyListeners();
       return;
     }
-    if (_isValidDestination(destination)) {
+    if (_isDestinationMatched(destination)) {
       _updateStack(destination);
       notifyListeners();
     } else {
@@ -200,7 +204,7 @@ class TheseusNavigator with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isValidDestination(Destination destination) =>
+  bool _isDestinationMatched(Destination destination) =>
       destinations.any((element) => element.isMatch(destination.uri));
 
   void _updateStack(Destination destination) {

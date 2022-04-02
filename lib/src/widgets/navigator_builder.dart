@@ -7,6 +7,7 @@ import '../navigator.dart';
 ///
 /// See also:
 /// - [DefaultNavigatorBuilder]
+/// - [BottomNavigationBuilder]
 ///
 abstract class NavigatorBuilder {
   /// Returns a widget that wraps a content of navigator's destinations.

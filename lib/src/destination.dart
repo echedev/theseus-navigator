@@ -55,6 +55,19 @@ class Destination<T extends DestinationParameters> {
         configuration ?? DestinationConfiguration.defaultMaterial();
   }
 
+  /// Creates a destination that provides a navigator with nested destinations.
+  /// 
+  Destination.intermediate({
+    required this.path,
+    this.isHome = false,
+    this.navigator,
+    this.redirections = const <Redirection>[],
+  }) : builder = null,
+        configuration = DestinationConfiguration.defaultMaterial(),
+        parameters = null,
+        parser = const DefaultDestinationParser(),
+        upwardDestinationBuilder = null;
+
   /// Path identifies the destination.
   ///
   /// Usually it follows the common url pattern with optional parameters.

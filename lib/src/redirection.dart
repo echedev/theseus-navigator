@@ -27,7 +27,7 @@ class Redirection {
   ///
   final Destination destination;
 
-  /// Should implement a logic to validate a destination.
+  /// Implements a logic to validate a destination.
   ///
   /// Must return true if it is allowed to navigate to the destination.
   /// Otherwise returns false.

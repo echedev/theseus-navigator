@@ -87,24 +87,18 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     if (navigationScheme.shouldClose) {
       return;
     }
-    // This is a 'happy path', just notifying Router to update the UI
-    if (destination.redirections.isEmpty) {
-      notifyListeners();
-      return;
-    }
     // Ignore redirections if we returned back from the redirection
     if (navigationScheme.redirectedFrom == destination) {
       notifyListeners();
       return;
     }
-    // Apply redirections if they are specified.
-    for (var redirection in destination.redirections) {
-      if (!(await redirection.validate(destination))) {
-        return SynchronousFuture(navigationScheme.goTo(redirection.destination,
-            isRedirection: true));
-      }
+    // Check if the current destination is valid, and perform redirection if needed.
+    final isDestinationValid = await navigationScheme.validate();
+    Log.d(runtimeType,
+        'onCurrentDestinationChanged(): destination=${destination.uri}, isDestinationValid=$isDestinationValid');
+    if (!isDestinationValid) {
+      return;
     }
-    // No one redirection was applied.
     notifyListeners();
   }
 }

@@ -145,6 +145,12 @@ class NavigationScheme with ChangeNotifier {
     navigator.goBack();
   }
 
+  /// Validates current destination and perform redirection if needed.
+  ///
+  Future<bool> validate() async {
+    return await _validateDestination(_currentDestination);
+  }
+
   void _initializeNavigator(TheseusNavigator navigator) {
     listener() => _onNavigatorStateChanged(navigator);
 
@@ -233,5 +239,23 @@ class NavigationScheme with ChangeNotifier {
           'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');
       notifyListeners();
     }
+  }
+
+  Future<bool> _validateDestination(Destination destination) async {
+    // Check redirections that are defined for given destination
+    for (var redirection in destination.redirections) {
+      if (!(await redirection.validate(destination))) {
+        goTo(redirection.destination, isRedirection: true);
+        return false;
+      }
+    }
+    // In case of nested destination, validate the owner
+    final navigator = findNavigator(destination);
+    if (navigator == null) {
+      _handleError(destination);
+      return false;
+    }
+    final owner = _navigatorOwners[navigator];
+    return owner != null ? await _validateDestination(owner) : true;
   }
 }

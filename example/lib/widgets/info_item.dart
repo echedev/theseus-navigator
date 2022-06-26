@@ -30,6 +30,7 @@ class InfoItem extends StatelessWidget {
         child: Card(
           color: isDarkStyle ? Theme.of(context).colorScheme.primary : null,
           child: InkWell(
+            onTap: onTap,
             child: Container(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -60,7 +61,6 @@ class InfoItem extends StatelessWidget {
                 ],
               ),
             ),
-            onTap: onTap,
           ),
         ));
   }

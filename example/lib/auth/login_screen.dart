@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs
 
-import 'package:example/widgets/info_item.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/info_item.dart';
 import 'auth_model.dart';
 import '../navigation.dart';
 

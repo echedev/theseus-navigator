@@ -31,12 +31,12 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: OutlinedButton(
-              child: const Text('Open Theseus Navigator package in Pub.dev'),
               style: OutlinedButton.styleFrom(
                 primary: Theme.of(context).colorScheme.secondary,
                 side: BorderSide(width: 2.0, color: Theme.of(context).colorScheme.secondary),
               ),
               onPressed: _openPubDev,
+              child: const Text('Open Theseus Navigator package in Pub.dev'),
             ),
           ),
           const InfoItem(

@@ -23,7 +23,7 @@ class CatalogDestinations {
     upwardDestinationBuilder: (destination) =>
         destination.parameters?.parentCategory == null
             ? null
-            : destination.copyWithParameters(CategoriesDestinationParameters(
+            : destination.withParameters(CategoriesDestinationParameters(
                 parentCategory:
                     destination.parameters?.parentCategory!.parent)),
   );

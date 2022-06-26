@@ -55,7 +55,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                             onTap: () {
                               catalogNavigator.goTo(CatalogDestinations
                                   .categories
-                                  .copyWithParameters(
+                                  .withParameters(
                                       CategoriesDestinationParameters(
                                 parentCategory: category,
                               )));

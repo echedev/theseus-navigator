@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.0.14-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.1.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -65,7 +65,7 @@ Widget build(BuildContext context) {
     //...
     routerDelegate: TheseusRouterDelegate(navigationScheme: navigationScheme),
     routeInformationParser: TheseusRouterInformationParser(navigationScheme: navigationScheme),
-  ),
+  );
 }
 ```
 - Somewhere in the app to navigate
@@ -77,22 +77,44 @@ The `Destination` is a model of UI endpoint that users can navigate in your app.
 
 Generally, you define a destination like this:
 ```dart
-final homeDestination = Destination<DefaultDestinationParameters>(
+final homeDestination = Destination<HomeDestinationParameters>(
   path: 'home',
   builder: (context, parameters) => HomeScreen(),
 );
 ```
-You can use your custom parameters class as a generic type parameter of destination. In this case you have to provide your custom destination `parser`.
+Here the `HomeDestinationParameters` is your custom parameter class, which must extend `DestinationParameters`. In this case you have to provide your custom destination `parser`.
 
 If you don't need typed parameters or don't care parameters at all for specific destination, you can use for shorten:
 ```dart
 final homeDestination = DestinationLight(
   //...
 );
-```
-If the destination is *final*, that means that it directly display some content, then you have to provide a `builder` function that returns a content widget.
 
-Otherwise you should provide a `navigator` with its own destinations, which would build the content or contain another nested navigator.
+// This is the same as
+
+final homeDestination = Destination<DefaultDestinationParameters>(
+  //...
+);
+
+
+```
+If the destination is *final*, which means that it directly display some content (don't be confused with 'final' Dart keyword), then you have to provide a `builder` function that returns a content widget.
+
+Otherwise you should provide a `navigator` with its own destinations, that would build the content or contain another nested navigator.
+```dart
+final mainDestination = Destination<DefaultDestinationParameters>(
+  path: '/',
+  navigator: mainNavigator,
+);
+
+final mainNavigator = TheseusNavigator(
+  destinations:[
+    homeDestination,
+    catalogDestination,
+    settingsDestination,
+  ],
+);
+```
 
 #### Path
 The destination is defined by its `uri`, which is built from the destination `path` and `parameters`.
@@ -196,7 +218,7 @@ In case of **custom** transition, you have to provide `transitionBuilder` as wel
 
 There are two pre-defined factory methods:
 
-`defaultMaterial()` - returns a configuration that pushes a destination to the stack with a standard Material animations.  
+`material()` - returns a configuration that pushes a destination to the stack with a standard Material animations.  
 `quite()` - replace the current destination with a new one without any animations.
 
 ```dart
@@ -305,7 +327,7 @@ Sometimes, on reverse navigation from a destination that user accessed bypassing
 
 For example, user open an app by a deep link that leads to a category screen somewhere in the categories hierarchy. On navigating back from this screen we would like to show the upper level category screen, and so on until the root of categories.
 
-TheseusNavigator support this behavior, when you define `upwardDestination` parameter for a destination.
+TheseusNavigator support this behavior, when you define `upwardDestinationBuilder` parameter of destination.
 
 It might look like this:
 ```dart
@@ -325,6 +347,13 @@ final categoriesDestination = Destination<CategoryListParameters>(
   ),
 );
 ```
+
+## Deep-links
+
+When a destination is requested by a platform, the following is happened for each navigator in hierarchy from the current destination up to the root:
+
+- Current destination is updated according to requested deep-link destination.
+- If the `upwardDestinationBuilder` parameter is provided for the current destination, the navigator's stack is cleared before adding new destination. Otherwise the current destination is pushed to existing stack.
 
 ## Redirections
 

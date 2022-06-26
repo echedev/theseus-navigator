@@ -84,7 +84,8 @@ final mainNavigator = TheseusNavigator(
 class MainDestinations {
   static final home = DestinationLight(
     path: '/home',
-    builder: (context, parameters) => const HomeScreen(),
+    // builder: (context, parameters) => const HomeScreen(),
+    navigator: homeNavigator,
     configuration: DestinationConfiguration.quiet(),
   );
   static final catalog = DestinationLight(

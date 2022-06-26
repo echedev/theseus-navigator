@@ -62,12 +62,13 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
     Log.d(runtimeType, 'setNewRoutePath(): destination=${destination.uri}');
-    // Don't reset stack if redirected to the 'errorDestination', to be able return
-    // back to previous destination.
-    final reset = (destination != navigationScheme.errorDestination);
-    return SynchronousFuture(navigationScheme.goTo(
-        destination.copyWithConfiguration(
-            destination.configuration.copyWith(reset: reset))));
+    // Reset current stack when:
+    // - the 'upwardDestinationBuilder' is specified, so we should build a custom stack
+    // - it is not an 'errorDestination', so we should be able return back to previous destination from the error.
+    final reset = (destination.upwardDestinationBuilder != null &&
+        destination != navigationScheme.errorDestination);
+    return SynchronousFuture(navigationScheme.goTo(destination
+        .withConfiguration(destination.configuration.copyWith(reset: reset))));
   }
 
   @override
@@ -87,24 +88,18 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     if (navigationScheme.shouldClose) {
       return;
     }
-    // This is a 'happy path', just notifying Router to update the UI
-    if (destination.redirections.isEmpty) {
-      notifyListeners();
-      return;
-    }
     // Ignore redirections if we returned back from the redirection
     if (navigationScheme.redirectedFrom == destination) {
       notifyListeners();
       return;
     }
-    // Apply redirections if they are specified.
-    for (var redirection in destination.redirections) {
-      if (!(await redirection.validate(destination))) {
-        return SynchronousFuture(navigationScheme.goTo(redirection.destination,
-            isRedirection: true));
-      }
+    // Check if the current destination is valid, and perform redirection if needed.
+    final isDestinationValid = await navigationScheme.validate();
+    Log.d(runtimeType,
+        'onCurrentDestinationChanged(): destination=${destination.uri}, isDestinationValid=$isDestinationValid');
+    if (!isDestinationValid) {
+      return;
     }
-    // No one redirection was applied.
     notifyListeners();
   }
 }

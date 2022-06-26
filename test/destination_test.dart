@@ -18,27 +18,27 @@ void main() {
       expect(TestDestinations.categories == TestDestinations.categories, true);
       expect(
           TestDestinations.categories
-                  .copyWithParameters(categoryParametersId1) ==
+                  .withParameters(categoryParametersId1) ==
               TestDestinations.categories
-                  .copyWithParameters(categoryParametersId1),
+                  .withParameters(categoryParametersId1),
           true);
       expect(
           TestDestinations.categories
-                  .copyWithParameters(categoryParametersId1) ==
+                  .withParameters(categoryParametersId1) ==
               TestDestinations.categories
-                  .copyWithParameters(categoryParametersId2),
+                  .withParameters(categoryParametersId2),
           false);
       expect(
           TestDestinations.categories
-                  .copyWithParameters(categoryParametersId1) ==
+                  .withParameters(categoryParametersId1) ==
               TestDestinations.categories
-                  .copyWithParameters(categoryParametersId1Q1),
+                  .withParameters(categoryParametersId1Q1),
           false);
       expect(TestDestinations.home != TestDestinations.about, true);
     });
     test('Matching URI', () {
       final destination1 = TestDestinations.categories;
-      final destination2 = destination1.copyWithParameters(
+      final destination2 = destination1.withParameters(
           DefaultDestinationParameters(<String, String>{'id': '1'}));
       expect(destination1.isMatch('/categories/1'), true);
       expect(destination1.isMatch('/categories'), true);
@@ -47,9 +47,9 @@ void main() {
     });
     test('Parsing URI', () async {
       final destination1 = TestDestinations.categories;
-      final destination2 = destination1.copyWithParameters(
+      final destination2 = destination1.withParameters(
           DefaultDestinationParameters(<String, String>{'id': '1'}));
-      final destination3 = destination1.copyWithParameters(
+      final destination3 = destination1.withParameters(
           DefaultDestinationParameters(<String, String>{'id': '2'}));
       expect(await destination1.parse('/categories/1') == destination2, true);
       expect(await destination1.parse('/categories/1') == destination3, false);

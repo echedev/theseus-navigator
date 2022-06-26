@@ -108,7 +108,7 @@ abstract class DestinationParser<T extends DestinationParameters> {
         .addAll(_parseUriPathParameters(destinationUri, baseDestination));
     parametersMap.addAll(destinationUri.queryParameters);
     return baseDestination
-        .copyWithParameters(await toDestinationParameters(parametersMap));
+        .withParameters(await toDestinationParameters(parametersMap));
   }
 
   /// Returns URI string for the destination

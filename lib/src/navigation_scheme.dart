@@ -105,7 +105,7 @@ class NavigationScheme with ChangeNotifier {
   Destination? findDestination(String uri) => _navigatorMatches.keys
       .firstWhereOrNull((destination) => destination.isMatch(uri));
 
-  /// Finds a proper navigator in the navigation scheme for a given destination.
+  /// Returns a proper navigator in the navigation scheme for a given destination.
   ///
   /// Returns 'null' if no navigator found.
   ///
@@ -143,6 +143,12 @@ class NavigationScheme with ChangeNotifier {
       return;
     }
     navigator.goBack();
+  }
+
+  /// Validates current destination and perform redirection if needed.
+  ///
+  Future<bool> validate() async {
+    return await _validateDestination(_currentDestination);
   }
 
   void _initializeNavigator(TheseusNavigator navigator) {
@@ -199,8 +205,8 @@ class NavigationScheme with ChangeNotifier {
         }
       } else {
         if (navigator.currentDestination.configuration.reset) {
-          goTo(owner.copyWithConfiguration(
-              owner.configuration.copyWith(reset: true)));
+          goTo(owner
+              .withConfiguration(owner.configuration.copyWith(reset: true)));
         } else {
           goTo(owner);
         }
@@ -227,11 +233,30 @@ class NavigationScheme with ChangeNotifier {
         newDestination = newDestination.navigator!.currentDestination;
       }
     }
-    if (_currentDestination != newDestination) {
+    if (_currentDestination != newDestination ||
+        newDestination.configuration.reset) {
       _currentDestination = newDestination;
       Log.d(runtimeType,
           'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');
       notifyListeners();
     }
+  }
+
+  Future<bool> _validateDestination(Destination destination) async {
+    // Check redirections that are defined for given destination
+    for (var redirection in destination.redirections) {
+      if (!(await redirection.validate(destination))) {
+        goTo(redirection.destination, isRedirection: true);
+        return false;
+      }
+    }
+    // In case of nested destination, validate the owner
+    final navigator = findNavigator(destination);
+    if (navigator == null) {
+      _handleError(destination);
+      return false;
+    }
+    final owner = _navigatorOwners[navigator];
+    return owner != null ? await _validateDestination(owner) : true;
   }
 }

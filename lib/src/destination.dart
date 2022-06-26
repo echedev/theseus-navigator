@@ -51,9 +51,21 @@ class Destination<T extends DestinationParameters> {
                 ((T != DefaultDestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    this.configuration =
-        configuration ?? DestinationConfiguration.defaultMaterial();
+    this.configuration = configuration ?? DestinationConfiguration.material();
   }
+
+  /// Creates a destination that provides a navigator with nested destinations.
+  ///
+  Destination.intermediate({
+    required this.path,
+    required this.navigator,
+    this.isHome = false,
+    this.redirections = const <Redirection>[],
+  })  : builder = null,
+        configuration = DestinationConfiguration.material(),
+        parameters = null,
+        parser = const DefaultDestinationParser(),
+        upwardDestinationBuilder = null;
 
   /// Path identifies the destination.
   ///
@@ -136,25 +148,29 @@ class Destination<T extends DestinationParameters> {
   Future<Destination<T>> parse(String uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
-  /// TODO: Add description
+  /// Return a widget that display destination's content.
+  ///
+  /// If the destination is final, then [builder] is called to build a content.
+  /// Otherwise [navigator.build] is called to build nested navigator's content.
+  ///
   Widget build(BuildContext context) => isFinalDestination
       ? builder!(context, parameters)
       : navigator!.build(context);
 
-  /// TODO: Add description
+  /// Return a destination that should be displayed on reverse navigation.
+  ///
   Destination? get upwardDestination => upwardDestinationBuilder?.call(this);
 
   /// Returns a copy of this destination with a different configuration.
   ///
-  Destination<T> copyWithConfiguration(
-          DestinationConfiguration configuration) =>
+  Destination<T> withConfiguration(DestinationConfiguration configuration) =>
       copyWith(
         configuration: configuration,
       );
 
   /// Returns a copy of this destination with different parameters.
   ///
-  Destination<T> copyWithParameters(T parameters) => copyWith(
+  Destination<T> withParameters(T parameters) => copyWith(
         parameters: parameters,
       );
 
@@ -216,7 +232,7 @@ class DestinationConfiguration {
   /// Creates a configuration that pushes a destination to the top of navigation
   /// stack with a standard Material animations.
   ///
-  const factory DestinationConfiguration.defaultMaterial() =
+  const factory DestinationConfiguration.material() =
       _DefaultDestinationConfiguration;
 
   /// Creates a configuration that replaces the current destination with a new one

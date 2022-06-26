@@ -41,7 +41,7 @@ void main() {
             TestNavigators.catalog);
         expect(
             navigationScheme.findNavigator(TestDestinations.categories
-                .copyWithParameters(
+                .withParameters(
                 DefaultDestinationParameters(<String, String>{'id': '1'}))),
             TestNavigators.catalog);
       });

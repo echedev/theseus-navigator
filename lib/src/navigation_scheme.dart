@@ -205,8 +205,8 @@ class NavigationScheme with ChangeNotifier {
         }
       } else {
         if (navigator.currentDestination.configuration.reset) {
-          goTo(owner.copyWithConfiguration(
-              owner.configuration.copyWith(reset: true)));
+          goTo(owner
+              .withConfiguration(owner.configuration.copyWith(reset: true)));
         } else {
           goTo(owner);
         }
@@ -233,7 +233,8 @@ class NavigationScheme with ChangeNotifier {
         newDestination = newDestination.navigator!.currentDestination;
       }
     }
-    if (_currentDestination != newDestination) {
+    if (_currentDestination != newDestination ||
+        newDestination.configuration.reset) {
       _currentDestination = newDestination;
       Log.d(runtimeType,
           'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');

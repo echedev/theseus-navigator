@@ -1,3 +1,8 @@
+## \[0.0.15\] - *2022-06-26*
+
+- BREAKING: Renamed some methods of `Destination` class
+- Bug fixes
+
 ## \[0.0.14\] - *2022-03-06*
 
 - Fix Dart Analyzer issues

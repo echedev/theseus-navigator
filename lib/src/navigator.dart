@@ -165,10 +165,12 @@ class TheseusNavigator with ChangeNotifier {
     _gotBack = false;
     _shouldClose = false;
     if (currentDestination == destination) {
-      Log.d(_tag,
-          'goTo(): The destination is already on top. No action required.');
-      notifyListeners();
-      return;
+      if (!destination.configuration.reset) {
+        Log.d(_tag,
+            'goTo(): The destination is already on top. No action required.');
+        notifyListeners();
+        return;
+      }
     }
     if (_isDestinationMatched(destination)) {
       _updateStack(destination);

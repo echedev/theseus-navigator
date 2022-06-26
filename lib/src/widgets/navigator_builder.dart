@@ -25,14 +25,17 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
 
   @override
   Widget build(BuildContext context, TheseusNavigator navigator) {
+    final pages = <_TheseusPage>[];
+    for (int i = 0; i < navigator.stack.length; i++) {
+      final destination = navigator.stack[i];
+      pages.add(_TheseusPage(
+        key: ValueKey('${destination.uri}-$i'),
+        destination: destination,
+      ));
+    }
     return Navigator(
       key: navigator.key,
-      pages: navigator.stack
-          .map((destination) => _TheseusPage(
-                key: ValueKey(destination.uri),
-                destination: destination,
-              ))
-          .toList(),
+      pages: pages,
       onPopPage: (route, result) {
         navigator.goBack();
         route.didPop(result);

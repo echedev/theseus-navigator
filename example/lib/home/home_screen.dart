@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
+import 'package:example/home/home_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,13 +10,21 @@ import '../navigation.dart';
 import '../widgets/info_item.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({
+    Key? key,
+    this.title,
+    this.next = false,
+  }) : super(key: key);
+
+  final String? title;
+
+  final bool next;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(title ?? 'Home'),
       ),
       body: ListView(
         children: [
@@ -73,6 +82,17 @@ class HomeScreen extends StatelessWidget {
                 },
                 child: const Text('Nonexistent screen')),
           ),
+          if (next)
+            InfoItem(
+              title: 'Navigate next screen',
+              description:
+              '''Opens another screen in the same bottom navigation tab. New screen will be added to the local navigation stack.''',
+              child: ElevatedButton(
+                  onPressed: () async {
+                    navigationScheme.goTo(HomeDestinations.home2);
+                  },
+                  child: const Text('Home 2')),
+            ),
           const SizedBox(
             height: 20.0,
           )

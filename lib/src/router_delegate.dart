@@ -62,12 +62,13 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
     Log.d(runtimeType, 'setNewRoutePath(): destination=${destination.uri}');
-    // Don't reset stack if redirected to the 'errorDestination', to be able return
-    // back to previous destination.
-    final reset = (destination != navigationScheme.errorDestination);
-    return SynchronousFuture(navigationScheme.goTo(
-        destination.copyWithConfiguration(
-            destination.configuration.copyWith(reset: reset))));
+    // Reset current stack when:
+    // - the 'upwardDestinationBuilder' is specified, so we should build a custom stack
+    // - it is not an 'errorDestination', so we should be able return back to previous destination from the error.
+    final reset = (destination.upwardDestinationBuilder != null &&
+        destination != navigationScheme.errorDestination);
+    return SynchronousFuture(navigationScheme.goTo(destination
+        .withConfiguration(destination.configuration.copyWith(reset: reset))));
   }
 
   @override

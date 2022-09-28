@@ -1,6 +1,11 @@
+## \[0.1.2\] - *2022-09-28*
+
+- Added `DrawerNavigationBuilder` and `TabsNavigationBuilder`
+- Bug fixes
+
 ## \[0.1.1\] - *2022-06-26*
 
-- BREAKING: Renamed some methods of `Destination` class
+- **BREAKING**: Renamed some methods of `Destination` class
 - Update handling of deep-links
 - Improve docs
 - Bug fixes

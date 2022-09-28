@@ -28,8 +28,8 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   /// A navigation scheme that contains destinations and navigators.
   ///
-  /// This router delegate is listening the navigation scheme to identify when the
-  /// current destination is changes, and in turn, notifies its listeners when this
+  /// This router delegate is listening the navigation scheme to identify if the
+  /// current destination is changed, and in turn, notifies its listeners when this
   /// happens.
   ///
   final NavigationScheme navigationScheme;

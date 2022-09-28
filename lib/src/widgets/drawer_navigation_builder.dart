@@ -57,8 +57,7 @@ class DrawerNavigationBuilder implements NavigatorBuilder {
       items: drawerItems,
       header: header,
       parameters: parameters,
-      onSelectItem: (index) =>
-          navigator.goTo(navigator.destinations[index]),
+      onSelectItem: (index) => navigator.goTo(navigator.destinations[index]),
       selectedIndex: navigator.destinations.indexOf(currentDestination),
     );
   }
@@ -109,19 +108,22 @@ class _DrawerWrapperState extends State<_DrawerWrapper> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  if (widget.header != null)
-                    widget.header!,
-                  ...widget.items.map((item) => ListTile(
-                    leading: item.leading,
-                    title: Text(item.title ?? ''),
-                    selected: widget.selectedIndex == widget.items.indexOf(item),
-                    selectedColor: widget.parameters?.selectedColor,
-                    selectedTileColor: widget.parameters?.selectedTileColor,
-                    onTap: () => widget.onSelectItem(widget.items.indexOf(item)),
-                  )).toList(),
+                  if (widget.header != null) widget.header!,
+                  ...widget.items
+                      .map((item) => ListTile(
+                            leading: item.leading,
+                            title: Text(item.title ?? ''),
+                            selected: widget.selectedIndex ==
+                                widget.items.indexOf(item),
+                            selectedColor: widget.parameters?.selectedColor,
+                            selectedTileColor:
+                                widget.parameters?.selectedTileColor,
+                            onTap: () =>
+                                widget.onSelectItem(widget.items.indexOf(item)),
+                          ))
+                      .toList(),
                 ],
-              )
-          ),
+              )),
           Expanded(
             child: Scaffold(
               body: widget.content,

@@ -1,4 +1,4 @@
-## \[0.1.2\] - *2022-09-28*
+## \[0.1.3\] - *2022-09-28*
 
 - Added `DrawerNavigationBuilder` and `TabsNavigationBuilder`
 - Bug fixes

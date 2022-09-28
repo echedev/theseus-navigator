@@ -60,7 +60,8 @@ class TabsNavigationBuilder implements NavigatorBuilder {
       tabs: tabs,
       // TODO: This implementation doesn't respect the possible parameters of destinations (excluding current destination).
       // How this could be resolved?
-      tabContentBuilder: (tabIndex) => navigator.destinations[tabIndex].build(context),
+      tabContentBuilder: (tabIndex) =>
+          navigator.destinations[tabIndex].build(context),
       parameters: parameters,
       onTabSelected: (index) => navigator.goTo(navigator.destinations[index]),
       selectedIndex: navigator.destinations.indexOf(currentDestination),
@@ -93,11 +94,11 @@ class _TabsNavigationWrapper extends StatefulWidget {
   final bool wrapInScaffold;
 
   @override
-  _TabsNavigationWrapperState createState() =>
-      _TabsNavigationWrapperState();
+  _TabsNavigationWrapperState createState() => _TabsNavigationWrapperState();
 }
 
-class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper> with TickerProviderStateMixin {
+class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper>
+    with TickerProviderStateMixin {
   late final TabController _controller;
 
   @override
@@ -124,7 +125,8 @@ class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper> with Tic
       isScrollable: widget.parameters.isScrollable,
       padding: widget.parameters.padding,
       indicatorColor: widget.parameters.indicatorColor,
-      automaticIndicatorColorAdjustment: widget.parameters.automaticIndicatorColorAdjustment,
+      automaticIndicatorColorAdjustment:
+          widget.parameters.automaticIndicatorColorAdjustment,
       indicatorWeight: widget.parameters.indicatorWeight,
       indicatorPadding: widget.parameters.indicatorPadding,
       indicator: widget.parameters.indicator,
@@ -144,7 +146,8 @@ class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper> with Tic
     );
     final tabBarView = TabBarView(
       controller: _controller,
-      children: List<Widget>.generate(widget.tabs.length, (index) => widget.tabContentBuilder(index)),
+      children: List<Widget>.generate(
+          widget.tabs.length, (index) => widget.tabContentBuilder(index)),
     );
     Widget result = Column(
       children: [

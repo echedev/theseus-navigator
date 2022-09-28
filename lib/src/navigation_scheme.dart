@@ -152,7 +152,7 @@ class NavigationScheme with ChangeNotifier {
   }
 
   void _initializeNavigator(TheseusNavigator navigator) {
-    listener() => _onNavigatorStateChanged(navigator);
+    void listener() => _onNavigatorStateChanged(navigator);
 
     // Add a listener of the navigator
     _navigatorListeners[navigator] = listener;

@@ -24,7 +24,7 @@ import 'index.dart';
 class BottomNavigationBuilder implements NavigatorBuilder {
   /// Creates a [BottomNavigationBuilder] instance.
   ///
-  BottomNavigationBuilder({
+  const BottomNavigationBuilder({
     required this.bottomNavigationItems,
     this.parameters = const BottomNavigationBarParameters(),
   });
@@ -40,7 +40,7 @@ class BottomNavigationBuilder implements NavigatorBuilder {
   /// A set of [BottomNavigationBar] parameters.
   ///
   /// Contains all supported parameters to customize [BottomNavigationBar] widget.
-  /// Doesn't include 'items', 'onTap' and 'currentIndex', which are manages by
+  /// Doesn't include 'items', 'onTap' and 'currentIndex', which are managed by
   /// [BottomNavigationBuilder].
   ///
   final BottomNavigationBarParameters parameters;

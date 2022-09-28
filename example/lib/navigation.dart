@@ -62,22 +62,7 @@ final mainNavigator = TheseusNavigator(
     MainDestinations.catalog,
     MainDestinations.settings,
   ],
-  builder: BottomNavigationBuilder(
-    bottomNavigationItems: const <BottomNavigationBarItem>[
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home_rounded),
-        label: 'Home',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.list_rounded),
-        label: 'Catalog',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.more_horiz_rounded),
-        label: 'Settings',
-      ),
-    ],
-  ),
+  builder: MainNavigatorBuilder(),
   tag: 'Main',
 );
 
@@ -101,6 +86,94 @@ class MainDestinations {
       Redirections.login,
     ],
   );
+}
+
+class MainNavigatorBuilder implements NavigatorBuilder {
+  @override
+  Widget build(BuildContext context, TheseusNavigator navigator) {
+    return _MainNavigatorWrapper(navigator: navigator);
+  }
+}
+
+class _MainNavigatorWrapper extends StatelessWidget {
+  const _MainNavigatorWrapper({
+    Key? key,
+    required this.navigator,
+  }) : super(key: key);
+
+  final TheseusNavigator navigator;
+
+  static const bottomNavigationBuilder = BottomNavigationBuilder(
+    bottomNavigationItems: <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.list_rounded),
+        label: 'Catalog',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.more_horiz_rounded),
+        label: 'Settings',
+      ),
+    ],
+  );
+
+  static const drawerNavigationBuilder = DrawerNavigationBuilder(
+    drawerItems: <DrawerItem>[
+      DrawerItem(
+        leading: Icon(Icons.home_rounded),
+        title: 'Home',
+      ),
+      DrawerItem(
+        leading: Icon(Icons.list_rounded),
+        title: 'Catalog',
+      ),
+      DrawerItem(
+        leading: Icon(Icons.more_horiz_rounded),
+        title: 'Settings',
+      ),
+    ],
+    parameters: DrawerParameters(
+      selectedColor: Colors.blue,
+    )
+  );
+
+  static const tabsNavigationBuilder = TabsNavigationBuilder(
+    tabs: <Widget>[
+      Tab(
+        icon: Icon(Icons.home_rounded),
+        child: Text('Home'),
+      ),
+      Tab(
+        icon: Icon(Icons.list_rounded),
+        child: Text('Catalog'),
+      ),
+      Tab(
+        icon: Icon(Icons.more_horiz_rounded),
+        child: Text('Settings'),
+      ),
+    ],
+    wrapInScaffold: true,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<TopLevelNavigationType>(
+      valueListenable: topLevelNavigationType,
+      builder: (context, value, child) {
+        switch (value) {
+          case TopLevelNavigationType.bottom:
+            return bottomNavigationBuilder.build(context, navigator);
+          case TopLevelNavigationType.drawer:
+            return drawerNavigationBuilder.build(context, navigator);
+          case TopLevelNavigationType.tabs:
+            return tabsNavigationBuilder.build(context, navigator);
+        }
+      },
+    );
+  }
 }
 
 class Redirections {

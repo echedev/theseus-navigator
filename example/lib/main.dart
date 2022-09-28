@@ -32,6 +32,10 @@ class MyApp extends StatelessWidget {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Colors.blue,
         ),
+        tabBarTheme: const TabBarTheme(
+          labelColor: Colors.blue,
+          unselectedLabelColor: Colors.blueGrey,
+        )
       ),
       routerDelegate: TheseusRouterDelegate(
         navigationScheme: navigationScheme,

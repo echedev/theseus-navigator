@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.1.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.1.2-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -256,7 +256,7 @@ final mainNavigator = TheseusNavigator(
 
 TheseusNavigator allows you to wrap destinations with your custom widget.
 
-This is required when you would like to navigate destinations through the `BottomNavigationBar`, `TabBar` or `Drawer`.
+This is required when you would like to navigate destinations through the `BottomNavigationBar`, `TabBar`, `Drawer` or some other way.
 
 To do this, you have to implement the `NavigatorBuilder` class:
 
@@ -271,7 +271,7 @@ class CustomNavigatorBuilder implements NavigatorBuilder {
   }
 }
 ```
-Then you should specify this navigator `builder`:
+Then you should specify the `builder` in the navigator instance:
 
 ```dart
 final mainNavigator = TheseusNavigator(
@@ -285,11 +285,14 @@ final mainNavigator = TheseusNavigator(
 );
 ```
 
-###### Bottom navigation
+###### Bottom navigation, drawer and tab bar
 
-The package includes `BottomNavigationBuilder` which is an implementation of the `NavigatorBuilder` that uses Flutter's `Scaffold` with `BottomNavigationBar` to wrap the current destination content and to switch between destinations.
+The package includes implementations of `NavigatorBuilder` for most common cases:  
+- `BottomNavigationBuilder` - uses Flutter's `Scaffold` with `BottomNavigationBar` to wrap the current destination content and to switch destinations.
+- `DrawerNavigationBuilder` - allows to navigate using `Drawer` widget.
+- `TabsNavigationBuilder` - uses `TabBar` to navigate destinations
 
-Adding the bottom navigation to your app is simple as following:
+fore example, adding the bottom navigation to your app is simple as following:
 
 ```dart
 final navigationScheme = NavigationScheme(
@@ -320,6 +323,8 @@ final navigationScheme = NavigationScheme(
 );
 ```
 The styling of the `BottomNavigationBar` widget is supported by using optional `parameters` argument of the `BottomNavigationBuilder`.
+
+You can use `DrawerNavigationBuilder` and `TabsNavigationBuilder` the same way.
 
 #### Upward Navigation
 
@@ -403,7 +408,6 @@ For more detailed code samples, please see the [example project](./example) whic
 
 ###### Coming Updates
 - Handling return values from destinations
-- Navigator builders for `TabBar` and `Drawer`
 - Configurations for modal dialog and bottom sheet destinations
 - Test coverage
 

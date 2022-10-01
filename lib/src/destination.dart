@@ -7,7 +7,7 @@ import 'redirection.dart';
 /// A class that contains all required information about navigation target.
 ///
 /// The destination is identified by its [path]. Optionally, [parameters] can be provided.
-/// Either content [builder] or child [navigator] must be provided for the destination.
+/// Either content [builder] or nested [navigator] must be provided for the destination.
 ///
 /// The navigator uses a destination's [configuration] to apply a certain logic of
 /// updating the navigation stack and transition animations.
@@ -47,9 +47,9 @@ class Destination<T extends DestinationParameters> {
                 (builder != null && navigator == null),
             'If the "navigator" is provided, the "builder" must be null, or vice versa.'),
         assert(
-            ((T == DefaultDestinationParameters) &&
+            ((T == DestinationParameters) &&
                     (parser is DefaultDestinationParser)) ||
-                ((T != DefaultDestinationParameters) &&
+                ((T != DestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
     this.configuration = configuration ?? DestinationConfiguration.material();
@@ -95,7 +95,7 @@ class Destination<T extends DestinationParameters> {
   /// A child navigator.
   ///
   /// Allows to implement nested navigation. When specified, the parent navigator
-  /// use this child navigator to build content for this destination.
+  /// uses this child navigator to build content for this destination.
   ///
   final TheseusNavigator? navigator;
 
@@ -119,7 +119,7 @@ class Destination<T extends DestinationParameters> {
 
   /// An optional label to identify a destination.
   ///
-  /// It will be the same for all destinations of some kind, regardless actual
+  /// It will be the same for all destinations of the kind, regardless actual
   /// values of destination parameters.
   ///
   final String? tag;
@@ -342,15 +342,14 @@ enum DestinationTransition {
   none,
 }
 
-/// An interface for destination parameters.
+/// Base destination parameters.
 ///
 /// Extend this abstract class to define your custom parameters class.
 /// Use [Destination<YourCustomDestinationParameters>()] to make a destination
 /// aware of your custom parameters.
 ///
-/// For custom parameters you also have to implement [toDestinationParameters()]
-/// ans [toMap()] methods in the [YouCustomDestinationParser<YourCustomDestinationParameters>]
-/// like this:
+/// For custom parameters you also must implement [YouCustomDestinationParser<YourCustomDestinationParameters>]
+/// with [toDestinationParameters()] ans [toMap()] methods, like this:
 /// ```
 /// class YourCustomDestinationParser
 ///     extends DestinationParser<YourCustomDestinationParameters> {
@@ -372,28 +371,14 @@ enum DestinationTransition {
 /// See also:
 /// - [DestinationParser]
 ///
-abstract class DestinationParameters {
-  /// Creates destination parameters.
+class DestinationParameters {
+  /// Creates a [DestinationParameters] instance.
   ///
-  const DestinationParameters();
-}
+  const DestinationParameters([this.map = const <String, String>{}]);
 
-/// Default destination parameters implementation.
-///
-/// Uses Map<String, String> to store parameter values.
-///
-class DefaultDestinationParameters extends DestinationParameters {
-  /// Creates default destination parameters.
-  ///
-  DefaultDestinationParameters([this.map = const <String, String>{}]);
-
-  /// Contains parameter values.
+  /// Contains parameter values parsed from the destination's URI.
   ///
   /// The parameter name is a [MapEntry.key], and the value is [MapEntry.value].
   ///
   final Map<String, String> map;
 }
-
-/// A shorten for destination without custom type parameters.
-///
-typedef DestinationLight = Destination<DefaultDestinationParameters>;

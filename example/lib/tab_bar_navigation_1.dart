@@ -9,20 +9,20 @@ class App extends StatelessWidget {
   final _navigationScheme = NavigationScheme(
     navigator: TheseusNavigator(
       destinations: [
-        Destination<DefaultDestinationParameters>(
+        Destination(
           path: '/todo',
           isHome: true,
           builder: (context, parameters) => TaskListScreen(
               tasks: _tasks.where((element) => !element.isCompleted).toList()),
           tag: 'To do',
         ),
-        Destination<DefaultDestinationParameters>(
+        Destination(
           path: '/completed',
           builder: (context, parameters) => TaskListScreen(
               tasks: _tasks.where((element) => element.isCompleted).toList()),
           tag: 'Completed',
         ),
-        Destination<DefaultDestinationParameters>(
+        Destination(
           path: '/all',
           builder: (context, parameters) => const TaskListScreen(tasks: _tasks),
           tag: 'All',

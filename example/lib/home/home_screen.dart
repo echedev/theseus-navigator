@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                 '''When trying to navigate to nonexistent destination, user will be redirected to the error screen if the "errorDestination" is specified.''',
             child: ElevatedButton(
                 onPressed: () async {
-                  navigationScheme.goTo(DestinationLight(
+                  navigationScheme.goTo(Destination(
                     path: '/nonexistent',
                     builder: (context, parameters) => const HomeScreen(),
                   ));

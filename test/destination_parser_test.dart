@@ -63,7 +63,7 @@ void main() {
     test('1 path parameter', () async {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.withParameters(
-          DefaultDestinationParameters(<String, String>{'id': '1'}));
+          DestinationParameters(<String, String>{'id': '1'}));
       expect(
           await parser.parseParameters('/categories', destination1) ==
               destination1,
@@ -80,7 +80,7 @@ void main() {
     test('Query parameters', () async {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.withParameters(
-          DefaultDestinationParameters(<String, String>{'q': 'query'}));
+          DestinationParameters(<String, String>{'q': 'query'}));
       expect(
           await parser.parseParameters('/categories?q=query', destination1) ==
               destination2,
@@ -105,11 +105,11 @@ void main() {
     });
     test('1 path parameter with value', () {
       final destination1 = TestDestinations.categories.withParameters(
-          DefaultDestinationParameters(<String, String>{'id': '1'}));
+          DestinationParameters(<String, String>{'id': '1'}));
       final destination2 = destination1.withParameters(
-          DefaultDestinationParameters(<String, String>{'q': 'query'}));
+          DestinationParameters(<String, String>{'q': 'query'}));
       final destination3 = destination1.withParameters(
-          DefaultDestinationParameters(
+          DestinationParameters(
               <String, String>{'q': 'query', 'id': '2'}));
       expect(parser.uri(destination1), '/categories/1');
       expect(parser.uri(destination2), '/categories?q=query');
@@ -117,15 +117,15 @@ void main() {
     });
     test('2 path parameters with values', () {
       final destination1 = TestDestinations.categoriesBrands.withParameters(
-          DefaultDestinationParameters(
+          DestinationParameters(
               <String, String>{'categoryId': '1', 'brandId': '2'}));
       expect(parser.uri(destination1), '/categories/1/brands/2');
     });
     test('Query parameters', () {
       final destination1 = TestDestinations.categories.withParameters(
-          DefaultDestinationParameters(<String, String>{'q': 'query'}));
+          DestinationParameters(<String, String>{'q': 'query'}));
       final destination2 = destination1.withParameters(
-          DefaultDestinationParameters(
+          DestinationParameters(
               <String, String>{'q': 'query', 'sort': 'name'}));
       expect(parser.uri(destination1), '/categories?q=query');
       expect(parser.uri(destination2), '/categories?q=query&sort=name');

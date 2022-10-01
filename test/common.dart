@@ -7,32 +7,32 @@ class TestDestinations {
           BuildContext context, T? parameters) =>
       Container();
 
-  static final home = DestinationLight(
+  static final home = Destination(
     path: '/home',
     builder: dummyBuilder,
     isHome: true,
   );
-  static final about = DestinationLight(
+  static final about = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
   );
-  static final catalog = DestinationLight(
+  static final catalog = Destination(
     path: '/catalog',
     navigator: TestNavigators.catalog,
   );
-  static final categories = DestinationLight(
+  static final categories = Destination(
     path: '/categories/{id}',
     builder: dummyBuilder,
   );
-  static final categoriesBrands = DestinationLight(
+  static final categoriesBrands = Destination(
     path: '/categories/{categoryId}/brands/{brandId}',
     builder: dummyBuilder,
   );
-  static final login = DestinationLight(
+  static final login = Destination(
     path: '/login',
     builder: dummyBuilder,
   );
-  static final error = DestinationLight(
+  static final error = Destination(
     path: '/error',
     builder: dummyBuilder,
   );

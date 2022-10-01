@@ -20,16 +20,16 @@ final navigationScheme = NavigationScheme(
 );
 
 class PrimaryDestinations {
-  static final login = DestinationLight(
+  static final login = Destination(
     path: '/auth',
     builder: (context, parameters) => const LoginScreen(),
   );
-  static final main = DestinationLight(
+  static final main = Destination(
     path: '/',
     isHome: true,
     navigator: mainNavigator,
   );
-  static final customTransition = DestinationLight(
+  static final customTransition = Destination(
     path: '/customTransition',
     builder: (context, parameters) => const CustomTransitionScreen(),
     configuration: DestinationConfiguration(
@@ -50,7 +50,7 @@ class PrimaryDestinations {
           );
         }),
   );
-  static final error = DestinationLight(
+  static final error = Destination(
     path: '/error',
     builder: (context, parameters) => const ErrorScreen(),
   );
@@ -67,17 +67,17 @@ final mainNavigator = TheseusNavigator(
 );
 
 class MainDestinations {
-  static final home = DestinationLight(
+  static final home = Destination(
     path: '/home',
     navigator: homeNavigator,
     configuration: DestinationConfiguration.quiet(),
   );
-  static final catalog = DestinationLight(
+  static final catalog = Destination(
     path: '/catalog',
     navigator: catalogNavigator,
     configuration: DestinationConfiguration.quiet(),
   );
-  static final settings = DestinationLight(
+  static final settings = Destination(
     path: '/settings',
     builder: (context, parameters) => const SettingsScreen(),
     configuration: DestinationConfiguration.quiet(),

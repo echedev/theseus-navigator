@@ -39,7 +39,7 @@ class TestDestinations {
 }
 
 class TestNavigators {
-  static final catalog = TheseusNavigator(
+  static final catalog = NavigationController(
     destinations: [
       TestDestinations.categories,
       TestDestinations.categoriesBrands,

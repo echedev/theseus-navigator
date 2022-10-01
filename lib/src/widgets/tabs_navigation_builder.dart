@@ -21,7 +21,7 @@ import 'index.dart';
 /// See also:
 /// - [NavigatorBuilder]
 /// - [TabBarParameters]
-/// - [TheseusNavigator]
+/// - [NavigationController]
 /// - [TabBar]
 ///
 class TabsNavigationBuilder implements NavigatorBuilder {
@@ -70,7 +70,7 @@ class TabsNavigationBuilder implements NavigatorBuilder {
   final bool wrapInScaffold;
 
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     final currentDestination = navigator.currentDestination;
     return _TabsNavigationWrapper(
       tabs: tabs,

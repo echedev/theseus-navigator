@@ -5,10 +5,10 @@ import 'package:theseus_navigator/theseus_navigator.dart';
 import 'common.dart';
 
 void main() {
-  late TheseusNavigator navigator;
+  late NavigationController navigator;
   group('Theseus Navigator', () {
     setUp(() {
-      navigator = TheseusNavigator(
+      navigator = NavigationController(
         destinations: [
           TestDestinations.home,
           TestDestinations.catalog,
@@ -21,7 +21,7 @@ void main() {
         expect(navigator.currentDestination, TestDestinations.home);
       });
       test('Custom initial destination', () {
-        navigator = TheseusNavigator(
+        navigator = NavigationController(
           destinations: [
             TestDestinations.home,
             TestDestinations.catalog,

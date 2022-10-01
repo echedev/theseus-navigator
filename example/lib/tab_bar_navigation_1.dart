@@ -7,7 +7,7 @@ class App extends StatelessWidget {
   App({Key? key}) : super(key: key);
 
   final _navigationScheme = NavigationScheme(
-    navigator: TheseusNavigator(
+    navigator: NavigationController(
       destinations: [
         Destination(
           path: '/todo',

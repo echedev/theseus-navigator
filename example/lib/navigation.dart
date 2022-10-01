@@ -56,7 +56,7 @@ class PrimaryDestinations {
   );
 }
 
-final mainNavigator = TheseusNavigator(
+final mainNavigator = NavigationController(
   destinations: [
     MainDestinations.home,
     MainDestinations.catalog,
@@ -89,7 +89,7 @@ class MainDestinations {
 
 class MainNavigatorBuilder implements NavigatorBuilder {
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     return _MainNavigatorWrapper(navigator: navigator);
   }
 }
@@ -100,7 +100,7 @@ class _MainNavigatorWrapper extends StatelessWidget {
     required this.navigator,
   }) : super(key: key);
 
-  final TheseusNavigator navigator;
+  final NavigationController navigator;
 
   static const bottomNavigationBuilder = BottomNavigationBuilder(
     bottomNavigationItems: <BottomNavigationBarItem>[

@@ -97,7 +97,7 @@ class Destination<T extends DestinationParameters> {
   /// Allows to implement nested navigation. When specified, the parent navigator
   /// uses this child navigator to build content for this destination.
   ///
-  final TheseusNavigator? navigator;
+  final NavigationController? navigator;
 
   /// Optional parameters, that are used to build content.
   ///
@@ -126,7 +126,7 @@ class Destination<T extends DestinationParameters> {
 
   /// Function that returns an underlay destination.
   ///
-  /// The TheseusNavigator use this method to create the underlay destination for the
+  /// A [NavigationController] uses this method to create the underlay destination for the
   /// current one, using its parameters.
   ///
   final Destination? Function(Destination<T> destination)?

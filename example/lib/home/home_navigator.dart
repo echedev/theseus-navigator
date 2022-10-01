@@ -2,7 +2,7 @@ import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'home_screen.dart';
 
-final homeNavigator = TheseusNavigator(
+final homeNavigator = NavigationController(
   destinations: [
     HomeDestinations.home1,
     HomeDestinations.home2,

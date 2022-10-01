@@ -17,7 +17,7 @@ import 'index.dart';
 /// See also:
 /// - [NavigatorBuilder]
 /// - [DrawerParameters]
-/// - [TheseusNavigator]
+/// - [NavigationController]
 /// - [Drawer]
 ///
 class DrawerNavigationBuilder implements NavigatorBuilder {
@@ -49,7 +49,7 @@ class DrawerNavigationBuilder implements NavigatorBuilder {
   final DrawerParameters? parameters;
 
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     final currentDestination = navigator.currentDestination;
     final content = currentDestination.build(context);
     return _DrawerWrapper(

@@ -12,7 +12,7 @@ import 'utils/utils.dart';
 ///
 /// See also:
 /// - [NavigationScheme]
-/// - [TheseusNavigator]
+/// - [NavigationController]
 /// - [Destination]
 ///
 class TheseusRouterDelegate extends RouterDelegate<Destination>

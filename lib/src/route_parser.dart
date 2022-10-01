@@ -14,7 +14,7 @@ import 'utils/utils.dart';
 ///
 /// See also:
 /// - [NavigationScheme]
-/// - [TheseusNavigator]
+/// - [NavigationController]
 /// - [Destination]
 ///
 class TheseusRouteInformationParser

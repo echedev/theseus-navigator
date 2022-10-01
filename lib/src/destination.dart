@@ -38,6 +38,7 @@ class Destination<T extends DestinationParameters> {
     this.parameters,
     this.parser = const DefaultDestinationParser(),
     this.redirections = const <Redirection>[],
+    this.tag,
     this.upwardDestinationBuilder,
   })  : assert(navigator != null || builder != null,
             'Either "builder" or "navigator" must be specified.'),
@@ -61,6 +62,7 @@ class Destination<T extends DestinationParameters> {
     required this.navigator,
     this.isHome = false,
     this.redirections = const <Redirection>[],
+    this.tag,
   })  : builder = null,
         configuration = DestinationConfiguration.material(),
         parameters = null,
@@ -114,6 +116,13 @@ class Destination<T extends DestinationParameters> {
   /// if this destination is allowed to navigate to.
   ///
   final List<Redirection> redirections;
+
+  /// An optional label to identify a destination.
+  ///
+  /// It will be the same for all destinations of some kind, regardless actual
+  /// values of destination parameters.
+  ///
+  final String? tag;
 
   /// Function that returns an underlay destination.
   ///
@@ -188,6 +197,7 @@ class Destination<T extends DestinationParameters> {
         configuration: configuration ?? this.configuration,
         parameters: parameters ?? this.parameters,
         parser: parser,
+        tag: tag,
         upwardDestinationBuilder: upwardDestinationBuilder,
       );
 

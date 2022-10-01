@@ -69,7 +69,6 @@ final mainNavigator = TheseusNavigator(
 class MainDestinations {
   static final home = DestinationLight(
     path: '/home',
-    // builder: (context, parameters) => const HomeScreen(),
     navigator: homeNavigator,
     configuration: DestinationConfiguration.quiet(),
   );
@@ -121,24 +120,23 @@ class _MainNavigatorWrapper extends StatelessWidget {
   );
 
   static const drawerNavigationBuilder = DrawerNavigationBuilder(
-    drawerItems: <DrawerItem>[
-      DrawerItem(
-        leading: Icon(Icons.home_rounded),
-        title: 'Home',
-      ),
-      DrawerItem(
-        leading: Icon(Icons.list_rounded),
-        title: 'Catalog',
-      ),
-      DrawerItem(
-        leading: Icon(Icons.more_horiz_rounded),
-        title: 'Settings',
-      ),
-    ],
-    parameters: DrawerParameters(
-      selectedColor: Colors.blue,
-    )
-  );
+      drawerItems: <DrawerItem>[
+        DrawerItem(
+          leading: Icon(Icons.home_rounded),
+          title: 'Home',
+        ),
+        DrawerItem(
+          leading: Icon(Icons.list_rounded),
+          title: 'Catalog',
+        ),
+        DrawerItem(
+          leading: Icon(Icons.more_horiz_rounded),
+          title: 'Settings',
+        ),
+      ],
+      parameters: DrawerParameters(
+        selectedColor: Colors.blue,
+      ));
 
   static const tabsNavigationBuilder = TabsNavigationBuilder(
     tabs: <Widget>[

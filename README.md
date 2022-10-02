@@ -1,14 +1,14 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.1.3-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.2.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-63%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
 - Declarative navigation scheme
 - Strongly-typed parameters
 - Deep links
-- Nested and feature navigation
+- Nested navigation
 - Redirections
 - Custom transitions
 
@@ -16,7 +16,7 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 
 It provides a simple API, does not require code generation and uses Flutter's Router / Navigator 2.0 under the hood.
 
-*Note: The package is still in progress. Any feedback, like missing features, better API suggestions, bug reports and other are appreciated.*
+*Note: The package is still in progress, and APIs might change. Any feedback, like missing features, better API suggestions, bug reports and other is appreciated.*
 
 You can check all supported features in the [Theseus Navigator Demo app](https://theseus-navigator.eche.dev/).
 
@@ -29,23 +29,23 @@ It might look like this:
 
 **Destinations** defines all possible UI endpoints in your app that users could reach using navigation.
 
-**TheseusNavigator** is responsible for managing the app navigation state within the scope of its destinations. It performs navigation actions, like `goTo(destination)` and `goBack()`, and builds the navigation stack.
+**NavigationController** is responsible for managing the app navigation state within the scope of its destinations. It performs navigation actions, like `goTo(destination)` and `goBack()`, and builds the navigation stack.
 
-The **NavigationScheme** is the entry point to navigation and orchestrates all destinations and navigators. It has a root navigator that manages top-level destinations, and optionally additional navigators to support nested and/or feature navigation.
+The **NavigationScheme** is an entry point to navigation, it orchestrates all destinations and navigators. It has a root navigator that manages top-level destinations, and, optionally, additional navigators to support nested navigation.
 
 Here is an example of usage:
 - Define destinations and navigation scheme
 ```dart
-final homeDestination = DestinationLight(
+final homeDestination = Destination(
       path: 'home',
       isHome: true,
       builder: (context, parameters) => HomeScreen(),
     );
-final catalogDestination = DestinationLight(
+final catalogDestination = Destination(
       path: 'catalog',
       builder: (context, parameters) => CatalogScreen(),
     );
-final settingsDestination = DestinationLight(
+final settingsDestination = Destination(
       path: 'settings',
       builder: (context, parameters) => SettingsScreen(),
     ); 
@@ -73,41 +73,26 @@ Widget build(BuildContext context) {
 onTap: () => navigationScheme.goTo(ordersDestination)
 ```
 ## Destination
-The `Destination` is a model of UI endpoint that users can navigate in your app.
+The `Destination` is a model of UI endpoint that user can navigate in your app.
 
 Generally, you define a destination like this:
 ```dart
-final homeDestination = Destination<HomeDestinationParameters>(
+final homeDestination = Destination(
   path: 'home',
   builder: (context, parameters) => HomeScreen(),
 );
 ```
-Here the `HomeDestinationParameters` is your custom parameter class, which must extend `DestinationParameters`. In this case you have to provide your custom destination `parser`.
 
-If you don't need typed parameters or don't care parameters at all for specific destination, you can use for shorten:
+If the destination is ***final***, which means that it directly display some content (don't be confused with 'final' Dart keyword), then you have to provide a `builder` function that returns a content widget.
+
+Otherwise you have to provide a `navigator`, that is a `NavigationController` with its own destinations, which could be either final and build the content or contain another nested navigator.
 ```dart
-final homeDestination = DestinationLight(
-  //...
-);
-
-// This is the same as
-
-final homeDestination = Destination<DefaultDestinationParameters>(
-  //...
-);
-
-
-```
-If the destination is *final*, which means that it directly display some content (don't be confused with 'final' Dart keyword), then you have to provide a `builder` function that returns a content widget.
-
-Otherwise you should provide a `navigator` with its own destinations, that would build the content or contain another nested navigator.
-```dart
-final mainDestination = Destination<DefaultDestinationParameters>(
+final mainDestination = Destination(
   path: '/',
   navigator: mainNavigator,
 );
 
-final mainNavigator = TheseusNavigator(
+final mainNavigator = NavigationController(
   destinations:[
     homeDestination,
     catalogDestination,
@@ -119,7 +104,7 @@ final mainNavigator = TheseusNavigator(
 #### Path
 The destination is defined by its `uri`, which is built from the destination `path` and `parameters`.
 
-The path might contains placeholders for path parameters. The last path parameter is optional.
+The path might contains placeholders for path parameters. The last path parameter is optional. Arbitrary query parameters are also supported.
 
 Example of destination path:
 
@@ -132,18 +117,18 @@ The following specific URIs will match that destination path:
 `/categories?q=someQuery`  
 `/categories/1?q=someQuery`
 
- Two last URIs contains a query parameter  as well, but still match the specified destination path.
+Two last URIs contains a query parameter  as well, and still match the specified destination path.
 
 #### Parameters
 
 ###### Default parameters handling
 
-By default, destination parameters, both path and query, are extracted from the destination's URI into the `DefaultDestinationParameters` class. It stores them as `Map<String, String>`.
+By default, destination parameters, both path and query, are extracted from the destination's URI into the `DestinationParameters` class. It stores them as `Map<String, String>`.
 
 In this case you don't need specify a destination parser, the `DefaultDestinationParser` implementation is used implicitly.
 
  ```dart
-final categoriesDestination = DestinationLight(
+final categoriesDestination = Destination(
     path: 'categories',
     builder: (context, params) => CategoryListScreen(
         parentCategoryId: params?['parentId'],
@@ -161,7 +146,7 @@ To use destination parameters of a certain type, you have to do the following:
 class CategoriesDestinationParameters extends DestinationParameters {
   CategoriesDestinationParameters({
     this.parentCategory,
-  });
+  }) : super();
 
   final Category? parentCategory;
 }
@@ -222,39 +207,39 @@ There are two pre-defined factory methods:
 `quite()` - replace the current destination with a new one without any animations.
 
 ```dart
-final catalogDestination = DestinationLight(
+final catalogDestination = Destination(
   path: 'catalog',
   builder: (context, parameters) => CatalogScreen(),
   configuration: const DestinationConfiguration.quiet(),
 );
 ```
 
-## TheseusNavigator
+## NavigationController
 
-The `TheseusNavigator` is a core component of the package, which manages the state of navigation.
+The `NavigationController` is a core component of the package, which manages the state of navigation.
 
 It maintains the navigation stack of destinations and offers methods to update it, like `goTo(destination)` and `goBack()`.
 
-TheseusNavigator is a `ChangeNotifier`, and notifies the `NavigationScheme` on any update of navigation stack.
+Navigation controller is a `ChangeNotifier`, and notifies the `NavigationScheme` on any update of navigation stack.
 
 You have an access to the whole navigation `stack`, and to the top most destination in the stack using `currentDestination` property.
 
 This example shows creation of the navigator that would wrap destinations with standard Flutter's `Navigator` widget:
 ```dart
-final mainNavigator = TheseusNavigator(
+final mainNavigator = NavigationController(
   destinations: [
     homeDestination,
     catalogDestination,
     settingsDestination,
   ],
-  debugLabel = 'Main',
+  tag = 'Main',
 );
 ```
-`debugLabel` attribute value is used in `GlobalKey` for the `Navigator` widget, and also allows to find logs related to this TheseusNavigator instance.
+`tag` attribute value is used in `GlobalKey` for the `Navigator` widget, and also allows to find logs related to this NavigationController instance.
 
 #### Navigator Builder
 
-TheseusNavigator allows you to wrap destinations with your custom widget.
+NavigationController allows you to wrap destinations with your custom widget.
 
 This is required when you would like to navigate destinations through the `BottomNavigationBar`, `TabBar`, `Drawer` or some other way.
 
@@ -265,7 +250,7 @@ class CustomNavigatorBuilder implements NavigatorBuilder {
   const CustomNavigatorBuilder();
 
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     // Your implementation of wrapper widget is here.
     // You have an access a navigator's stack and current destination.
   }
@@ -274,7 +259,7 @@ class CustomNavigatorBuilder implements NavigatorBuilder {
 Then you should specify the `builder` in the navigator instance:
 
 ```dart
-final mainNavigator = TheseusNavigator(
+final mainNavigator = NavigationController(
   destinations: [
     homeDestination,
     catalogDestination,
@@ -285,7 +270,7 @@ final mainNavigator = TheseusNavigator(
 );
 ```
 
-###### Bottom navigation, drawer and tab bar
+###### Navigation via Bottom navigation bar, Drawer and Tab bar
 
 The package includes implementations of `NavigatorBuilder` for most common cases:  
 - `BottomNavigationBuilder` - uses Flutter's `Scaffold` with `BottomNavigationBar` to wrap the current destination content and to switch destinations.
@@ -296,7 +281,7 @@ fore example, adding the bottom navigation to your app is simple as following:
 
 ```dart
 final navigationScheme = NavigationScheme(
-  navigator: TheseusNavigator(
+  navigator: NavigationController(
     destinations: [
       homeDestination,
       catalogDestination,
@@ -326,13 +311,13 @@ The styling of the `BottomNavigationBar` widget is supported by using optional `
 
 You can use `DrawerNavigationBuilder` and `TabsNavigationBuilder` the same way.
 
-#### Upward Navigation
+#### Upward navigation
 
 Sometimes, on reverse navigation from a destination that user accessed bypassing underlay destinations, we need to restore a missed destination hierarchy.
 
 For example, user open an app by a deep link that leads to a category screen somewhere in the categories hierarchy. On navigating back from this screen we would like to show the upper level category screen, and so on until the root of categories.
 
-TheseusNavigator support this behavior, when you define `upwardDestinationBuilder` parameter of destination.
+The package support this behavior, when you define `upwardDestinationBuilder` parameter of destination.
 
 It might look like this:
 ```dart
@@ -355,9 +340,10 @@ final categoriesDestination = Destination<CategoryListParameters>(
 
 ## Deep-links
 
-When a destination is requested by a platform, the following is happened for each navigator in hierarchy from the current destination up to the root:
+When a destination is requested by a platform, the following is happened for each navigator in the hierarchy from the current destination up to the root:
 
 - Current destination is updated according to requested deep-link destination.
+
 - If the `upwardDestinationBuilder` parameter is provided for the current destination, the navigator's stack is cleared before adding new destination. Otherwise the current destination is pushed to existing stack.
 
 ## Redirections
@@ -368,7 +354,7 @@ The basic example is that some screen should be shown only for signed in users.
 
 The package provides `Redirection` class to support this behavior. You can specify a list of redirections for destinations that should be validated before navigation.
 ```dart
-final settingsDestination = DestinationLight(
+final settingsDestination = Destination(
       path: 'settings',
       builder: (context, parameters) => SettingsScreen(),
       redirections: [
@@ -390,7 +376,7 @@ final navigationScheme = NavigationScheme(
   destinations: [
     //...
   ],
-  errorDestination: DestinationLight(
+  errorDestination: Destination(
     path: '/error',
     builder: (context, parameters) => ErrorScreen(),
   )

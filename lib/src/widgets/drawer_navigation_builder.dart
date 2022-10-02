@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../navigator.dart';
+import '../navigation_controller.dart';
 import 'index.dart';
 
 /// A [NavigatorBuilder] that allows to switch between destinations using

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'destination.dart';
-import 'navigator.dart';
+import 'navigation_controller.dart';
 import 'navigation_scheme.dart';
 import 'utils/utils.dart';
 

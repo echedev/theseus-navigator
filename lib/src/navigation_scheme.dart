@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
-import 'navigator.dart';
+import 'navigation_controller.dart';
 import 'utils/utils.dart';
 
 /// Defines a navigation scheme of the app.

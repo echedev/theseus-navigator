@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../destination.dart';
-import '../navigator.dart';
+import '../navigation_controller.dart';
 
 /// Builds a widget that wraps a content for [NavigationController].
 ///

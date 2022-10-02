@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'destination_parser.dart';
-import 'navigator.dart';
+import 'navigation_controller.dart';
 import 'redirection.dart';
 
 /// A class that contains all required information about navigation target.

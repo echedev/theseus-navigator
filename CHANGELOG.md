@@ -1,3 +1,10 @@
+## \[0.2.0\] - *2022-10-02*
+
+- **BREAKING**: `TheseusNavigator` class renamed to `NavigationController`
+- **BREAKING**: `DestinationLight` and `DefaultDestinationParameters` were removed
+- Adds `tag` property to `Destination` which is another optional way to identify destinations.
+- `TabsNavigationBuilder` is updated to support 'AppBar'
+
 ## \[0.1.3\] - *2022-09-28*
 
 - Added `DrawerNavigationBuilder` and `TabsNavigationBuilder`

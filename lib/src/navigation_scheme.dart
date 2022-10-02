@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
-import 'navigator.dart';
+import 'navigation_controller.dart';
 import 'utils/utils.dart';
 
 /// Defines a navigation scheme of the app.
@@ -20,7 +20,7 @@ import 'utils/utils.dart';
 ///
 /// See also:
 /// - [Destination]
-/// - [TheseusNavigator]
+/// - [NavigationController]
 ///
 class NavigationScheme with ChangeNotifier {
   /// Creates navigation scheme.
@@ -28,7 +28,7 @@ class NavigationScheme with ChangeNotifier {
   NavigationScheme({
     List<Destination> destinations = const <Destination>[],
     this.errorDestination,
-    TheseusNavigator? navigator,
+    NavigationController? navigator,
   })  : assert(
             (destinations.isEmpty ? navigator!.destinations : destinations)
                 .any((destination) => destination.isHome),
@@ -40,7 +40,7 @@ class NavigationScheme with ChangeNotifier {
                     .any((destination) => destination == errorDestination)),
             'When "errorDestination" and custom "navigator" are specified, you must include the "errorDestination" to the "navigator"s destinations') {
     _rootNavigator = navigator ??
-        TheseusNavigator(
+        NavigationController(
           destinations: <Destination>[
             ...destinations,
             if (errorDestination != null) errorDestination!
@@ -64,19 +64,19 @@ class NavigationScheme with ChangeNotifier {
   ///
   Destination get currentDestination => _currentDestination;
 
-  final _navigatorListeners = <TheseusNavigator, VoidCallback?>{};
+  final _navigatorListeners = <NavigationController, VoidCallback?>{};
 
-  final _navigatorMatches = <Destination, TheseusNavigator>{};
+  final _navigatorMatches = <Destination, NavigationController>{};
 
-  final _navigatorOwners = <TheseusNavigator, Destination>{};
+  final _navigatorOwners = <NavigationController, Destination>{};
 
-  late final TheseusNavigator _rootNavigator;
+  late final NavigationController _rootNavigator;
 
   /// The root navigator in the navigation scheme.
   ///
   /// This navigator manages top level destinations.
   ///
-  TheseusNavigator get rootNavigator => _rootNavigator;
+  NavigationController get rootNavigator => _rootNavigator;
 
   Destination? _redirectedFrom;
 
@@ -109,7 +109,7 @@ class NavigationScheme with ChangeNotifier {
   ///
   /// Returns 'null' if no navigator found.
   ///
-  TheseusNavigator? findNavigator(Destination destination) =>
+  NavigationController? findNavigator(Destination destination) =>
       _navigatorMatches[findDestination(destination.path)];
 
   /// Opens the specified [destination].
@@ -151,7 +151,7 @@ class NavigationScheme with ChangeNotifier {
     return await _validateDestination(_currentDestination);
   }
 
-  void _initializeNavigator(TheseusNavigator navigator) {
+  void _initializeNavigator(NavigationController navigator) {
     void listener() => _onNavigatorStateChanged(navigator);
 
     // Add a listener of the navigator
@@ -183,7 +183,7 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
-  void _onNavigatorStateChanged(TheseusNavigator navigator) {
+  void _onNavigatorStateChanged(NavigationController navigator) {
     Log.d(runtimeType,
         'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, gotBack=${navigator.gotBack}, shouldClose=${navigator.shouldClose}');
     if (navigator.hasError) {

@@ -5,8 +5,8 @@ import 'exceptions.dart';
 
 /// A base destination parser.
 ///
-/// [DestinationParser] object is used to parse the destination object from the
-/// give URI string, and to generate the URI for the destination.
+/// [DestinationParser] is used to parse the destination object from the
+/// given URI string, and to generate the URI for the destination.
 ///
 /// When subclassed, the certain type of destination parameters must be provided.
 ///
@@ -203,17 +203,16 @@ abstract class DestinationParser<T extends DestinationParameters> {
 /// A default implementation of [DestinationParser].
 ///
 class DefaultDestinationParser
-    extends DestinationParser<DefaultDestinationParameters> {
+    extends DestinationParser<DestinationParameters> {
   /// Creates default destination parser.
   ///
   const DefaultDestinationParser() : super();
 
   @override
-  Future<DefaultDestinationParameters> toDestinationParameters(
+  Future<DestinationParameters> toDestinationParameters(
           Map<String, String> map) =>
-      SynchronousFuture(DefaultDestinationParameters(map));
+      SynchronousFuture(DestinationParameters(map));
 
   @override
-  Map<String, String> toMap(DefaultDestinationParameters parameters) =>
-      parameters.map;
+  Map<String, String> toMap(DestinationParameters parameters) => parameters.map;
 }

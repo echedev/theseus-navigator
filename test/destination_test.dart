@@ -8,11 +8,11 @@ void main() {
   group('Destination', () {
     test('Equality', () {
       final categoryParametersId1 =
-          DefaultDestinationParameters(<String, String>{'id': '1'});
+          DestinationParameters(<String, String>{'id': '1'});
       final categoryParametersId2 =
-          DefaultDestinationParameters(<String, String>{'id': '2'});
+          DestinationParameters(<String, String>{'id': '2'});
       final categoryParametersId1Q1 =
-          DefaultDestinationParameters(<String, String>{'id': '1', 'q': '1'});
+          DestinationParameters(<String, String>{'id': '1', 'q': '1'});
       expect(TestDestinations.home == TestDestinations.home, true);
       expect(TestDestinations.home == TestDestinations.about, false);
       expect(TestDestinations.categories == TestDestinations.categories, true);
@@ -39,7 +39,7 @@ void main() {
     test('Matching URI', () {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.withParameters(
-          DefaultDestinationParameters(<String, String>{'id': '1'}));
+          DestinationParameters(<String, String>{'id': '1'}));
       expect(destination1.isMatch('/categories/1'), true);
       expect(destination1.isMatch('/categories'), true);
       expect(destination1.isMatch('/home'), false);
@@ -48,9 +48,9 @@ void main() {
     test('Parsing URI', () async {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1.withParameters(
-          DefaultDestinationParameters(<String, String>{'id': '1'}));
+          DestinationParameters(<String, String>{'id': '1'}));
       final destination3 = destination1.withParameters(
-          DefaultDestinationParameters(<String, String>{'id': '2'}));
+          DestinationParameters(<String, String>{'id': '2'}));
       expect(await destination1.parse('/categories/1') == destination2, true);
       expect(await destination1.parse('/categories/1') == destination3, false);
     });

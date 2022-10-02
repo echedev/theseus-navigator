@@ -6,34 +6,34 @@ import 'exceptions.dart';
 import 'utils/utils.dart';
 import 'widgets/index.dart';
 
-/// The [TheseusNavigator] manages the navigation state.
+/// A [NavigationController] manages the navigation state.
 ///
 /// Using the given [destinations] list, it maintains the navigation [stack].
 ///
 /// The navigation stack is updated when a user navigates to specified destination
 /// by calling [goTo] method, or returns back with [goBack] method.
 ///
-/// The navigator provides an access to a [currentDestination], which is one on the
-/// top of the stack.
+/// The navigation controller (navigator) provides an access to a [currentDestination],
+/// which is one on the top of the stack.
 ///
 /// Initially, the navigation stack contains a destination at [initialDestinationIndex]
 /// in the provided list of destinations.
 ///
-/// [TheseusNavigator] implements [ChangeNotifier] and notifies its listener when
+/// [NavigationController] implements [ChangeNotifier] and notifies its listener when
 /// the [currentDestination]/[stack] is changed, or some error was happened.
 ///
 /// See also:
 /// - [Destination]
 /// - [NavigationScheme]
-/// - [TheseusNavigatorError]
+/// - [NavigationControllerError]
 ///
-class TheseusNavigator with ChangeNotifier {
-  /// Creates navigator.
+class NavigationController with ChangeNotifier {
+  /// Creates navigation controller instance.
   ///
   /// Add initial destination to the navigation stack and creates a [GlobalKey] for
   /// a [Navigator] widget.
   ///
-  TheseusNavigator({
+  NavigationController({
     required this.destinations,
     this.builder = const DefaultNavigatorBuilder(),
     this.initialDestinationIndex = 0,
@@ -54,16 +54,20 @@ class TheseusNavigator with ChangeNotifier {
   /// Defaults to [DefaultNavigatorBuilder] that wraps destinations to Flutter's
   /// [Navigator] widget.
   ///
-  /// Also a [BottomNavigationBuilder] implementation is available, which allow
-  /// to switch destination using Flutter's [BottomNavigationBar] widget.
+  /// Also the following implementations are available:
+  /// - [BottomNavigationBuilder] allows to switch destination using Flutter's
+  /// [BottomNavigationBar] widget.
+  /// - [DrawerNavigationBuilder] uses drawer menu to navigate top-level destinations.
+  /// - [TabsNavigationBuilder] uses [TabBar] with [TabBarView] widgets to switch destinations.
   ///
-  /// It can be used when you want, for example, to navigate destinations by
-  /// [TabBar], or [BottomNavigationBar].
+  /// You can implement your custom wrapper by extending the [NavigatorBuilder] class.
   ///
   /// See also:
   /// - [NavigatorBuilder]
   /// - [DefaultNavigatorBuilder]
   /// - [BottomNavigationBuilder]
+  /// - [DrawerNavigationBuilder]
+  /// - [TabsNavigationBuilder]
   ///
   final NavigatorBuilder builder;
 
@@ -92,11 +96,11 @@ class TheseusNavigator with ChangeNotifier {
   ///
   late final GlobalKey<NavigatorState> key;
 
-  TheseusNavigatorError? _error;
+  NavigationControllerError? _error;
 
   /// Error details
   ///
-  TheseusNavigatorError? get error => _error;
+  NavigationControllerError? get error => _error;
 
   /// Whether an error was happened on [goTo()] or [goBack()] actions.
   ///
@@ -177,7 +181,7 @@ class TheseusNavigator with ChangeNotifier {
       notifyListeners();
     } else {
       if (notifyOnError) {
-        _error = TheseusNavigatorError(destination: destination);
+        _error = NavigationControllerError(destination: destination);
         notifyListeners();
         return;
       } else {
@@ -249,9 +253,9 @@ class TheseusNavigator with ChangeNotifier {
 
 /// Contains navigation error details
 ///
-class TheseusNavigatorError {
+class NavigationControllerError {
   /// Creates an error object
-  TheseusNavigatorError({
+  NavigationControllerError({
     this.destination,
   });
 

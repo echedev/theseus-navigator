@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 
 import 'destination_parser.dart';
-import 'navigator.dart';
+import 'navigation_controller.dart';
 import 'redirection.dart';
 
 /// A class that contains all required information about navigation target.
 ///
 /// The destination is identified by its [path]. Optionally, [parameters] can be provided.
-/// Either content [builder] or child [navigator] must be provided for the destination.
+/// Either content [builder] or nested [navigator] must be provided for the destination.
 ///
 /// The navigator uses a destination's [configuration] to apply a certain logic of
 /// updating the navigation stack and transition animations.
@@ -38,6 +38,7 @@ class Destination<T extends DestinationParameters> {
     this.parameters,
     this.parser = const DefaultDestinationParser(),
     this.redirections = const <Redirection>[],
+    this.tag,
     this.upwardDestinationBuilder,
   })  : assert(navigator != null || builder != null,
             'Either "builder" or "navigator" must be specified.'),
@@ -46,9 +47,9 @@ class Destination<T extends DestinationParameters> {
                 (builder != null && navigator == null),
             'If the "navigator" is provided, the "builder" must be null, or vice versa.'),
         assert(
-            ((T == DefaultDestinationParameters) &&
+            ((T == DestinationParameters) &&
                     (parser is DefaultDestinationParser)) ||
-                ((T != DefaultDestinationParameters) &&
+                ((T != DestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
     this.configuration = configuration ?? DestinationConfiguration.material();
@@ -61,6 +62,7 @@ class Destination<T extends DestinationParameters> {
     required this.navigator,
     this.isHome = false,
     this.redirections = const <Redirection>[],
+    this.tag,
   })  : builder = null,
         configuration = DestinationConfiguration.material(),
         parameters = null,
@@ -93,9 +95,9 @@ class Destination<T extends DestinationParameters> {
   /// A child navigator.
   ///
   /// Allows to implement nested navigation. When specified, the parent navigator
-  /// use this child navigator to build content for this destination.
+  /// uses this child navigator to build content for this destination.
   ///
-  final TheseusNavigator? navigator;
+  final NavigationController? navigator;
 
   /// Optional parameters, that are used to build content.
   ///
@@ -115,9 +117,16 @@ class Destination<T extends DestinationParameters> {
   ///
   final List<Redirection> redirections;
 
+  /// An optional label to identify a destination.
+  ///
+  /// It will be the same for all destinations of the kind, regardless actual
+  /// values of destination parameters.
+  ///
+  final String? tag;
+
   /// Function that returns an underlay destination.
   ///
-  /// The TheseusNavigator use this method to create the underlay destination for the
+  /// A [NavigationController] uses this method to create the underlay destination for the
   /// current one, using its parameters.
   ///
   final Destination? Function(Destination<T> destination)?
@@ -188,6 +197,7 @@ class Destination<T extends DestinationParameters> {
         configuration: configuration ?? this.configuration,
         parameters: parameters ?? this.parameters,
         parser: parser,
+        tag: tag,
         upwardDestinationBuilder: upwardDestinationBuilder,
       );
 
@@ -332,15 +342,14 @@ enum DestinationTransition {
   none,
 }
 
-/// An interface for destination parameters.
+/// Base destination parameters.
 ///
 /// Extend this abstract class to define your custom parameters class.
 /// Use [Destination<YourCustomDestinationParameters>()] to make a destination
 /// aware of your custom parameters.
 ///
-/// For custom parameters you also have to implement [toDestinationParameters()]
-/// ans [toMap()] methods in the [YouCustomDestinationParser<YourCustomDestinationParameters>]
-/// like this:
+/// For custom parameters you also must implement [YouCustomDestinationParser<YourCustomDestinationParameters>]
+/// with [toDestinationParameters()] ans [toMap()] methods, like this:
 /// ```
 /// class YourCustomDestinationParser
 ///     extends DestinationParser<YourCustomDestinationParameters> {
@@ -362,28 +371,14 @@ enum DestinationTransition {
 /// See also:
 /// - [DestinationParser]
 ///
-abstract class DestinationParameters {
-  /// Creates destination parameters.
+class DestinationParameters {
+  /// Creates a [DestinationParameters] instance.
   ///
-  const DestinationParameters();
-}
+  const DestinationParameters([this.map = const <String, String>{}]);
 
-/// Default destination parameters implementation.
-///
-/// Uses Map<String, String> to store parameter values.
-///
-class DefaultDestinationParameters extends DestinationParameters {
-  /// Creates default destination parameters.
-  ///
-  DefaultDestinationParameters([this.map = const <String, String>{}]);
-
-  /// Contains parameter values.
+  /// Contains parameter values parsed from the destination's URI.
   ///
   /// The parameter name is a [MapEntry.key], and the value is [MapEntry.value].
   ///
   final Map<String, String> map;
 }
-
-/// A shorten for destination without custom type parameters.
-///
-typedef DestinationLight = Destination<DefaultDestinationParameters>;

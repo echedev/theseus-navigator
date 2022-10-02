@@ -6,7 +6,7 @@ import 'category.dart';
 import 'category_list_screen.dart';
 import 'category_repository.dart';
 
-final catalogNavigator = TheseusNavigator(
+final catalogNavigator = NavigationController(
   destinations: [
     CatalogDestinations.categories,
   ],

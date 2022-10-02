@@ -42,7 +42,7 @@ void main() {
         expect(
             navigationScheme.findNavigator(TestDestinations.categories
                 .withParameters(
-                DefaultDestinationParameters(<String, String>{'id': '1'}))),
+                DestinationParameters(<String, String>{'id': '1'}))),
             TestNavigators.catalog);
       });
       test('Finding navigator for nonexistent destination', () {

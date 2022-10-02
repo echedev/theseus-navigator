@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../navigator.dart';
+import '../navigation_controller.dart';
 import 'index.dart';
 
 /// A [NavigatorBuilder] that allows to switch between destinations using
@@ -18,7 +18,7 @@ import 'index.dart';
 /// See also:
 /// - [NavigatorBuilder]
 /// - [BottomNavigationBarParameters]
-/// - [TheseusNavigator]
+/// - [NavigationController]
 /// - [BottomNavigationBar]
 ///
 class BottomNavigationBuilder implements NavigatorBuilder {
@@ -46,7 +46,7 @@ class BottomNavigationBuilder implements NavigatorBuilder {
   final BottomNavigationBarParameters parameters;
 
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     final currentDestination = navigator.currentDestination;
     final content = currentDestination.build(context);
     return _BottomNavigationWrapper(

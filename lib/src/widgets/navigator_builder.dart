@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../destination.dart';
-import '../navigator.dart';
+import '../navigation_controller.dart';
 
-/// Builds a widget that wraps a content for [TheseusNavigator].
+/// Builds a widget that wraps a content for [NavigationController].
 ///
 /// See also:
 /// - [DefaultNavigatorBuilder]
@@ -12,7 +12,7 @@ import '../navigator.dart';
 abstract class NavigatorBuilder {
   /// Returns a widget that wraps a content of navigator's destinations.
   ///
-  Widget build(BuildContext context, TheseusNavigator navigator);
+  Widget build(BuildContext context, NavigationController navigator);
 }
 
 /// Implementation of [NavigatorBuilder] that wraps destination's content into
@@ -24,7 +24,7 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
   const DefaultNavigatorBuilder();
 
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     final pages = <_TheseusPage>[];
     for (int i = 0; i < navigator.stack.length; i++) {
       final destination = navigator.stack[i];

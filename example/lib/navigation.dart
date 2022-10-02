@@ -20,16 +20,16 @@ final navigationScheme = NavigationScheme(
 );
 
 class PrimaryDestinations {
-  static final login = DestinationLight(
+  static final login = Destination(
     path: '/auth',
     builder: (context, parameters) => const LoginScreen(),
   );
-  static final main = DestinationLight(
+  static final main = Destination(
     path: '/',
     isHome: true,
     navigator: mainNavigator,
   );
-  static final customTransition = DestinationLight(
+  static final customTransition = Destination(
     path: '/customTransition',
     builder: (context, parameters) => const CustomTransitionScreen(),
     configuration: DestinationConfiguration(
@@ -50,13 +50,13 @@ class PrimaryDestinations {
           );
         }),
   );
-  static final error = DestinationLight(
+  static final error = Destination(
     path: '/error',
     builder: (context, parameters) => const ErrorScreen(),
   );
 }
 
-final mainNavigator = TheseusNavigator(
+final mainNavigator = NavigationController(
   destinations: [
     MainDestinations.home,
     MainDestinations.catalog,
@@ -67,18 +67,17 @@ final mainNavigator = TheseusNavigator(
 );
 
 class MainDestinations {
-  static final home = DestinationLight(
+  static final home = Destination(
     path: '/home',
-    // builder: (context, parameters) => const HomeScreen(),
     navigator: homeNavigator,
     configuration: DestinationConfiguration.quiet(),
   );
-  static final catalog = DestinationLight(
+  static final catalog = Destination(
     path: '/catalog',
     navigator: catalogNavigator,
     configuration: DestinationConfiguration.quiet(),
   );
-  static final settings = DestinationLight(
+  static final settings = Destination(
     path: '/settings',
     builder: (context, parameters) => const SettingsScreen(),
     configuration: DestinationConfiguration.quiet(),
@@ -90,7 +89,7 @@ class MainDestinations {
 
 class MainNavigatorBuilder implements NavigatorBuilder {
   @override
-  Widget build(BuildContext context, TheseusNavigator navigator) {
+  Widget build(BuildContext context, NavigationController navigator) {
     return _MainNavigatorWrapper(navigator: navigator);
   }
 }
@@ -101,7 +100,7 @@ class _MainNavigatorWrapper extends StatelessWidget {
     required this.navigator,
   }) : super(key: key);
 
-  final TheseusNavigator navigator;
+  final NavigationController navigator;
 
   static const bottomNavigationBuilder = BottomNavigationBuilder(
     bottomNavigationItems: <BottomNavigationBarItem>[
@@ -121,24 +120,23 @@ class _MainNavigatorWrapper extends StatelessWidget {
   );
 
   static const drawerNavigationBuilder = DrawerNavigationBuilder(
-    drawerItems: <DrawerItem>[
-      DrawerItem(
-        leading: Icon(Icons.home_rounded),
-        title: 'Home',
-      ),
-      DrawerItem(
-        leading: Icon(Icons.list_rounded),
-        title: 'Catalog',
-      ),
-      DrawerItem(
-        leading: Icon(Icons.more_horiz_rounded),
-        title: 'Settings',
-      ),
-    ],
-    parameters: DrawerParameters(
-      selectedColor: Colors.blue,
-    )
-  );
+      drawerItems: <DrawerItem>[
+        DrawerItem(
+          leading: Icon(Icons.home_rounded),
+          title: 'Home',
+        ),
+        DrawerItem(
+          leading: Icon(Icons.list_rounded),
+          title: 'Catalog',
+        ),
+        DrawerItem(
+          leading: Icon(Icons.more_horiz_rounded),
+          title: 'Settings',
+        ),
+      ],
+      parameters: DrawerParameters(
+        selectedColor: Colors.blue,
+      ));
 
   static const tabsNavigationBuilder = TabsNavigationBuilder(
     tabs: <Widget>[

@@ -1,62 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:theseus_navigator/theseus_navigator.dart';
 
-void main() => runApp(App());
+void main() => runApp(const App());
 
-class App extends StatelessWidget {
-  App({Key? key}) : super(key: key);
-
-  final _navigationScheme = NavigationScheme(
-    navigator: NavigationController(
-      destinations: [
-        Destination(
-          path: '/todo',
-          isHome: true,
-          builder: (context, parameters) => TaskListScreen(
-              tasks: _tasks.where((element) => !element.isCompleted).toList()),
-          tag: 'To do',
-        ),
-        Destination(
-          path: '/completed',
-          builder: (context, parameters) => TaskListScreen(
-              tasks: _tasks.where((element) => element.isCompleted).toList()),
-          tag: 'Completed',
-        ),
-        Destination(
-          path: '/all',
-          builder: (context, parameters) => const TaskListScreen(tasks: _tasks),
-          tag: 'All',
-        ),
+final navigationScheme = NavigationScheme(
+  navigator: NavigationController(
+    destinations: [
+      Destination(
+        path: '/todo',
+        isHome: true,
+        builder: (context, parameters) => TaskListView(
+            tasks: tasks.where((element) => !element.isCompleted).toList()),
+        tag: 'To do',
+      ),
+      Destination(
+        path: '/completed',
+        builder: (context, parameters) => TaskListView(
+            tasks: tasks.where((element) => element.isCompleted).toList()),
+        tag: 'Completed',
+      ),
+      Destination(
+        path: '/all',
+        builder: (context, parameters) => const TaskListView(tasks: tasks),
+        tag: 'All',
+      ),
+    ],
+    builder: TabsNavigationBuilder(
+      tabs: [
+        const Tab(child: Text('TO DO'),),
+        const Tab(child: Text('COMPLETED'),),
+        const Tab(child: Text('ALL'),),
       ],
-      builder: TabsNavigationBuilder(
-        tabs: [
-          const Tab(child: Text('TO DO'),),
-          const Tab(child: Text('COMPLETED'),),
-          const Tab(child: Text('ALL'),),
-        ],
-        appBarParametersBuilder: (destination) => AppBarParameters(
-          title: Text('Tasks - ${destination.tag}'),
-        ),
-        wrapInScaffold: true,
+      appBarParametersBuilder: (destination) => AppBarParameters(
+        title: Text('Tasks - ${destination.tag}'),
       ),
     ),
-  );
+  ),
+);
+
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: TheseusRouterDelegate(
-        navigationScheme: _navigationScheme,
+        navigationScheme: navigationScheme,
       ),
       routeInformationParser: TheseusRouteInformationParser(
-        navigationScheme: _navigationScheme,
+        navigationScheme: navigationScheme,
       ),
     );
   }
 }
 
-class TaskListScreen extends StatelessWidget {
-  const TaskListScreen({
+class TaskListView extends StatelessWidget {
+  const TaskListView({
     Key? key,
     required this.tasks,
   }) : super(key: key);
@@ -106,7 +105,7 @@ class Task {
   final bool isCompleted;
 }
 
-const _tasks = <Task>[
+const tasks = <Task>[
   Task(id: 1, name: 'Task 1', description: 'Description of task #1'),
   Task(id: 2, name: 'Task 2', description: 'Description of task #2', isCompleted: true),
   Task(id: 3, name: 'Task 3', description: 'Description of task #3', isCompleted: true),

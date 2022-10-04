@@ -31,7 +31,7 @@ class TabsNavigationBuilder implements NavigatorBuilder {
     required this.tabs,
     this.parameters = const TabBarParameters(),
     this.appBarParametersBuilder,
-    this.wrapInScaffold = false,
+    this.wrapInScaffold = true,
   });
 
   /// Typically a list of [Tab] widgets, that corresponds to the navigator's
@@ -66,6 +66,7 @@ class TabsNavigationBuilder implements NavigatorBuilder {
   /// Controls if the [Scaffold] widget should be used around the tab bar and tab's content.
   ///
   /// This might be needed if you are using tabs as a top level navigation in your app.
+  /// Defaults to 'true'.
   ///
   final bool wrapInScaffold;
 

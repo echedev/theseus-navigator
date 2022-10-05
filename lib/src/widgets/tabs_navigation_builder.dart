@@ -20,6 +20,7 @@ import 'index.dart';
 ///
 /// See also:
 /// - [NavigatorBuilder]
+/// - [AppBarParameters]
 /// - [TabBarParameters]
 /// - [NavigationController]
 /// - [TabBar]
@@ -55,12 +56,14 @@ class TabsNavigationBuilder implements NavigatorBuilder {
   /// Once this builder is specified, the navigation [TabBar] will appear as part of
   /// [AppBar] widget.
   /// When this function is called, the [destination] parameter is set to current
-  /// destination (selected tab). The function should return an instance of [AppBarParameters],
+  /// destination (selected tab).
+  ///
+  /// The function should return an instance of [AppBarParameters],
   /// which is a set of all parameters available in the [AppBar] widget.
   /// So the app bar widget con be made to match the current destination.
   /// For example, you can set a title and actions, depending on the current destination.
   ///
-  final AppBarParameters Function(Destination destination)?
+  final AppBarParameters Function(BuildContext context, Destination destination)?
       appBarParametersBuilder;
 
   /// Controls if the [Scaffold] widget should be used around the tab bar and tab's content.
@@ -82,7 +85,7 @@ class TabsNavigationBuilder implements NavigatorBuilder {
       parameters: parameters,
       onTabSelected: (index) => navigator.goTo(navigator.destinations[index]),
       selectedIndex: navigator.destinations.indexOf(currentDestination),
-      appBarParameters: appBarParametersBuilder?.call(currentDestination),
+      appBarParameters: appBarParametersBuilder?.call(context, currentDestination),
       wrapInScaffold: wrapInScaffold,
     );
   }

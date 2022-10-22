@@ -195,23 +195,23 @@ class Destination<T extends DestinationParameters> {
     );
   }
 
-    /// Creates a copy of this destination with the given fields replaced
-    /// with the new values.
-    ///
-    Destination<T> copyWith({
-      DestinationConfiguration? configuration,
-      T? parameters,
-    }) =>
-        Destination<T>(
-          path: path,
-          builder: builder,
-          navigator: navigator,
-          configuration: configuration ?? this.configuration,
-          parameters: parameters ?? this.parameters,
-          parser: parser,
-          tag: tag,
-          upwardDestinationBuilder: upwardDestinationBuilder,
-        );
+  /// Creates a copy of this destination with the given fields replaced
+  /// with the new values.
+  ///
+  Destination<T> copyWith({
+    DestinationConfiguration? configuration,
+    T? parameters,
+  }) =>
+      Destination<T>(
+        path: path,
+        builder: builder,
+        navigator: navigator,
+        configuration: configuration ?? this.configuration,
+        parameters: parameters ?? this.parameters,
+        parser: parser,
+        tag: tag,
+        upwardDestinationBuilder: upwardDestinationBuilder,
+      );
 
   /// Destinations are equal when their URI string are equal.
   ///
@@ -390,7 +390,7 @@ class DestinationParameters {
   /// Creates a [DestinationParameters] instance.
   ///
   DestinationParameters([Map<String, String>? map])
-    : map = map ?? <String, String>{};
+      : map = map ?? <String, String>{};
 
   /// Contains parameter values parsed from the destination's URI.
   ///

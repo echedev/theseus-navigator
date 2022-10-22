@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.2.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.3.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -366,6 +366,8 @@ final settingsDestination = Destination(
     ); 
 ```
 In the example above, when the user navigates to Settings screen, first the `validator` function of specified redirection will be called. If it return *false*, then user will be redirected to the Login screen.
+
+Validator function in redirection could be asynchronous. In case it runs for a long time, the waiting overlay widget is displayed until the destination resolved. You can customize the waiting overlay by providing `waitingOverlayBuilder` parameter of `NavigationScheme`.
 
 ## Error handling
 

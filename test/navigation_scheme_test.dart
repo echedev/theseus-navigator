@@ -142,10 +142,10 @@ void main() {
       });
       test(
           'For custom root navigator, if the error destination is provided, it should be included to the navigation scheme',
-              () {
-            expect(
-                navigationScheme.findDestination('/error'), TestDestinations.error);
-          });
+          () {
+        expect(
+            navigationScheme.findDestination('/error'), TestDestinations.error);
+      });
       test(
           'Redirect to error destination when navigate to non-existent destination',
           () async {

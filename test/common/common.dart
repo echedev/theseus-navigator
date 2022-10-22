@@ -24,7 +24,8 @@ class TestDestinations {
     redirections: [
       Redirection(
         destination: TestDestinations.login,
-        validator: (destination) async => Future.delayed(const Duration(seconds: 5), () => true),
+        validator: (destination) async =>
+            Future.delayed(const Duration(seconds: 5), () => true),
       ),
     ],
   );
@@ -46,7 +47,9 @@ class TestDestinations {
     builder: dummyBuilder,
     parser: CategoriesParser(),
     upwardDestinationBuilder: (destination) {
-      return destination.parameters?.parent == null ? null : destination.withParameters(CategoriesParameters());
+      return destination.parameters?.parent == null
+          ? null
+          : destination.withParameters(CategoriesParameters());
     },
   );
   static final categoriesBrands = Destination(

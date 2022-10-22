@@ -21,6 +21,7 @@ class CategoryRepository {
   late final List<Category> _categories;
 
   Future<Category?> getCategory(String id) async {
+    // await Future.delayed(const Duration(seconds: 3));
     return _categories.firstWhereOrNull((category) => category.id == id);
   }
 

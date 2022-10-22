@@ -1,3 +1,9 @@
+## \[0.3.0\] - *2022-10-22*
+
+- Support asynchronous `validator` in `Redirection`
+- Added `waitingOverlayBuilder` property in `NavigationScheme`
+- Better test coverage
+
 ## \[0.2.0\] - *2022-10-02*
 
 - **BREAKING**: `TheseusNavigator` class renamed to `NavigationController`

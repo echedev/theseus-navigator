@@ -59,26 +59,25 @@ void main() {
               const RouteInformation(location: '/home2')),
           throwsA(isA<UnknownUriException>()));
     });
-    test('Parsing supported uri which contains wrong parameter values should return an error destination',
-            () async {
-          expect(
-              await parser.parseRouteInformation(
-                  const RouteInformation(location: '/categories/10')),
-              TestDestinations.error);
-        });
+    test(
+        'Parsing supported uri which contains wrong parameter values should return an error destination',
+        () async {
+      expect(
+          await parser.parseRouteInformation(
+              const RouteInformation(location: '/categories/10')),
+          TestDestinations.error);
+    });
     test(
         'Throw exception when parsing supported uri which contains wrong parameter values, and the error destination is not provided',
-            () async {
-          expect(
-                  () async => await parserNoError.parseRouteInformation(
-                  const RouteInformation(location: '/categories/10')),
-              throwsA(isA<UnknownUriException>()));
-        });
-    test('Restore route information from the destination',
-            () {
-          expect(
-              parser.restoreRouteInformation(TestDestinations.home).location,
-              '/home');
-        });
+        () async {
+      expect(
+          () async => await parserNoError.parseRouteInformation(
+              const RouteInformation(location: '/categories/10')),
+          throwsA(isA<UnknownUriException>()));
+    });
+    test('Restore route information from the destination', () {
+      expect(parser.restoreRouteInformation(TestDestinations.home).location,
+          '/home');
+    });
   });
 }

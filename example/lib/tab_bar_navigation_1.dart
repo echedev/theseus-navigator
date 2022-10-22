@@ -31,7 +31,7 @@ final navigationScheme = NavigationScheme(
         const Tab(child: Text('COMPLETED'),),
         const Tab(child: Text('ALL'),),
       ],
-      appBarParametersBuilder: (destination) => AppBarParameters(
+      appBarParametersBuilder: (context, destination) => AppBarParameters(
         title: Text('Tasks - ${destination.tag}'),
       ),
     ),

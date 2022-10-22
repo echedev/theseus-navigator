@@ -2,10 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
 
-import 'common.dart';
+import 'common/common.dart';
 
 void main() {
   late NavigationScheme navigationScheme;
+
+  late NavigationScheme navigationSchemeNoError;
+
   group('Navigation Scheme', () {
     setUp(() {
       navigationScheme = NavigationScheme(
@@ -16,9 +19,10 @@ void main() {
         ],
       );
     });
-    group('Service functions', () {
+    group('Finding destinations and navigators', () {
       test('Finding existing destination', () {
-        expect(navigationScheme.findDestination('/home'), TestDestinations.home);
+        expect(
+            navigationScheme.findDestination('/home'), TestDestinations.home);
         expect(navigationScheme.findDestination('/catalog'),
             TestDestinations.catalog);
         expect(navigationScheme.findDestination('/categories'),
@@ -42,7 +46,7 @@ void main() {
         expect(
             navigationScheme.findNavigator(TestDestinations.categories
                 .withParameters(
-                DestinationParameters(<String, String>{'id': '1'}))),
+                    DestinationParameters(<String, String>{'id': '1'}))),
             TestNavigators.catalog);
       });
       test('Finding navigator for nonexistent destination', () {
@@ -59,7 +63,8 @@ void main() {
       });
       test('Navigate to nested destination', () async {
         await navigationScheme.goTo(TestDestinations.catalog);
-        expect(navigationScheme.currentDestination, TestDestinations.categories);
+        expect(
+            navigationScheme.currentDestination, TestDestinations.categories);
       });
       test('Navigate to another primary destination and return back', () async {
         await navigationScheme.goTo(TestDestinations.about);
@@ -67,7 +72,9 @@ void main() {
         expect(navigationScheme.currentDestination, TestDestinations.home);
         expect(navigationScheme.shouldClose, false);
       });
-      test('Navigate back when the only destination is in the stack should close the app', () {
+      test(
+          'Navigate back when the only destination is in the stack should close the app',
+          () {
         navigationScheme.goBack();
         expect(navigationScheme.shouldClose, true);
       });
@@ -84,17 +91,21 @@ void main() {
         );
       });
       test('Current destination is stored after redirection', () async {
-        await navigationScheme.goTo(TestDestinations.login, isRedirection: true);
+        await navigationScheme.goTo(TestDestinations.login,
+            isRedirection: true);
         expect(navigationScheme.currentDestination, TestDestinations.login);
         expect(navigationScheme.redirectedFrom, TestDestinations.home);
       });
       test('User can navigate back from the redirected destination', () async {
-        await navigationScheme.goTo(TestDestinations.login, isRedirection: true);
+        await navigationScheme.goTo(TestDestinations.login,
+            isRedirection: true);
         navigationScheme.goBack();
         expect(navigationScheme.currentDestination, TestDestinations.home);
       });
     });
     group('Error handling', () {
+      late NavigationScheme navigationSchemeCustom;
+
       setUp(() {
         navigationScheme = NavigationScheme(
           destinations: [
@@ -104,11 +115,40 @@ void main() {
           ],
           errorDestination: TestDestinations.error,
         );
+        navigationSchemeNoError = NavigationScheme(
+          destinations: [
+            TestDestinations.home,
+            TestDestinations.catalog,
+            TestDestinations.about,
+          ],
+        );
+        navigationSchemeCustom = NavigationScheme(
+          navigator: NavigationController(
+            destinations: [
+              TestDestinations.home,
+              TestDestinations.catalog,
+              TestDestinations.about,
+              TestDestinations.error,
+            ],
+          ),
+          errorDestination: TestDestinations.error,
+        );
       });
-      test('When provided, the error destination is included to the navigation scheme', () {
-        expect(navigationScheme.findDestination('/error'), TestDestinations.error);
+      test(
+          'When provided, the error destination is included to the navigation scheme',
+          () {
+        expect(
+            navigationScheme.findDestination('/error'), TestDestinations.error);
       });
-      test('Redirect to error destination when navigate to nonexistent destination', () async {
+      test(
+          'For custom root navigator, if the error destination is provided, it should be included to the navigation scheme',
+              () {
+            expect(
+                navigationScheme.findDestination('/error'), TestDestinations.error);
+          });
+      test(
+          'Redirect to error destination when navigate to non-existent destination',
+          () async {
         await navigationScheme.goTo(TestDestinations.login);
         expect(navigationScheme.currentDestination, TestDestinations.error);
       });
@@ -116,6 +156,19 @@ void main() {
         await navigationScheme.goTo(TestDestinations.login);
         navigationScheme.goBack();
         expect(navigationScheme.currentDestination, TestDestinations.home);
+      });
+      test('Throw an exception if no error destination provided', () async {
+        expect(
+            () async =>
+                await navigationSchemeNoError.goTo(TestDestinations.login),
+            throwsA(isA<UnknownDestinationException>()));
+      });
+    });
+    group('Service', () {
+      test('Stop listen to navigators on dispose', () async {
+        expect(navigationScheme.rootNavigator.hasListeners, true);
+        navigationScheme.dispose();
+        expect(navigationScheme.rootNavigator.hasListeners, false);
       });
     });
   });

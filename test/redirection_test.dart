@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
 
-import 'common.dart';
+import 'common/common.dart';
 
 void main() {
   group('Redirection', () {

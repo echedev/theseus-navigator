@@ -164,7 +164,7 @@ class NavigationController with ChangeNotifier {
   ///
   Future<void> goTo(Destination destination) async {
     Log.d(_tag,
-        'goTo(): destination=${destination.uri}, reset=${destination.configuration.reset}');
+        'goTo(): destination=$destination, reset=${destination.configuration.reset}');
     _error = null;
     _gotBack = false;
     _shouldClose = false;
@@ -206,7 +206,7 @@ class NavigationController with ChangeNotifier {
       _shouldClose = true;
     }
     Log.d(_tag,
-        'goBack(): destination=${_stack.last.uri}, shouldClose=$_shouldClose');
+        'goBack(): destination=${_stack.last}, shouldClose=$_shouldClose');
     notifyListeners();
   }
 

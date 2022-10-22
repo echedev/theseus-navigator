@@ -16,13 +16,15 @@ import 'utils/utils.dart';
 /// - [Destination]
 ///
 class TheseusRouterDelegate extends RouterDelegate<Destination>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+    with ChangeNotifier
+{
   /// Creates router delegate.
   ///
   TheseusRouterDelegate({
     required this.navigationScheme,
   }) {
     Log.d(runtimeType, 'TheseusRouterDelegate():');
+    _key = GlobalKey<NavigatorState>(debugLabel: 'TheseusNavigator');
     navigationScheme.addListener(_onCurrentDestinationChanged);
   }
 
@@ -34,13 +36,27 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   ///
   final NavigationScheme navigationScheme;
 
-  @override
-  GlobalKey<NavigatorState>? get navigatorKey =>
-      navigationScheme.findNavigator(navigationScheme.currentDestination)?.key;
+  late final GlobalKey<NavigatorState> _key;
 
   @override
   Widget build(BuildContext context) {
-    return navigationScheme.rootNavigator.build(context);
+    Log.d(runtimeType, 'build(): isResolving=${navigationScheme.isResolving}');
+    return Navigator(
+      key: _key,
+      pages: [
+        MaterialPage(
+          key: const ValueKey('TheseusRootPage'),
+          child: navigationScheme.rootNavigator.build(context),
+        ),
+        if (navigationScheme.isResolving)
+          const _TheseusPageOverlay(
+            child: _TheseusWaitingOverlay(
+              key: Key('_TheseusWaitingOverlay_'),
+            ),
+          ),
+      ],
+      onPopPage: (route, result) => route.didPop(result),
+    );
   }
 
   @override
@@ -61,11 +77,12 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   @override
   // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
-    Log.d(runtimeType, 'setNewRoutePath(): destination=${destination.uri}');
-    // Reset current stack when:
-    // - the 'upwardDestinationBuilder' is specified, so we should build a custom stack
-    // - it is not an 'errorDestination', so we should be able return back to previous destination from the error.
-    final reset = (destination.upwardDestinationBuilder != null &&
+    Log.d(runtimeType, 'setNewRoutePath(): destination=$destination');
+    // The current navigation controller stack remains when:
+    // - The 'upwardDestinationBuilder' is not specified, so we shouldn't build a custom stack.
+    // - New destination is an 'errorDestination', from which we should be able return back to previous destination.
+    // Otherwise the stack is reset.
+    final reset = (destination.hasUpwardDestinationBuilder &&
         destination != navigationScheme.errorDestination);
     return SynchronousFuture(navigationScheme.goTo(destination
         .withConfiguration(destination.configuration.copyWith(reset: reset))));
@@ -83,23 +100,49 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   Future<void> _onCurrentDestinationChanged() async {
     final destination = navigationScheme.currentDestination;
     Log.d(runtimeType,
-        'onCurrentDestinationChanged(): destination=${destination.uri}');
+        'onCurrentDestinationChanged(): destination=$destination');
     // Ignore closing app request here. It is processed in the 'popRoute()' method.
     if (navigationScheme.shouldClose) {
       return;
     }
-    // Ignore redirections if we returned back from the redirection
-    if (navigationScheme.redirectedFrom == destination) {
-      notifyListeners();
-      return;
-    }
-    // Check if the current destination is valid, and perform redirection if needed.
-    final isDestinationValid = await navigationScheme.validate();
-    Log.d(runtimeType,
-        'onCurrentDestinationChanged(): destination=${destination.uri}, isDestinationValid=$isDestinationValid');
-    if (!isDestinationValid) {
-      return;
-    }
     notifyListeners();
+  }
+}
+
+class _TheseusPageOverlay extends Page {
+  const _TheseusPageOverlay({
+    required this.child,
+    LocalKey? key,
+  }) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+      settings: this,
+      opaque: false,
+      pageBuilder: (context, animation, secondaryAnimation) => child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) => child,
+    );
+  }
+}
+
+class _TheseusWaitingOverlay extends StatelessWidget {
+  const _TheseusWaitingOverlay({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ModalBarrier(
+          color: Colors.black.withAlpha(128),
+          dismissible: false,
+        ),
+        const Center(child: CircularProgressIndicator(),),
+      ],
+    );
   }
 }

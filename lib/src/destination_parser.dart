@@ -72,7 +72,7 @@ abstract class DestinationParser<T extends DestinationParameters> {
     return true;
   }
 
-  /// Check if the path segment string is a valid path parameter template.
+  /// Check if the path segment string is a valid path parameter placeholder.
   ///
   /// The default path parameter format is '{parameterName}'.
   ///
@@ -86,29 +86,38 @@ abstract class DestinationParser<T extends DestinationParameters> {
   ///
   String parsePathParameterName(String pathSegment) {
     if (!isPathParameter(pathSegment)) {
+      // TODO: Implement custom exception
       throw Exception('$pathSegment is not a valid path parameter');
     }
     return pathSegment.substring(1, pathSegment.length - 1);
   }
 
-  /// Parse parameter values from the specified URI and based on provided destination template.
+  /// Parses parameter values from the specified URI for matched destination.
   ///
-  /// Returns the copy of [baseDestination] with parameters parsed from the [uri].
-  /// Uses [toDestinationParameters] implementation to create the certain [DestinationParameters].
-  /// Throws [DestinationNotMatchException] if the URI does mot match base destination.
+  /// Returns the copy of [matchedDestination] with actual parameter values parsed from the [uri].
+  /// Uses [toDestinationParameters] implementation to create parameters object of
+  /// type [T].
+  ///
+  /// Also it ensures that raw parameters value in [DestinationParameters.map] are valid.
+  ///
+  /// Throws [DestinationNotMatchException] if the URI does mot match the destination.
   ///
   Future<Destination<T>> parseParameters(
-      String uri, Destination<T> baseDestination) async {
-    if (!isMatch(uri, baseDestination)) {
-      throw DestinationNotMatchException(uri, baseDestination);
+      String uri, Destination<T> matchedDestination) async {
+    // TODO: Is this check really needed here?
+    if (!isMatch(uri, matchedDestination)) {
+      throw DestinationNotMatchException(uri, matchedDestination);
     }
-    final destinationUri = Uri.parse(uri);
-    final parametersMap = <String, String>{};
-    parametersMap
-        .addAll(_parseUriPathParameters(destinationUri, baseDestination));
-    parametersMap.addAll(destinationUri.queryParameters);
-    return baseDestination
-        .withParameters(await toDestinationParameters(parametersMap));
+    final parsedUri = Uri.parse(uri);
+    final parametersMap = <String, String>{}
+      ..addAll(_parsePathParameters(parsedUri, matchedDestination))
+      ..addAll(parsedUri.queryParameters);
+    final T parameters = await toDestinationParameters(parametersMap);
+    final rawParameters = toMap(parameters);
+    parameters
+      ..map.clear()
+      ..map.addAll(rawParameters);
+    return matchedDestination.withParameters(parameters);
   }
 
   /// Returns URI string for the destination
@@ -133,7 +142,7 @@ abstract class DestinationParser<T extends DestinationParameters> {
     ).toString();
   }
 
-  Map<String, String> _parseUriPathParameters(
+  Map<String, String> _parsePathParameters(
       Uri uri, Destination<T> baseDestination) {
     final result = <String, String>{};
     final baseDestinationUri = Uri.parse(baseDestination.path);
@@ -214,5 +223,5 @@ class DefaultDestinationParser
       SynchronousFuture(DestinationParameters(map));
 
   @override
-  Map<String, String> toMap(DestinationParameters parameters) => parameters.map;
+  Map<String, String> toMap(DestinationParameters parameters) => Map.of(parameters.map);
 }

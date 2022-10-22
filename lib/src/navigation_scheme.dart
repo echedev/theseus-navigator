@@ -68,7 +68,8 @@ class NavigationScheme with ChangeNotifier {
   /// In these cases this function is used to build a widget, which would be displayed
   /// until the current destination is resolved.
   ///
-  final Widget Function(BuildContext context, Destination destination)? waitingOverlayBuilder;
+  final Widget Function(BuildContext context, Destination destination)?
+      waitingOverlayBuilder;
 
   late Destination _currentDestination;
 
@@ -157,8 +158,9 @@ class NavigationScheme with ChangeNotifier {
     final completer = Completer<void>();
     var destinationToComplete = destination;
     _destinationCompleters[destinationToComplete] = completer;
-    while(!destinationToComplete.isFinalDestination) {
-      destinationToComplete = destinationToComplete.navigator!.currentDestination;
+    while (!destinationToComplete.isFinalDestination) {
+      destinationToComplete =
+          destinationToComplete.navigator!.currentDestination;
       _destinationCompleters[destinationToComplete] = completer;
     }
     navigator.goTo(destination);
@@ -190,12 +192,15 @@ class NavigationScheme with ChangeNotifier {
   /// In case of validation are not passed, redirects to corresponding redirection destination.
   ///
   Future<void> resolve() async {
-    Timer isResolvingTimer = Timer(const Duration(milliseconds: 500), () {
-      if (!_isResolving) {
-        _isResolving = true;
-        notifyListeners();
-      }
-    },);
+    Timer isResolvingTimer = Timer(
+      const Duration(milliseconds: 500),
+      () {
+        if (!_isResolving) {
+          _isResolving = true;
+          notifyListeners();
+        }
+      },
+    );
     final resolvedDestination = await _resolveDestination(_currentDestination);
     isResolvingTimer.cancel();
     Log.d(runtimeType,
@@ -206,8 +211,7 @@ class NavigationScheme with ChangeNotifier {
         _destinationCompleters[_currentDestination]?.complete();
       }
       notifyListeners();
-    }
-    else {
+    } else {
       goTo(resolvedDestination, isRedirection: true);
     }
   }

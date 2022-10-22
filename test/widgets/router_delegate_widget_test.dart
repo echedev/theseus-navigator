@@ -25,7 +25,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(navigationScheme.rootNavigator.key), findsOneWidget);
     });
-    testWidgets('Show waiting overlay when resolving the destination', (tester) async {
+    testWidgets('Show waiting overlay when resolving the destination',
+        (tester) async {
       const waitingOverlayKey = Key('_TheseusWaitingOverlay_');
       await tester.pumpWidget(_mainWrapper(navigationScheme: navigationScheme));
       await tester.pumpAndSettle();

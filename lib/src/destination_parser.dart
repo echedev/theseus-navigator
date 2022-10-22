@@ -223,5 +223,6 @@ class DefaultDestinationParser
       SynchronousFuture(DestinationParameters(map));
 
   @override
-  Map<String, String> toMap(DestinationParameters parameters) => Map.of(parameters.map);
+  Map<String, String> toMap(DestinationParameters parameters) =>
+      Map.of(parameters.map);
 }

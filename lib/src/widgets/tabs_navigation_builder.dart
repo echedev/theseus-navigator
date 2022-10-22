@@ -63,8 +63,8 @@ class TabsNavigationBuilder implements NavigatorBuilder {
   /// So the app bar widget con be made to match the current destination.
   /// For example, you can set a title and actions, depending on the current destination.
   ///
-  final AppBarParameters Function(BuildContext context, Destination destination)?
-      appBarParametersBuilder;
+  final AppBarParameters Function(
+      BuildContext context, Destination destination)? appBarParametersBuilder;
 
   /// Controls if the [Scaffold] widget should be used around the tab bar and tab's content.
   ///
@@ -85,7 +85,8 @@ class TabsNavigationBuilder implements NavigatorBuilder {
       parameters: parameters,
       onTabSelected: (index) => navigator.goTo(navigator.destinations[index]),
       selectedIndex: navigator.destinations.indexOf(currentDestination),
-      appBarParameters: appBarParametersBuilder?.call(context, currentDestination),
+      appBarParameters:
+          appBarParametersBuilder?.call(context, currentDestination),
       wrapInScaffold: wrapInScaffold,
     );
   }

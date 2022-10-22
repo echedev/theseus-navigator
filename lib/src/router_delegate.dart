@@ -16,8 +16,7 @@ import 'utils/utils.dart';
 /// - [Destination]
 ///
 class TheseusRouterDelegate extends RouterDelegate<Destination>
-    with ChangeNotifier
-{
+    with ChangeNotifier {
   /// Creates router delegate.
   ///
   TheseusRouterDelegate({
@@ -99,8 +98,8 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   Future<void> _onCurrentDestinationChanged() async {
     final destination = navigationScheme.currentDestination;
-    Log.d(runtimeType,
-        'onCurrentDestinationChanged(): destination=$destination');
+    Log.d(
+        runtimeType, 'onCurrentDestinationChanged(): destination=$destination');
     // Ignore closing app request here. It is processed in the 'popRoute()' method.
     if (navigationScheme.shouldClose) {
       return;
@@ -123,7 +122,8 @@ class _TheseusPageOverlay extends Page {
       settings: this,
       opaque: false,
       pageBuilder: (context, animation, secondaryAnimation) => child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) => child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          child,
     );
   }
 }
@@ -141,7 +141,9 @@ class _TheseusWaitingOverlay extends StatelessWidget {
           color: Colors.black.withAlpha(128),
           dismissible: false,
         ),
-        const Center(child: CircularProgressIndicator(),),
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
       ],
     );
   }

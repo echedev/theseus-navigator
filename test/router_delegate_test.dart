@@ -39,26 +39,47 @@ void main() {
         await delegate.setNewRoutePath(TestDestinations.about);
         expect(delegate.currentConfiguration, TestDestinations.about);
         expect(navigationScheme.currentDestination, TestDestinations.about);
-        expect(navigationScheme.findNavigator(navigationScheme.currentDestination)?.stack.length, 2);
+        expect(
+            navigationScheme
+                .findNavigator(navigationScheme.currentDestination)
+                ?.stack
+                .length,
+            2);
       });
-      test('New route with "upwardDestinationBuilder" is pushed to the app by OS', () async {
-        final destination = TestDestinations.categoriesTyped
-            .withParameters(CategoriesParameters(parent: categoriesDataSource[0]));
+      test(
+          'New route with "upwardDestinationBuilder" is pushed to the app by OS',
+          () async {
+        final destination = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[0]));
         await delegate.setNewRoutePath(destination);
         expect(navigationScheme.currentDestination, destination);
-        expect(navigationScheme.findNavigator(navigationScheme.currentDestination)?.stack.length, 2);
+        expect(
+            navigationScheme
+                .findNavigator(navigationScheme.currentDestination)
+                ?.stack
+                .length,
+            2);
       });
     });
     group('Pop route', () {
-      test('Popping the only route should keep the current destination on non-Android platform', () async {
+      test(
+          'Popping the only route should keep the current destination on non-Android platform',
+          () async {
         final result = await delegate.popRoute();
         expect(result, true);
         expect(navigationScheme.currentDestination, TestDestinations.home);
       });
-      test('Popping the current route should set the current destination to previous one', () async {
+      test(
+          'Popping the current route should set the current destination to previous one',
+          () async {
         await navigationScheme.goTo(TestDestinations.about);
         expect(navigationScheme.currentDestination, TestDestinations.about);
-        expect(navigationScheme.findNavigator(navigationScheme.currentDestination)?.stack.length, 2);
+        expect(
+            navigationScheme
+                .findNavigator(navigationScheme.currentDestination)
+                ?.stack
+                .length,
+            2);
         final result = await delegate.popRoute();
         expect(result, true);
         expect(navigationScheme.currentDestination, TestDestinations.home);

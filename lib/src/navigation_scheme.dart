@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import 'destination.dart';
 import 'exceptions.dart';
@@ -28,6 +31,7 @@ class NavigationScheme with ChangeNotifier {
   NavigationScheme({
     List<Destination> destinations = const <Destination>[],
     this.errorDestination,
+    this.waitingOverlayBuilder,
     NavigationController? navigator,
   })  : assert(
             (destinations.isEmpty ? navigator!.destinations : destinations)
@@ -43,7 +47,7 @@ class NavigationScheme with ChangeNotifier {
         NavigationController(
           destinations: <Destination>[
             ...destinations,
-            if (errorDestination != null) errorDestination!
+            if (errorDestination != null) errorDestination!,
           ],
           tag: 'Root',
         );
@@ -56,6 +60,16 @@ class NavigationScheme with ChangeNotifier {
   ///
   final Destination? errorDestination;
 
+  /// Returns a widget to display while destination is resolving.
+  ///
+  /// Resolving the destination might be asynchronous, for example, because of parsing typed
+  /// parameters or checking redirection conditions.
+  ///
+  /// In these cases this function is used to build a widget, which would be displayed
+  /// until the current destination is resolved.
+  ///
+  final Widget Function(BuildContext context, Destination destination)? waitingOverlayBuilder;
+
   late Destination _currentDestination;
 
   /// The current destination within the whole navigation scheme.
@@ -64,11 +78,22 @@ class NavigationScheme with ChangeNotifier {
   ///
   Destination get currentDestination => _currentDestination;
 
+  bool _isResolving = false;
+
+  /// Indicates if a current destination is in resolving state.
+  ///
+  /// This flag is turned on during performing of the redirection validations, or
+  /// parsing of typed parameters.
+  ///
+  bool get isResolving => _isResolving;
+
   final _navigatorListeners = <NavigationController, VoidCallback?>{};
 
   final _navigatorMatches = <Destination, NavigationController>{};
 
   final _navigatorOwners = <NavigationController, Destination>{};
+
+  final _destinationCompleters = <Destination, Completer<void>>{};
 
   late final NavigationController _rootNavigator;
 
@@ -125,10 +150,20 @@ class NavigationScheme with ChangeNotifier {
       return SynchronousFuture(null);
     }
     Log.d(runtimeType,
-        'goTo(): navigator=${navigator.tag}, destination=${destination.uri}, isRedirection=$isRedirection');
+        'goTo(): navigator=${navigator.tag}, destination=$destination, isRedirection=$isRedirection');
     _shouldClose = false;
     _redirectedFrom = isRedirection ? _currentDestination : null;
-    return SynchronousFuture(navigator.goTo(destination));
+
+    final completer = Completer<void>();
+    var destinationToComplete = destination;
+    _destinationCompleters[destinationToComplete] = completer;
+    while(!destinationToComplete.isFinalDestination) {
+      destinationToComplete = destinationToComplete.navigator!.currentDestination;
+      _destinationCompleters[destinationToComplete] = completer;
+    }
+    navigator.goTo(destination);
+
+    return completer.future;
   }
 
   /// Close the current destination.
@@ -145,10 +180,36 @@ class NavigationScheme with ChangeNotifier {
     navigator.goBack();
   }
 
-  /// Validates current destination and perform redirection if needed.
+  /// Resolves the current destination
   ///
-  Future<bool> validate() async {
-    return await _validateDestination(_currentDestination);
+  /// Applies redirection validations to the current destination.
+  /// While validations are performed, the [isResolving] flag is set to true.
+  /// This allows to display a widget returned by [waitingOverlayBuilder]
+  /// until the destination is resolved.
+  ///
+  /// In case of validation are not passed, redirects to corresponding redirection destination.
+  ///
+  Future<void> resolve() async {
+    Timer isResolvingTimer = Timer(const Duration(milliseconds: 500), () {
+      if (!_isResolving) {
+        _isResolving = true;
+        notifyListeners();
+      }
+    },);
+    final resolvedDestination = await _resolveDestination(_currentDestination);
+    isResolvingTimer.cancel();
+    Log.d(runtimeType,
+        'resolve(): currentDestination=$_currentDestination, resolvedDestination=$resolvedDestination');
+    if (resolvedDestination == _currentDestination) {
+      _isResolving = false;
+      if (!(_destinationCompleters[_currentDestination]?.isCompleted ?? true)) {
+        _destinationCompleters[_currentDestination]?.complete();
+      }
+      notifyListeners();
+    }
+    else {
+      goTo(resolvedDestination, isRedirection: true);
+    }
   }
 
   void _initializeNavigator(NavigationController navigator) {
@@ -191,7 +252,7 @@ class NavigationScheme with ChangeNotifier {
     }
     final owner = _navigatorOwners[navigator];
     if (owner != null) {
-      Log.d(runtimeType, 'onNavigatorStateChanged(): owner=${owner.uri}');
+      Log.d(runtimeType, 'onNavigatorStateChanged(): owner=$owner');
       if (navigator.gotBack) {
         if (navigator.shouldClose) {
           final parentNavigator = findNavigator(owner);
@@ -220,14 +281,14 @@ class NavigationScheme with ChangeNotifier {
     Destination newDestination = _rootNavigator.currentDestination;
     // TODO: Do we need the stack here?
     List<Destination> newStack = List.from(_rootNavigator.stack);
-    if (_rootNavigator.shouldClose) {
-      _shouldClose = true;
+    // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
+    _shouldClose = _rootNavigator.shouldClose;
+    if (_shouldClose) {
       Log.d(runtimeType,
-          'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');
+          'updateCurrentDestination(): currentDestination=$_currentDestination, shouldClose=$_shouldClose');
       notifyListeners();
       return;
     } else {
-      _shouldClose = false;
       while (!newDestination.isFinalDestination) {
         newStack.addAll(newDestination.navigator!.stack);
         newDestination = newDestination.navigator!.currentDestination;
@@ -237,26 +298,30 @@ class NavigationScheme with ChangeNotifier {
         newDestination.configuration.reset) {
       _currentDestination = newDestination;
       Log.d(runtimeType,
-          'updateCurrentDestination(): currentDestination=${_currentDestination.uri}, shouldClose=$_shouldClose');
-      notifyListeners();
+          'updateCurrentDestination(): currentDestination=$_currentDestination, shouldClose=$_shouldClose');
+      if (_currentDestination != _redirectedFrom || _redirectedFrom == null) {
+        resolve();
+      }
     }
   }
 
-  Future<bool> _validateDestination(Destination destination) async {
+  Future<Destination> _resolveDestination(Destination destination) async {
     // Check redirections that are defined for given destination
     for (var redirection in destination.redirections) {
       if (!(await redirection.validate(destination))) {
-        goTo(redirection.destination, isRedirection: true);
-        return false;
+        return await _resolveDestination(redirection.destination);
       }
     }
     // In case of nested destination, validate the owner
     final navigator = findNavigator(destination);
     if (navigator == null) {
-      _handleError(destination);
-      return false;
+      throw UnknownDestinationException(destination);
     }
     final owner = _navigatorOwners[navigator];
-    return owner != null ? await _validateDestination(owner) : true;
+    if (owner == null) {
+      return destination;
+    }
+    final resolvedOwner = await _resolveDestination(owner);
+    return owner != resolvedOwner ? resolvedOwner : destination;
   }
 }

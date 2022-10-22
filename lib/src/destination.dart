@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'destination_parser.dart';
 import 'navigation_controller.dart';
@@ -132,6 +133,10 @@ class Destination<T extends DestinationParameters> {
   final Destination? Function(Destination<T> destination)?
       upwardDestinationBuilder;
 
+  /// Indicates if the [upwardDestinationBuilder] is provided.
+  ///
+  bool get hasUpwardDestinationBuilder => upwardDestinationBuilder != null;
+
   /// Whether this destination is final, i.e. it builds a content
   ///
   /// Final destinations must have a [builder] function provided.
@@ -179,27 +184,34 @@ class Destination<T extends DestinationParameters> {
 
   /// Returns a copy of this destination with different parameters.
   ///
-  Destination<T> withParameters(T parameters) => copyWith(
-        parameters: parameters,
-      );
-
-  /// Creates a copy of this destination with the given fields replaced
-  /// with the new values.
+  /// For typed parameters ensures that raw parameter values in [DestinationParameters.map] are valid.
   ///
-  Destination<T> copyWith({
-    DestinationConfiguration? configuration,
-    T? parameters,
-  }) =>
-      Destination<T>(
-        path: path,
-        builder: builder,
-        navigator: navigator,
-        configuration: configuration ?? this.configuration,
-        parameters: parameters ?? this.parameters,
-        parser: parser,
-        tag: tag,
-        upwardDestinationBuilder: upwardDestinationBuilder,
-      );
+  Destination<T> withParameters(T parameters) {
+    final rawParameters = parser.toMap(parameters);
+    return copyWith(
+      parameters: parameters
+        ..map.clear()
+        ..map.addAll(rawParameters),
+    );
+  }
+
+    /// Creates a copy of this destination with the given fields replaced
+    /// with the new values.
+    ///
+    Destination<T> copyWith({
+      DestinationConfiguration? configuration,
+      T? parameters,
+    }) =>
+        Destination<T>(
+          path: path,
+          builder: builder,
+          navigator: navigator,
+          configuration: configuration ?? this.configuration,
+          parameters: parameters ?? this.parameters,
+          parser: parser,
+          tag: tag,
+          upwardDestinationBuilder: upwardDestinationBuilder,
+        );
 
   /// Destinations are equal when their URI string are equal.
   ///
@@ -212,6 +224,9 @@ class Destination<T extends DestinationParameters> {
 
   @override
   int get hashCode => uri.hashCode;
+
+  @override
+  String toString() => uri;
 }
 
 /// Encapsulates the configuration attributes which are used for navigating to
@@ -374,11 +389,12 @@ enum DestinationTransition {
 class DestinationParameters {
   /// Creates a [DestinationParameters] instance.
   ///
-  const DestinationParameters([this.map = const <String, String>{}]);
+  DestinationParameters([Map<String, String>? map])
+    : map = map ?? <String, String>{};
 
   /// Contains parameter values parsed from the destination's URI.
   ///
   /// The parameter name is a [MapEntry.key], and the value is [MapEntry.value].
   ///
-  final Map<String, String> map;
+  late final Map<String, String> map;
 }

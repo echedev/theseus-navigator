@@ -17,6 +17,9 @@ final navigationScheme = NavigationScheme(
     PrimaryDestinations.customTransition,
   ],
   errorDestination: PrimaryDestinations.error,
+  waitingOverlayBuilder: (context, destination) => const Scaffold(
+    body: Center(child: CircularProgressIndicator(),),
+  ),
 );
 
 class PrimaryDestinations {
@@ -176,7 +179,8 @@ class _MainNavigatorWrapper extends StatelessWidget {
 
 class Redirections {
   static final login = Redirection(
-    validator: (destination) => SynchronousFuture(isLoggedIn.value),
+    // validator: (destination) => SynchronousFuture(isLoggedIn.value),
+    validator: (destination) => Future.delayed(const Duration(seconds: 5), () => isLoggedIn.value),
     destination: PrimaryDestinations.login,
   );
 }

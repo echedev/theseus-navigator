@@ -34,8 +34,8 @@ class TheseusRouteInformationParser
       RouteInformation routeInformation) async {
     final uri = routeInformation.location ?? '';
     Log.d(runtimeType, 'parseRouteInformation(): $uri');
-    final baseDestination = navigationScheme.findDestination(uri);
-    if (baseDestination == null) {
+    final matchedDestination = navigationScheme.findDestination(uri);
+    if (matchedDestination == null) {
       if (navigationScheme.errorDestination != null) {
         return SynchronousFuture(navigationScheme.errorDestination!);
       } else {
@@ -43,7 +43,7 @@ class TheseusRouteInformationParser
       }
     }
     try {
-      final result = await baseDestination.parse(uri);
+      final result = await matchedDestination.parse(uri);
       return result;
     } catch (error) {
       if (navigationScheme.errorDestination != null) {

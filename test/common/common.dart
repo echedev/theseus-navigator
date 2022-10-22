@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
 
+import 'index.dart';
+
 class TestDestinations {
   static Widget dummyBuilder<T extends DestinationParameters>(
           BuildContext context, T? parameters) =>
@@ -16,6 +18,21 @@ class TestDestinations {
     path: '/settings/about',
     builder: dummyBuilder,
   );
+  static final aboutWithRedirection = Destination(
+    path: '/settings/about',
+    builder: dummyBuilder,
+    redirections: [
+      Redirection(
+        destination: TestDestinations.login,
+        validator: (destination) async => Future.delayed(const Duration(seconds: 5), () => true),
+      ),
+    ],
+  );
+  static final aboutWithConfiguration = Destination(
+    path: '/settings/about',
+    builder: dummyBuilder,
+    configuration: DestinationConfiguration.quiet(),
+  );
   static final catalog = Destination(
     path: '/catalog',
     navigator: TestNavigators.catalog,
@@ -23,6 +40,14 @@ class TestDestinations {
   static final categories = Destination(
     path: '/categories/{id}',
     builder: dummyBuilder,
+  );
+  static final categoriesTyped = Destination<CategoriesParameters>(
+    path: '/categories/{parentId}',
+    builder: dummyBuilder,
+    parser: CategoriesParser(),
+    upwardDestinationBuilder: (destination) {
+      return destination.parameters?.parent == null ? null : destination.withParameters(CategoriesParameters());
+    },
   );
   static final categoriesBrands = Destination(
     path: '/categories/{categoryId}/brands/{brandId}',

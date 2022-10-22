@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
@@ -143,8 +145,8 @@ void main() {
       test(
           'For custom root navigator, if the error destination is provided, it should be included to the navigation scheme',
           () {
-        expect(
-            navigationScheme.findDestination('/error'), TestDestinations.error);
+        expect(navigationSchemeCustom.findDestination('/error'),
+            TestDestinations.error);
       });
       test(
           'Redirect to error destination when navigate to non-existent destination',

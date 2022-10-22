@@ -1,4 +1,4 @@
-## \[0.3.1\] - *2022-10-22*
+## \[0.3.2\] - *2022-10-22*
 
 - Support asynchronous `validator` in `Redirection`
 - Added `waitingOverlayBuilder` property in `NavigationScheme`

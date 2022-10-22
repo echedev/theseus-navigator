@@ -1,7 +1,5 @@
 import 'package:theseus_navigator/theseus_navigator.dart';
 
-import 'index.dart';
-
 class Category {
   const Category({
     required this.id,

@@ -7,7 +7,7 @@ import 'common/index.dart';
 void main() {
   const parser = DefaultDestinationParser();
 
-  final _categoriesParser = CategoriesParser();
+  final categoriesParser = CategoriesParser();
 
   group('Destination Parser', () {
     group('Path parameter', () {
@@ -88,10 +88,10 @@ void main() {
         const parentCategory1 = Category(id: '1', name: 'Category 1');
         final destination2 = destination1
             .withParameters(CategoriesParameters(parent: parentCategory1));
-        final result1 = await _categoriesParser.parseParameters(
-            '/categories', destination1);
+        final result1 =
+            await categoriesParser.parseParameters('/categories', destination1);
         expect(result1 == destination1, true);
-        final result2 = await _categoriesParser.parseParameters(
+        final result2 = await categoriesParser.parseParameters(
             '/categories/1', destination1);
         expect(result2 == destination2, true);
         expect(result2.parameters is CategoriesParameters, true);
@@ -100,7 +100,7 @@ void main() {
             mapEquals(
                 result2.parameters!.map, <String, String>{'parentId': '1'}),
             true);
-        final result3 = await _categoriesParser.parseParameters(
+        final result3 = await categoriesParser.parseParameters(
             '/categories/2', destination1);
         expect(result3 == destination2, false);
       });

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
@@ -8,8 +8,6 @@ import 'common/index.dart';
 
 void main() {
   late NavigationScheme navigationScheme;
-
-  late NavigationScheme navigationSchemeNoError;
 
   late TheseusRouterDelegate delegate;
 
@@ -22,13 +20,6 @@ void main() {
           TestDestinations.about,
         ],
         errorDestination: TestDestinations.error,
-      );
-      navigationSchemeNoError = NavigationScheme(
-        destinations: [
-          TestDestinations.home,
-          TestDestinations.catalog,
-          TestDestinations.about,
-        ],
       );
       delegate = TheseusRouterDelegate(
         navigationScheme: navigationScheme,

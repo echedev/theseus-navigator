@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'destination_parser.dart';
 import 'navigation_controller.dart';

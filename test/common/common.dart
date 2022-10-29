@@ -29,6 +29,16 @@ class TestDestinations {
       ),
     ],
   );
+  static final aboutWithInvalidRedirection = Destination(
+    path: '/settings/about',
+    builder: dummyBuilder,
+    redirections: [
+      Redirection(
+        destination: TestDestinations.login,
+        validator: (destination) async => false,
+      ),
+    ],
+  );
   static final aboutWithConfiguration = Destination(
     path: '/settings/about',
     builder: dummyBuilder,

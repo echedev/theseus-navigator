@@ -1,4 +1,10 @@
-## \[0.3.1\] - *2022-10-22*
+## \[0.3.4\] - *2022-10-29*
+
+- Fixes an issue when new route is requested by OS during resolving the current destination.
+- Added `redirectedFrom` property in `DestinationConfiguration`
+- The `gotBack` property in `NavigationController` is changed to `backFrom`, which contains the previous destination when `goBack` action is performed.
+
+## \[0.3.2\] - *2022-10-22*
 
 - Support asynchronous `validator` in `Redirection`
 - Added `waitingOverlayBuilder` property in `NavigationScheme`

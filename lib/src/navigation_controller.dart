@@ -96,30 +96,32 @@ class NavigationController with ChangeNotifier {
   ///
   late final GlobalKey<NavigatorState> key;
 
+  Destination? _backFrom;
+
+  /// The destination from [goBack] action is performed.
+  ///
+  /// It is set to current destination right before [goBack] action is processed.
+  /// Otherwise it is set to null.
+  ///
+  Destination? get backFrom => _backFrom;
+
   NavigationControllerError? _error;
 
   /// Error details
   ///
   NavigationControllerError? get error => _error;
 
-  /// Whether an error was happened on [goTo()] or [goBack()] actions.
+  /// Whether an error was happened on last [goTo] or [goBack] action.
   ///
   bool get hasError => _error != null;
-
-  bool _gotBack = false;
-
-  /// Whether the back action was performed.
-  ///
-  /// It is 'true' if the last navigation method call was the [goBack()].
-  ///
-  bool get gotBack => _gotBack;
 
   bool _shouldClose = false;
 
   /// Whether the navigator should close.
   ///
-  /// It is set to 'true' when user call [onBack] method when the only destination
+  /// It is set to 'true' when user call [goBack] method when the only destination
   /// is in the stack.
+  ///
   /// If this is the root navigator in the [NavigationScheme], setting [shouldClose]
   /// to true will cause closing the app.
   ///
@@ -131,19 +133,19 @@ class NavigationController with ChangeNotifier {
 
   /// The current destination of the navigator.
   ///
-  /// It is the top destination in the navigation [stack].
+  /// It is the topmost destination in the navigation [stack].
   ///
   Destination get currentDestination => _stack.last;
 
   /// The navigation [stack].
   ///
-  /// When [goTo] method is called, the destination is added to the stack,
-  /// and when [goBack] method is called, the [currentDestination] is removed from
+  /// When [goTo] method is called, the destination is placed on the top of the stack,
+  /// and when [goBack] method is called, the topmost destination is removed from
   /// the stack.
   ///
   List<Destination> get stack => _stack.toList();
 
-  /// Builds a widget that wraps the destination's content.
+  /// Builds a widget that wraps destinations of the navigator.
   ///
   Widget build(BuildContext context) {
     return builder.build(context, this);
@@ -152,12 +154,12 @@ class NavigationController with ChangeNotifier {
   /// Opens specified destination.
   ///
   /// By calling calling this method, depending on [destination.configuration],
-  /// the given destination will be either added to the navigation [stack], or
-  /// will replace the current destination.
+  /// the given destination will be either added to the top of the navigation [stack],
+  /// or will replace the topmost destination in the stack.
   ///
   /// Also, missing upward destinations can be added to the stack, if the
   /// current stack state doesn't match, and the [destination.upwardDestinationBuilder]
-  /// is defined. This mostly could happen when it is navigated as a deeplink.
+  /// is defined.
   ///
   /// Throws [UnknownDestinationException] if the navigator's [destinations]
   /// doesn't contain given destination.
@@ -165,8 +167,8 @@ class NavigationController with ChangeNotifier {
   Future<void> goTo(Destination destination) async {
     Log.d(_tag,
         'goTo(): destination=$destination, reset=${destination.configuration.reset}');
+    _backFrom = null;
     _error = null;
-    _gotBack = false;
     _shouldClose = false;
     if (currentDestination == destination) {
       if (!destination.configuration.reset) {
@@ -192,13 +194,13 @@ class NavigationController with ChangeNotifier {
 
   /// Closes the current destination.
   ///
-  /// The current destination is removed from the navigation [stack].
+  /// The topmost destination is removed from the navigation [stack].
   ///
   /// If it is the only destination in the stack, it remains in the stack and
   /// [shouldClose] flag is set to 'true'.
   ///
   void goBack() {
-    _gotBack = true;
+    _backFrom = currentDestination;
     if (_stack.length > 1) {
       _stack.removeLast();
       _shouldClose = false;

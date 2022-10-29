@@ -43,7 +43,10 @@ abstract class DestinationParser<T extends DestinationParameters> {
   ///
   Map<String, String> toMap(T parameters);
 
-  /// Check if the provided [uri] string match the base [destination]
+  /// Checks if the [destination] matches the [uri].
+  ///
+  /// The destination does match when its [path] structure (URI segments number
+  /// and values, including path parameters) matches given [uri] string.
   ///
   bool isMatch(String uri, Destination<T> destination) {
     if ((uri == '/' || uri.isEmpty)) {

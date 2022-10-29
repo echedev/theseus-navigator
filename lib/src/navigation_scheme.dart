@@ -53,7 +53,7 @@ class NavigationScheme with ChangeNotifier {
         );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
-    _updateCurrentDestination();
+    _updateCurrentDestination(backFrom: null);
   }
 
   /// The destination to redirect in case of error.
@@ -104,11 +104,10 @@ class NavigationScheme with ChangeNotifier {
   ///
   NavigationController get rootNavigator => _rootNavigator;
 
-  Destination? _redirectedFrom;
-
   /// Stores the original destination in case of redirection.
   ///
-  Destination? get redirectedFrom => _redirectedFrom;
+  Destination? get redirectedFrom =>
+      _currentDestination.configuration.redirectedFrom;
 
   bool _shouldClose = false;
 
@@ -124,7 +123,7 @@ class NavigationScheme with ChangeNotifier {
     super.dispose();
   }
 
-  /// Find a destination that match a given URI.
+  /// Find a destination in the scheme that match a given URI.
   ///
   /// Returns 'null' if no destination matching the URI was found.
   ///
@@ -144,16 +143,15 @@ class NavigationScheme with ChangeNotifier {
   /// If found, uses the navigator's [goTo] method to open the destination.
   /// Otherwise throws [UnknownDestinationException].
   ///
-  Future<void> goTo(Destination destination, {bool isRedirection = false}) {
+  Future<void> goTo(Destination destination) {
     final navigator = findNavigator(destination);
     if (navigator == null) {
       _handleError(destination);
       return SynchronousFuture(null);
     }
     Log.d(runtimeType,
-        'goTo(): navigator=${navigator.tag}, destination=$destination, isRedirection=$isRedirection');
+        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.configuration.redirectedFrom}');
     _shouldClose = false;
-    _redirectedFrom = isRedirection ? _currentDestination : null;
 
     final completer = Completer<void>();
     var destinationToComplete = destination;
@@ -201,19 +199,24 @@ class NavigationScheme with ChangeNotifier {
         }
       },
     );
-    final resolvedDestination = await _resolveDestination(_currentDestination);
+    final requestedDestination = _currentDestination;
+    final resolvedDestination = await _resolveDestination(requestedDestination);
     isResolvingTimer.cancel();
     Log.d(runtimeType,
-        'resolve(): currentDestination=$_currentDestination, resolvedDestination=$resolvedDestination');
-    if (resolvedDestination == _currentDestination) {
+        'resolve(): requestedDestination=$requestedDestination, resolvedDestination=$resolvedDestination');
+    if (requestedDestination != _currentDestination) {
       _isResolving = false;
-      if (!(_destinationCompleters[_currentDestination]?.isCompleted ?? true)) {
-        _destinationCompleters[_currentDestination]?.complete();
-      }
       notifyListeners();
-    } else {
-      goTo(resolvedDestination, isRedirection: true);
+      return;
     }
+    if (resolvedDestination == requestedDestination) {
+      _isResolving = false;
+      _completeResolvedDestination(requestedDestination);
+      notifyListeners();
+      return;
+    }
+    goTo(resolvedDestination.withConfiguration(resolvedDestination.configuration
+        .copyWith(redirectedFrom: requestedDestination)));
   }
 
   void _initializeNavigator(NavigationController navigator) {
@@ -236,7 +239,8 @@ class NavigationScheme with ChangeNotifier {
 
   void _handleError(Destination? destination) {
     if (errorDestination != null) {
-      goTo(errorDestination!, isRedirection: true);
+      goTo((errorDestination!).withConfiguration(errorDestination!.configuration
+          .copyWith(redirectedFrom: destination)));
     } else {
       throw UnknownDestinationException(destination);
     }
@@ -250,14 +254,14 @@ class NavigationScheme with ChangeNotifier {
 
   void _onNavigatorStateChanged(NavigationController navigator) {
     Log.d(runtimeType,
-        'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, gotBack=${navigator.gotBack}, shouldClose=${navigator.shouldClose}');
+        'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, backFrom=${navigator.backFrom}, shouldClose=${navigator.shouldClose}');
     if (navigator.hasError) {
       _handleError(navigator.error!.destination);
     }
     final owner = _navigatorOwners[navigator];
     if (owner != null) {
       Log.d(runtimeType, 'onNavigatorStateChanged(): owner=$owner');
-      if (navigator.gotBack) {
+      if (navigator.backFrom != null) {
         if (navigator.shouldClose) {
           final parentNavigator = findNavigator(owner);
           if (parentNavigator == null) {
@@ -266,7 +270,7 @@ class NavigationScheme with ChangeNotifier {
           }
           parentNavigator.goBack();
         } else {
-          _updateCurrentDestination();
+          _updateCurrentDestination(backFrom: navigator.backFrom);
         }
       } else {
         if (navigator.currentDestination.configuration.reset) {
@@ -277,12 +281,11 @@ class NavigationScheme with ChangeNotifier {
         }
       }
     } else {
-      _updateCurrentDestination();
+      _updateCurrentDestination(backFrom: navigator.backFrom);
     }
   }
 
-  void _updateCurrentDestination() {
-    Destination newDestination = _rootNavigator.currentDestination;
+  void _updateCurrentDestination({required Destination? backFrom}) {
     // TODO: Do we need the stack here?
     List<Destination> newStack = List.from(_rootNavigator.stack);
     // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
@@ -292,20 +295,23 @@ class NavigationScheme with ChangeNotifier {
           'updateCurrentDestination(): currentDestination=$_currentDestination, shouldClose=$_shouldClose');
       notifyListeners();
       return;
-    } else {
-      while (!newDestination.isFinalDestination) {
-        newStack.addAll(newDestination.navigator!.stack);
-        newDestination = newDestination.navigator!.currentDestination;
-      }
     }
+
+    Destination newDestination = _rootNavigator.currentDestination;
+    while (!newDestination.isFinalDestination) {
+      newStack.addAll(newDestination.navigator!.stack);
+      newDestination = newDestination.navigator!.currentDestination;
+    }
+    Log.d(runtimeType,
+        'updateCurrentDestination(): currentDestination=$_currentDestination, newDestination=$newDestination');
     if (_currentDestination != newDestination ||
         newDestination.configuration.reset) {
       _currentDestination = newDestination;
-      Log.d(runtimeType,
-          'updateCurrentDestination(): currentDestination=$_currentDestination, shouldClose=$_shouldClose');
-      if (_currentDestination != _redirectedFrom || _redirectedFrom == null) {
-        resolve();
+      if (_currentDestination == backFrom?.configuration.redirectedFrom) {
+        notifyListeners();
+        return;
       }
+      resolve();
     }
   }
 
@@ -327,5 +333,17 @@ class NavigationScheme with ChangeNotifier {
     }
     final resolvedOwner = await _resolveDestination(owner);
     return owner != resolvedOwner ? resolvedOwner : destination;
+  }
+
+  void _completeResolvedDestination(Destination destination) {
+    Destination? destinationToComplete = destination;
+    while (destinationToComplete != null) {
+      if (!(_destinationCompleters[destinationToComplete]?.isCompleted ??
+          true)) {
+        _destinationCompleters[destinationToComplete]?.complete();
+      }
+      destinationToComplete =
+          destinationToComplete.configuration.redirectedFrom;
+    }
   }
 }

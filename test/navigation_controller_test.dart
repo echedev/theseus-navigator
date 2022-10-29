@@ -51,14 +51,14 @@ void main() {
         await navigator.goTo(TestDestinations.catalog);
         expect(navigator.currentDestination, TestDestinations.catalog);
         expect(navigator.stack.length, 2);
-        expect(navigator.gotBack, false);
+        expect(navigator.backFrom, null);
       });
       test('Navigate to another 2 destinations with "push" action', () async {
         await navigator.goTo(TestDestinations.catalog);
         await navigator.goTo(TestDestinations.about);
         expect(navigator.currentDestination, TestDestinations.about);
         expect(navigator.stack.length, 3);
-        expect(navigator.gotBack, false);
+        expect(navigator.backFrom, null);
       });
       test('Navigate to another destination with "push" action and return back',
           () async {
@@ -66,7 +66,7 @@ void main() {
         navigator.goBack();
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
-        expect(navigator.gotBack, true);
+        expect(navigator.backFrom, TestDestinations.catalog);
         expect(navigator.shouldClose, false);
       });
       test(
@@ -78,7 +78,7 @@ void main() {
         navigator.goBack();
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
-        expect(navigator.gotBack, true);
+        expect(navigator.backFrom, TestDestinations.catalog);
         expect(navigator.shouldClose, false);
       });
       test('Navigate to the same destination will not change the stack',
@@ -86,7 +86,7 @@ void main() {
         await navigator.goTo(TestDestinations.home);
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
-        expect(navigator.gotBack, false);
+        expect(navigator.backFrom, null);
       });
       test(
           'Navigate back from the last destination in the stack should set close flag',
@@ -94,7 +94,7 @@ void main() {
         navigator.goBack();
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
-        expect(navigator.gotBack, true);
+        expect(navigator.backFrom, TestDestinations.home);
         expect(navigator.shouldClose, true);
       });
     });

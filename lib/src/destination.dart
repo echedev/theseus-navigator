@@ -163,7 +163,7 @@ class Destination<T extends DestinationParameters> {
 
   /// Return a widget that display destination's content.
   ///
-  /// If the destination is final, then [builder] is called to build a content.
+  /// If the destination is final, then [builder] is called to build the content.
   /// Otherwise [navigator.build] is called to build nested navigator's content.
   ///
   Widget build(BuildContext context) => isFinalDestination
@@ -208,6 +208,7 @@ class Destination<T extends DestinationParameters> {
         configuration: configuration ?? this.configuration,
         parameters: parameters ?? this.parameters,
         parser: parser,
+        redirections: redirections,
         tag: tag,
         upwardDestinationBuilder: upwardDestinationBuilder,
       );
@@ -245,6 +246,7 @@ class DestinationConfiguration {
   const DestinationConfiguration({
     required this.action,
     required this.transition,
+    this.redirectedFrom,
     this.reset = false,
     this.transitionBuilder,
   }) : assert(
@@ -279,6 +281,11 @@ class DestinationConfiguration {
   ///
   final DestinationTransition transition;
 
+  /// In case of redirection, contains a destination from which the redirection
+  /// was performed.
+  ///
+  final Destination? redirectedFrom;
+
   /// Whether the stack would be cleared before adding the destination.
   ///
   final bool reset;
@@ -297,11 +304,13 @@ class DestinationConfiguration {
   ///
   DestinationConfiguration copyWith({
     // TODO: Add other properties
+    Destination? redirectedFrom,
     bool? reset,
   }) =>
       DestinationConfiguration(
         action: action,
         transition: transition,
+        redirectedFrom: redirectedFrom ?? this.redirectedFrom,
         reset: reset ?? this.reset,
         transitionBuilder: transitionBuilder,
       );

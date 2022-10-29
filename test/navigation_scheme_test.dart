@@ -86,23 +86,20 @@ void main() {
         navigationScheme = NavigationScheme(
           destinations: [
             TestDestinations.home,
-            TestDestinations.catalog,
-            TestDestinations.about,
+            TestDestinations.aboutWithInvalidRedirection,
             TestDestinations.login,
           ],
         );
       });
-      test('Current destination is stored after redirection', () async {
-        await navigationScheme.goTo(TestDestinations.login,
-            isRedirection: true);
+      test('Original destination is saved in the configuration of redirection destination', () async {
+        await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
         expect(navigationScheme.currentDestination, TestDestinations.login);
-        expect(navigationScheme.redirectedFrom, TestDestinations.home);
+        expect(navigationScheme.currentDestination.configuration.redirectedFrom, TestDestinations.aboutWithInvalidRedirection);
       });
       test('User can navigate back from the redirected destination', () async {
-        await navigationScheme.goTo(TestDestinations.login,
-            isRedirection: true);
+        await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
         navigationScheme.goBack();
-        expect(navigationScheme.currentDestination, TestDestinations.home);
+        expect(navigationScheme.currentDestination, TestDestinations.aboutWithInvalidRedirection);
       });
     });
     group('Error handling', () {

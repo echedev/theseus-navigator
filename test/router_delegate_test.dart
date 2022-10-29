@@ -35,7 +35,7 @@ void main() {
                 .findNavigator(navigationScheme.currentDestination)
                 ?.stack
                 .length,
-            2);
+            1);
       });
       test(
           'New route with "upwardDestinationBuilder" is pushed to the app by OS',

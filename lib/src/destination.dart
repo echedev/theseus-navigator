@@ -233,7 +233,7 @@ class Destination<T extends DestinationParameters> {
 /// the destination.
 ///
 /// There are convenient factory constructors of commonly used configurations.
-/// [defaultMaterial] - pushes the destination to the navigation stack with standard material animations.
+/// [material] - pushes the destination to the navigation stack with standard material animations.
 /// [quiet] - replace the previous destination with the current one without animations.
 ///
 /// See also:
@@ -260,6 +260,11 @@ class DestinationConfiguration {
   ///
   const factory DestinationConfiguration.material() =
       _DefaultDestinationConfiguration;
+
+  /// Creates a configuration that displays a destination as a modal dialog.
+  ///
+  const factory DestinationConfiguration.dialog() =
+      _DialogDestinationConfiguration;
 
   /// Creates a configuration that replaces the current destination with a new one
   /// with no animations.
@@ -324,6 +329,14 @@ class _DefaultDestinationConfiguration extends DestinationConfiguration {
         );
 }
 
+class _DialogDestinationConfiguration extends DestinationConfiguration {
+  const _DialogDestinationConfiguration()
+      : super(
+          action: DestinationAction.push,
+          transition: DestinationTransition.materialDialog,
+        );
+}
+
 class _QuietDestinationConfiguration extends DestinationConfiguration {
   const _QuietDestinationConfiguration()
       : super(
@@ -355,6 +368,10 @@ enum DestinationTransition {
   /// Standard Material animations.
   ///
   material,
+
+  /// Destination appears as a dialog with Material transitions and modal barrier.
+  ///
+  materialDialog,
 
   /// Custom animations.
   ///

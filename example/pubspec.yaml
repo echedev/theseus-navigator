@@ -11,11 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  collection: ^1.16.0
   cupertino_icons: ^1.0.2
   google_fonts: ^2.1.0
   theseus_navigator:
     path: ../
-  url_launcher: ^6.1.5
+  url_launcher: ^6.1.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

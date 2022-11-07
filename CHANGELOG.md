@@ -1,3 +1,7 @@
+## \[0.3.5\] - *2022-11-07*
+
+- Support of displaying destination as a dialog.
+
 ## \[0.3.4\] - *2022-10-29*
 
 - Fixes an issue when new route is requested by OS during resolving the current destination.

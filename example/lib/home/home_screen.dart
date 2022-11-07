@@ -110,7 +110,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> _openPubDev() async {
-    if (!await launch('https://pub.dev/packages/theseus_navigator'))
+    if (!await launchUrl(Uri.parse('https://pub.dev/packages/theseus_navigator'))) {
       throw 'Could not launch url';
+    }
   }
 }

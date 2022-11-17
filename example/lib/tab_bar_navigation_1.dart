@@ -44,12 +44,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: TheseusRouterDelegate(
-        navigationScheme: navigationScheme,
-      ),
-      routeInformationParser: TheseusRouteInformationParser(
-        navigationScheme: navigationScheme,
-      ),
+      routerDelegate: navigationScheme.routerDelegate,
+      routeInformationParser: navigationScheme.routeParser,
     );
   }
 }

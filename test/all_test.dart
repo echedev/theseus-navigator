@@ -15,5 +15,7 @@ void main() {
   redirection.main();
   router_delegate.main();
   route_parser.main();
-  router_delegate_widgets.main();
+
+  destination_widget.main();
+  router_delegate_widget.main();
 }

@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
-import 'package:theseus_navigator/theseus_navigator.dart';
 
 import 'navigation.dart';
 
@@ -37,12 +36,8 @@ class MyApp extends StatelessWidget {
           unselectedLabelColor: Colors.blueGrey,
         )
       ),
-      routerDelegate: TheseusRouterDelegate(
-        navigationScheme: navigationScheme,
-      ),
-      routeInformationParser: TheseusRouteInformationParser(
-        navigationScheme: navigationScheme,
-      ),
+      routerDelegate: navigationScheme.routerDelegate,
+      routeInformationParser: navigationScheme.routeParser,
     );
   }
 }

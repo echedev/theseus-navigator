@@ -7,6 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'destination.dart';
 import 'exceptions.dart';
 import 'navigation_controller.dart';
+import 'router_delegate.dart';
+import 'route_parser.dart';
 import 'utils/utils.dart';
 
 /// Defines a navigation scheme of the app.
@@ -51,6 +53,8 @@ class NavigationScheme with ChangeNotifier {
           ],
           tag: 'Root',
         );
+    _routerDelegate = TheseusRouterDelegate(navigationScheme: this);
+    _routeParser = TheseusRouteInformationParser(navigationScheme: this);
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
     _updateCurrentDestination(backFrom: null);
@@ -104,6 +108,18 @@ class NavigationScheme with ChangeNotifier {
   ///
   NavigationController get rootNavigator => _rootNavigator;
 
+  late final TheseusRouterDelegate _routerDelegate;
+
+  /// Reference to the RouterDelegate implementation
+  ///
+  TheseusRouterDelegate get routerDelegate => _routerDelegate;
+
+  late final TheseusRouteInformationParser _routeParser;
+
+  /// Reference to the RouteInformationParser implementation
+  ///
+  TheseusRouteInformationParser get routeParser => _routeParser;
+
   /// Stores the original destination in case of redirection.
   ///
   Destination? get redirectedFrom =>
@@ -119,6 +135,7 @@ class NavigationScheme with ChangeNotifier {
 
   @override
   void dispose() {
+    _routerDelegate.dispose();
     _removeNavigatorListeners();
     super.dispose();
   }

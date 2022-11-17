@@ -29,6 +29,7 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
     for (int i = 0; i < navigator.stack.length; i++) {
       final destination = navigator.stack[i];
       pages.add(_TheseusPage(
+        // TODO: Remove reference to 'i' in the key
         key: ValueKey('${destination.uri}-$i'),
         destination: destination,
       ));
@@ -58,6 +59,12 @@ class _TheseusPage extends Page {
     switch (destination.configuration.transition) {
       case DestinationTransition.material:
         return MaterialPageRoute(
+          settings: this,
+          builder: (context) => destination.build(context),
+        );
+      case DestinationTransition.materialDialog:
+        return DialogRoute(
+          context: context,
           settings: this,
           builder: (context) => destination.build(context),
         );

@@ -3,6 +3,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
+import 'package:theseus_navigator/src/router_delegate.dart';
 
 import 'common/index.dart';
 
@@ -21,9 +22,7 @@ void main() {
         ],
         errorDestination: TestDestinations.error,
       );
-      delegate = TheseusRouterDelegate(
-        navigationScheme: navigationScheme,
-      );
+      delegate = navigationScheme.routerDelegate;
     });
     group('Set new route', () {
       test('New route is pushed to the app by OS', () async {
@@ -79,7 +78,7 @@ void main() {
     group('Service', () {
       test('Stop listen to navigation scheme on dispose', () async {
         expect(navigationScheme.hasListeners, true);
-        delegate.dispose();
+        navigationScheme.routerDelegate.dispose();
         expect(navigationScheme.hasListeners, false);
       });
     });

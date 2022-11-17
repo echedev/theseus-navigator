@@ -6,6 +6,4 @@ export 'src/exceptions.dart';
 export 'src/navigation_scheme.dart';
 export 'src/navigation_controller.dart';
 export 'src/redirection.dart';
-export 'src/router_delegate.dart';
-export 'src/route_parser.dart';
 export 'src/widgets/index.dart';

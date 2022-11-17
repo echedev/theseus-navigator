@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
+import 'package:theseus_navigator/src/route_parser.dart';
 
 import 'common/index.dart';
 

@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.3.5-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.4.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -10,7 +10,7 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 - Deep links
 - Nested navigation
 - Redirections
-- Custom transitions
+- Implementation of common navigation cases
 
 ![Theseus Navigator Demo](./assets/TheseusNavigatorDemo.gif)
 
@@ -63,8 +63,8 @@ final navigationScheme = NavigationScheme(
 Widget build(BuildContext context) {
   return MaterialApp.router(
     //...
-    routerDelegate: TheseusRouterDelegate(navigationScheme: navigationScheme),
-    routeInformationParser: TheseusRouterInformationParser(navigationScheme: navigationScheme),
+    routerDelegate: navigationScheme.routerDelegate,
+    routeInformationParser: navigationScheme.routeParser,
   );
 }
 ```
@@ -82,10 +82,13 @@ final homeDestination = Destination(
   builder: (context, parameters) => HomeScreen(),
 );
 ```
+It is a *final* destination, which directly displays the content returned by provided `builder` function.
 
-If the destination is ***final***, which means that it directly display some content (don't be confused with 'final' Dart keyword), then you have to provide a `builder` function that returns a content widget.
+#### Nested navigation
 
-Otherwise you have to provide a `navigator`, that is a `NavigationController` with its own destinations, which could be either final and build the content or contain another nested navigator.
+For nested navigation, instead of `builder` parameter you should provide a navigator, which is a `NavigationController`.  
+It manages its own destinations, which could be either final ones and build the content or transit ones and provide another nested navigator.  
+
 ```dart
 final mainDestination = Destination(
   path: '/',
@@ -100,6 +103,24 @@ final mainNavigator = NavigationController(
   ],
 );
 ```
+*The `NavigatorController` is described in next sections.*
+
+By using `Destination.transit()` constructor it is also possible to wrap the nested navigation UI in some additional widget subtree.
+```
+final mainDestination = Destination.transit(
+  path: '/',
+  navigator: mainNavigator,
+  builder: (context, parameters, child) {
+    return Column(
+      children: [
+        const Text('Parent destination'),
+        Expanded(child: child),
+      ],  
+    );
+  }
+);
+```
+This constructor has an optional `builder` parameter with additional `child` argument, which represents the nested navigator UI and must be included in the resulting widget tree.
 
 #### Path
 The destination is defined by its `uri`, which is built from the destination `path` and `parameters`.

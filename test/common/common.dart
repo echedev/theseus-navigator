@@ -53,6 +53,18 @@ class TestDestinations {
     path: '/catalog',
     navigator: TestNavigators.catalog,
   );
+  static final catalogTransit = Destination.transit(
+    path: '/catalog',
+    navigator: TestNavigators.catalog,
+    builder: (context, parameters, child) {
+      return Column(
+        children: [
+          const Text('Catalog'),
+          Expanded(child: child),
+        ],
+      );
+    },
+  );
   static final categories = Destination(
     path: '/categories/{id}',
     builder: dummyBuilder,

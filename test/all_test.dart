@@ -5,7 +5,8 @@ import 'navigation_controller_test.dart' as navigation_controller;
 import 'redirection_test.dart' as redirection;
 import 'route_parser_test.dart' as route_parser;
 import 'router_delegate_test.dart' as router_delegate;
-import 'widgets/router_delegate_widget_test.dart' as router_delegate_widgets;
+import 'widgets/destination_widget_test.dart' as destination_widget;
+import 'widgets/router_delegate_widget_test.dart' as router_delegate_widget;
 
 void main() {
   destination.main();

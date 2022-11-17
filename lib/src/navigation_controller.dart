@@ -48,11 +48,10 @@ class NavigationController with ChangeNotifier {
   ///
   final List<Destination> destinations;
 
-  /// An implementation of [NavigatorBuilder] that creates a wrapping widget tree
-  /// around destinations.
+  /// An implementation of [NavigatorBuilder] which creates a navigation UI.
   ///
-  /// Defaults to [DefaultNavigatorBuilder] that wraps destinations to Flutter's
-  /// [Navigator] widget.
+  /// Defaults to [DefaultNavigatorBuilder] which uses Flutter's [Navigator] widget
+  /// to represent the stack of destinations.
   ///
   /// Also the following implementations are available:
   /// - [BottomNavigationBuilder] allows to switch destination using Flutter's

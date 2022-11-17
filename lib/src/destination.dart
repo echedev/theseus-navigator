@@ -53,13 +53,20 @@ class Destination<T extends DestinationParameters> {
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
     this.configuration = configuration ?? DestinationConfiguration.material();
+    _transitBuilder = null;
   }
 
   /// Creates a destination that provides a navigator with nested destinations.
   ///
-  Destination.intermediate({
+  /// An optional [builder] parameter is basically the same like normal [Destination.builder],
+  /// but has additional [child] parameter, which contains the nested content that built by [navigator].
+  /// The implementation of [builder] function must include this child widget sub-tree
+  /// in the result for correct displaying the nested content.
+  ///
+  Destination.transit({
     required this.path,
     required this.navigator,
+    Widget Function(BuildContext context, T? parameters, Widget child)? builder,
     this.isHome = false,
     this.redirections = const <Redirection>[],
     this.tag,
@@ -67,7 +74,8 @@ class Destination<T extends DestinationParameters> {
         configuration = DestinationConfiguration.material(),
         parameters = null,
         parser = const DefaultDestinationParser(),
-        upwardDestinationBuilder = null;
+        upwardDestinationBuilder = null,
+        _transitBuilder = builder;
 
   /// Path identifies the destination.
   ///
@@ -132,6 +140,9 @@ class Destination<T extends DestinationParameters> {
   final Destination? Function(Destination<T> destination)?
       upwardDestinationBuilder;
 
+  late final Widget Function(BuildContext context, T? parameters, Widget child)?
+      _transitBuilder;
+
   /// Indicates if the [upwardDestinationBuilder] is provided.
   ///
   bool get hasUpwardDestinationBuilder => upwardDestinationBuilder != null;
@@ -143,10 +154,36 @@ class Destination<T extends DestinationParameters> {
   ///
   bool get isFinalDestination => navigator == null;
 
+  /// Return a destination that should be displayed on reverse navigation.
+  ///
+  Destination? get upwardDestination => upwardDestinationBuilder?.call(this);
+
   /// A full URI of the destination, with parameters placeholders replaced with
   /// actual parameter values.
   ///
   String get uri => parser.uri(this);
+
+  /// Return a widget that display destination's content.
+  ///
+  /// If the destination is final, then [builder] is called to build the content.
+  ///
+  /// Otherwise [navigator.build] is called to build nested navigator's content.
+  /// In case the destination was created by [Destination.transit] constructor,
+  /// and [builder] parameter was specified, the nested content is also wrapped in
+  /// the widget sub-tree returned by that builder.
+  ///
+  Widget build(BuildContext context) {
+    if (isFinalDestination) {
+      return builder!(context, parameters);
+    } else {
+      final nestedContent = navigator!.build(context);
+      if (_transitBuilder != null) {
+        return _transitBuilder!(context, parameters, nestedContent);
+      } else {
+        return nestedContent;
+      }
+    }
+  }
 
   /// Check if the destination matches the provided URI string
   ///
@@ -160,19 +197,6 @@ class Destination<T extends DestinationParameters> {
   ///
   Future<Destination<T>> parse(String uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
-
-  /// Return a widget that display destination's content.
-  ///
-  /// If the destination is final, then [builder] is called to build the content.
-  /// Otherwise [navigator.build] is called to build nested navigator's content.
-  ///
-  Widget build(BuildContext context) => isFinalDestination
-      ? builder!(context, parameters)
-      : navigator!.build(context);
-
-  /// Return a destination that should be displayed on reverse navigation.
-  ///
-  Destination? get upwardDestination => upwardDestinationBuilder?.call(this);
 
   /// Returns a copy of this destination with a different configuration.
   ///

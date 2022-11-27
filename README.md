@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.4.0-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.4.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -86,7 +86,7 @@ It is a *final* destination, which directly displays the content returned by pro
 
 #### Nested navigation
 
-For nested navigation, instead of `builder` parameter you should provide a navigator, which is a `NavigationController`.  
+For nested navigation, instead of `builder` parameter you should provide a `navigator`, which is a `NavigationController`.  
 It manages its own destinations, which could be either final ones and build the content or transit ones and provide another nested navigator.  
 
 ```dart
@@ -261,7 +261,7 @@ final mainNavigator = NavigationController(
 
 #### Navigator Builder
 
-NavigationController allows you to wrap destinations with your custom widget.
+NavigationController allows you to wrap destinations with your custom navigation UI.
 
 This is required when you would like to navigate destinations through the `BottomNavigationBar`, `TabBar`, `Drawer` or some other way.
 
@@ -288,7 +288,7 @@ final mainNavigator = NavigationController(
     settingsDestination,
   ],
   builder: CustomNavigatorBuilder(),
-  tag = 'Main',
+  tag: 'Main',
 );
 ```
 

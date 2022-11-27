@@ -32,6 +32,9 @@ class Redirection {
   /// Must return true if it is allowed to navigate to the destination.
   /// Otherwise returns false.
   ///
+  /// If validation could be performed synchronously consider return result with
+  /// [SynchronousFuture].
+  ///
   final Future<bool> Function(Destination destination)? validator;
 
   /// Validates the destination.

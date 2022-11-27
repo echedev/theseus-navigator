@@ -48,10 +48,11 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
           child: navigationScheme.rootNavigator.build(context),
         ),
         if (navigationScheme.isResolving)
-          const _TheseusPageOverlay(
-            child: _TheseusWaitingOverlay(
-              key: Key('_TheseusWaitingOverlay_'),
-            ),
+          _TheseusPageOverlay(
+            child: navigationScheme.waitingOverlayBuilder?.call(context, navigationScheme.currentDestination)
+                ?? const _TheseusWaitingOverlay(
+                  key: Key('_TheseusWaitingOverlay_'),
+                ),
           ),
       ],
       onPopPage: (route, result) => route.didPop(result),

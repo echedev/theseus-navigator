@@ -1,3 +1,8 @@
+### 0.4.1
+2022-11-27
+
+- Fix: custom waiting view was not applied
+
 ### 0.4.0
 2022-11-17
 

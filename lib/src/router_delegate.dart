@@ -49,8 +49,9 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
         ),
         if (navigationScheme.isResolving)
           _TheseusPageOverlay(
-            child: navigationScheme.waitingOverlayBuilder?.call(context, navigationScheme.currentDestination)
-                ?? const _TheseusWaitingOverlay(
+            child: navigationScheme.waitingOverlayBuilder
+                    ?.call(context, navigationScheme.currentDestination) ??
+                const _TheseusWaitingOverlay(
                   key: Key('_TheseusWaitingOverlay_'),
                 ),
           ),

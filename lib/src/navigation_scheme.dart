@@ -123,7 +123,7 @@ class NavigationScheme with ChangeNotifier {
   /// Stores the original destination in case of redirection.
   ///
   Destination? get redirectedFrom =>
-      _currentDestination.configuration.redirectedFrom;
+      _currentDestination.settings.redirectedFrom;
 
   bool _shouldClose = false;
 
@@ -167,7 +167,7 @@ class NavigationScheme with ChangeNotifier {
       return SynchronousFuture(null);
     }
     Log.d(runtimeType,
-        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.configuration.redirectedFrom}');
+        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.settings.redirectedFrom}');
     _shouldClose = false;
 
     final completer = Completer<void>();
@@ -232,7 +232,7 @@ class NavigationScheme with ChangeNotifier {
       notifyListeners();
       return;
     }
-    goTo(resolvedDestination.withConfiguration(resolvedDestination.configuration
+    goTo(resolvedDestination.withSettings(resolvedDestination.settings
         .copyWith(redirectedFrom: requestedDestination)));
   }
 
@@ -256,7 +256,7 @@ class NavigationScheme with ChangeNotifier {
 
   void _handleError(Destination? destination) {
     if (errorDestination != null) {
-      goTo((errorDestination!).withConfiguration(errorDestination!.configuration
+      goTo((errorDestination!).withSettings(errorDestination!.settings
           .copyWith(redirectedFrom: destination)));
     } else {
       throw UnknownDestinationException(destination);
@@ -290,9 +290,9 @@ class NavigationScheme with ChangeNotifier {
           _updateCurrentDestination(backFrom: navigator.backFrom);
         }
       } else {
-        if (navigator.currentDestination.configuration.reset) {
+        if (navigator.currentDestination.settings.reset) {
           goTo(owner
-              .withConfiguration(owner.configuration.copyWith(reset: true)));
+              .withSettings(owner.settings.copyWith(reset: true)));
         } else {
           goTo(owner);
         }
@@ -322,9 +322,9 @@ class NavigationScheme with ChangeNotifier {
     Log.d(runtimeType,
         'updateCurrentDestination(): currentDestination=$_currentDestination, newDestination=$newDestination');
     if (_currentDestination != newDestination ||
-        newDestination.configuration.reset) {
+        newDestination.settings.reset) {
       _currentDestination = newDestination;
-      if (_currentDestination == backFrom?.configuration.redirectedFrom) {
+      if (_currentDestination == backFrom?.settings.redirectedFrom) {
         notifyListeners();
         return;
       }
@@ -360,7 +360,7 @@ class NavigationScheme with ChangeNotifier {
         _destinationCompleters[destinationToComplete]?.complete();
       }
       destinationToComplete =
-          destinationToComplete.configuration.redirectedFrom;
+          destinationToComplete.settings.redirectedFrom;
     }
   }
 }

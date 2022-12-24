@@ -39,15 +39,15 @@ class TestDestinations {
       ),
     ],
   );
-  static final aboutWithDialogConfiguration = Destination(
+  static final aboutWithDialogSettings = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
-    configuration: DestinationConfiguration.dialog(),
+    settings: DestinationSettings.dialog(),
   );
-  static final aboutWithQuietConfiguration = Destination(
+  static final aboutWithQuietSettings = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
   );
   static final catalog = Destination(
     path: '/catalog',

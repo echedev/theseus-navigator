@@ -212,19 +212,19 @@ final categoriesDestination = Destination<CategoriesDestinationParameters>(
   );
 ```
 
-#### Configuration
+#### Settings
 
-The `DestinationConfiguration` contains attributes that are related to appearance of the destination when user navigates to or from it.
+The `DestinationSettings` contains attributes that are used to determine a logic and behavior of updating the navigation state with the destination.
 
-`action` - defines how the navigation stack will be updated when navigate to the destination, can be **push** or **replace**.
+`action` - defines how the navigation stack will be changed on navigation to the destination, can be **push** or **replace**.
 
-`transition` - animations that would apply when destination content appears, can be **material**, **custom**, or **none**.
+`transition` - animations that would apply when the destination content appears, can be **material**, **custom**, or **none**.
 
 In case of **custom** transition, you have to provide `transitionBuilder` as well.
 
 There are two pre-defined factory methods:
 
-`material()` - returns a configuration that pushes a destination to the stack with a standard Material animations.  
+`material()` - returns a settings to pushes a destination to the stack with a standard Material animations.  
 `dialog()` - display a destination as a modal dialog.  
 `quite()` - replace the current destination with a new one without any animations.
 
@@ -232,7 +232,7 @@ There are two pre-defined factory methods:
 final catalogDestination = Destination(
   path: 'catalog',
   builder: (context, parameters) => CatalogScreen(),
-  configuration: const DestinationConfiguration.quiet(),
+  settings: const DestinationSettings.quiet(),
 );
 ```
 

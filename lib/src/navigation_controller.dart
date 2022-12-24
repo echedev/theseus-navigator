@@ -152,7 +152,7 @@ class NavigationController with ChangeNotifier {
 
   /// Opens specified destination.
   ///
-  /// By calling calling this method, depending on [destination.configuration],
+  /// By calling calling this method, depending on [destination.settings],
   /// the given destination will be either added to the top of the navigation [stack],
   /// or will replace the topmost destination in the stack.
   ///
@@ -165,12 +165,12 @@ class NavigationController with ChangeNotifier {
   ///
   Future<void> goTo(Destination destination) async {
     Log.d(_tag,
-        'goTo(): destination=$destination, reset=${destination.configuration.reset}');
+        'goTo(): destination=$destination, reset=${destination.settings.reset}');
     _backFrom = null;
     _error = null;
     _shouldClose = false;
     if (currentDestination == destination) {
-      if (!destination.configuration.reset) {
+      if (!destination.settings.reset) {
         Log.d(_tag,
             'goTo(): The destination is already on top. No action required.');
         notifyListeners();
@@ -215,10 +215,10 @@ class NavigationController with ChangeNotifier {
       destinations.any((element) => element.isMatch(destination.uri));
 
   void _updateStack(Destination destination) {
-    if (destination.configuration.reset) {
+    if (destination.settings.reset) {
       _stack.clear();
     } else {
-      if (destination.configuration.action == DestinationAction.replace) {
+      if (destination.settings.action == DestinationAction.replace) {
         _stack.removeLast();
       }
     }

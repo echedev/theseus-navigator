@@ -18,7 +18,7 @@
 2022-10-29
 
 - Fixes an issue when new route is requested by OS during resolving the current destination.
-- Added `redirectedFrom` property in `DestinationConfiguration`
+- Added `redirectedFrom` property in `DestinationSettings`
 - The `gotBack` property in `NavigationController` is changed to `backFrom`, which contains the previous destination when `goBack` action is performed.
 
 ### 0.3.2

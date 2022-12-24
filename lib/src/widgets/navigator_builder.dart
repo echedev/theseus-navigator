@@ -56,7 +56,7 @@ class _TheseusPage extends Page {
 
   @override
   Route createRoute(BuildContext context) {
-    switch (destination.configuration.transition) {
+    switch (destination.settings.transition) {
       case DestinationTransition.material:
         return MaterialPageRoute(
           settings: this,
@@ -73,7 +73,7 @@ class _TheseusPage extends Page {
           settings: this,
           pageBuilder: (context, animation, secondaryAnimation) =>
               destination.build(context),
-          transitionsBuilder: destination.configuration.transitionBuilder!,
+          transitionsBuilder: destination.settings.transitionBuilder!,
         );
       case DestinationTransition.none:
       default:

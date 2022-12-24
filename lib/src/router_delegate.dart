@@ -82,7 +82,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     // The current navigation stack is reset if the new destination is not an error.
     final reset = destination != navigationScheme.errorDestination;
     return SynchronousFuture(navigationScheme.goTo(destination
-        .withConfiguration(destination.configuration.copyWith(reset: reset))));
+        .withSettings(destination.settings.copyWith(reset: reset))));
   }
 
   @override

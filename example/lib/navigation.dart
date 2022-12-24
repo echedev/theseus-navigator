@@ -34,7 +34,7 @@ class PrimaryDestinations {
   static final customTransition = Destination(
     path: '/customTransition',
     builder: (context, parameters) => const CustomTransitionScreen(),
-    configuration: DestinationConfiguration(
+    settings: DestinationSettings(
         action: DestinationAction.push,
         transition: DestinationTransition.custom,
         transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -72,17 +72,17 @@ class MainDestinations {
   static final home = Destination(
     path: '/home',
     navigator: homeNavigator,
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
   );
   static final catalog = Destination(
     path: '/catalog',
     navigator: catalogNavigator,
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
   );
   static final settings = Destination(
     path: '/settings',
     builder: (context, parameters) => const SettingsScreen(),
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
     redirections: [
       Redirections.login,
     ],

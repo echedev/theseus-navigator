@@ -9,8 +9,9 @@ import 'redirection.dart';
 /// The destination is identified by its [path]. Optionally, [parameters] can be provided.
 /// Either content [builder] or nested [navigator] must be provided for the destination.
 ///
-/// The navigator uses a destination's [configuration] to apply a certain logic of
-/// updating the navigation stack and transition animations.
+/// The navigator uses a destination's [settings] to determine a way of changing
+/// the navigation stack, apply transition animations and other aspects of updating
+/// the navigation state.
 ///
 /// The [parser] is used to parse destination from the URI and generate a URI string
 /// for the destination.
@@ -21,7 +22,7 @@ import 'redirection.dart';
 /// If [redirections] are specified, they will be applied on navigation to this destination.
 ///
 /// See also:
-/// - [DestinationConfiguration]
+/// - [DestinationSettings]
 /// - [DestinationParameters]
 /// - [DestinationParser]
 /// - [Redirection]
@@ -32,7 +33,7 @@ class Destination<T extends DestinationParameters> {
   Destination({
     required this.path,
     this.builder,
-    DestinationConfiguration? configuration,
+    DestinationSettings? settings,
     this.isHome = false,
     this.navigator,
     this.parameters,
@@ -52,7 +53,7 @@ class Destination<T extends DestinationParameters> {
                 ((T != DestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    this.configuration = configuration ?? DestinationConfiguration.material();
+    this.settings = settings ?? DestinationSettings.material();
     _transitBuilder = null;
   }
 
@@ -71,7 +72,7 @@ class Destination<T extends DestinationParameters> {
     this.redirections = const <Redirection>[],
     this.tag,
   })  : builder = null,
-        configuration = DestinationConfiguration.material(),
+        settings = DestinationSettings.material(),
         parameters = null,
         parser = const DefaultDestinationParser(),
         upwardDestinationBuilder = null,
@@ -92,7 +93,7 @@ class Destination<T extends DestinationParameters> {
 
   /// Defines a way of how this destination will appear.
   ///
-  late final DestinationConfiguration configuration;
+  late final DestinationSettings settings;
 
   /// Whether the destination is the home destination.
   ///
@@ -198,11 +199,10 @@ class Destination<T extends DestinationParameters> {
   Future<Destination<T>> parse(String uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
-  /// Returns a copy of this destination with a different configuration.
+  /// Returns a copy of this destination with a different settings.
   ///
-  Destination<T> withConfiguration(DestinationConfiguration configuration) =>
-      copyWith(
-        configuration: configuration,
+  Destination<T> withSettings(DestinationSettings settings) => copyWith(
+        settings: settings,
       );
 
   /// Returns a copy of this destination with different parameters.
@@ -222,14 +222,14 @@ class Destination<T extends DestinationParameters> {
   /// with the new values.
   ///
   Destination<T> copyWith({
-    DestinationConfiguration? configuration,
+    DestinationSettings? settings,
     T? parameters,
   }) =>
       Destination<T>(
         path: path,
         builder: builder,
         navigator: navigator,
-        configuration: configuration ?? this.configuration,
+        settings: settings ?? this.settings,
         parameters: parameters ?? this.parameters,
         parser: parser,
         redirections: redirections,
@@ -253,21 +253,22 @@ class Destination<T extends DestinationParameters> {
   String toString() => uri;
 }
 
-/// Encapsulates the configuration attributes which are used for navigating to
-/// the destination.
+/// Encapsulates the settings attributes which are applied when the navigation state
+/// is updated with the the destination.
 ///
-/// There are convenient factory constructors of commonly used configurations.
+/// There are convenient factory constructors for commonly used settings.
 /// [material] - pushes the destination to the navigation stack with standard material animations.
+/// [dialog] - display the destination like a dialog
 /// [quiet] - replace the previous destination with the current one without animations.
 ///
 /// See also:
 /// - [DestinationAction]
 /// - [DestinationTransition]
 ///
-class DestinationConfiguration {
-  /// Creates configuration of a destination.
+class DestinationSettings {
+  /// Creates an instance of [DestinationSettings].
   ///
-  const DestinationConfiguration({
+  const DestinationSettings({
     required this.action,
     required this.transition,
     this.redirectedFrom,
@@ -279,22 +280,19 @@ class DestinationConfiguration {
                 (transition != DestinationTransition.custom),
             'You have to provide "transitionBuilder" for "custom" transition.');
 
-  /// Creates a configuration that pushes a destination to the top of navigation
+  /// Creates a settings to push a destination to the top of navigation
   /// stack with a standard Material animations.
   ///
-  const factory DestinationConfiguration.material() =
-      _DefaultDestinationConfiguration;
+  const factory DestinationSettings.material() = _DefaultDestinationSettings;
 
-  /// Creates a configuration that displays a destination as a modal dialog.
+  /// Creates a settings to displays a destination as a modal dialog.
   ///
-  const factory DestinationConfiguration.dialog() =
-      _DialogDestinationConfiguration;
+  const factory DestinationSettings.dialog() = _DialogDestinationSettings;
 
-  /// Creates a configuration that replaces the current destination with a new one
+  /// Creates a settings to replaces the current destination with a new one
   /// with no animations.
   ///
-  const factory DestinationConfiguration.quiet() =
-      _QuietDestinationConfiguration;
+  const factory DestinationSettings.quiet() = _QuietDestinationSettings;
 
   /// How the destination will update the navigation stack.
   ///
@@ -328,15 +326,15 @@ class DestinationConfiguration {
   ///
   final RouteTransitionsBuilder? transitionBuilder;
 
-  /// Creates a copy of this configuration with the given fields replaced
+  /// Creates a copy of this settings with the given fields replaced
   /// with the new values.
   ///
-  DestinationConfiguration copyWith({
+  DestinationSettings copyWith({
     // TODO: Add other properties
     Destination? redirectedFrom,
     bool? reset,
   }) =>
-      DestinationConfiguration(
+      DestinationSettings(
         action: action,
         transition: transition,
         redirectedFrom: redirectedFrom ?? this.redirectedFrom,
@@ -345,24 +343,24 @@ class DestinationConfiguration {
       );
 }
 
-class _DefaultDestinationConfiguration extends DestinationConfiguration {
-  const _DefaultDestinationConfiguration()
+class _DefaultDestinationSettings extends DestinationSettings {
+  const _DefaultDestinationSettings()
       : super(
           action: DestinationAction.push,
           transition: DestinationTransition.material,
         );
 }
 
-class _DialogDestinationConfiguration extends DestinationConfiguration {
-  const _DialogDestinationConfiguration()
+class _DialogDestinationSettings extends DestinationSettings {
+  const _DialogDestinationSettings()
       : super(
           action: DestinationAction.push,
           transition: DestinationTransition.materialDialog,
         );
 }
 
-class _QuietDestinationConfiguration extends DestinationConfiguration {
-  const _QuietDestinationConfiguration()
+class _QuietDestinationSettings extends DestinationSettings {
+  const _QuietDestinationSettings()
       : super(
           action: DestinationAction.replace,
           transition: DestinationTransition.none,
@@ -414,7 +412,7 @@ enum DestinationTransition {
 ///
 /// For custom parameters you also must implement [YouCustomDestinationParser<YourCustomDestinationParameters>]
 /// with [toDestinationParameters()] ans [toMap()] methods, like this:
-/// ```
+/// ``` dart
 /// class YourCustomDestinationParser
 ///     extends DestinationParser<YourCustomDestinationParameters> {
 ///   const YourCustomDestinationParser() : super();
@@ -422,12 +420,12 @@ enum DestinationTransition {
 ///   @override
 ///   YourCustomDestinationParameters toDestinationParameters(
 ///       Map<String, String> map) {
-///       ...
+///       //...
 ///   }
 ///
 ///   @override
 ///   Map<String, String> toMap(YourCustomDestinationParameters parameters) {
-///       ...
+///       //...
 ///   }
 /// }
 /// ```

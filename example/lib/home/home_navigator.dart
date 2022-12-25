@@ -32,6 +32,6 @@ class HomeDestinations {
       title: 'Dialog',
       message: 'This destination is shown as a dialog.',
     ),
-    configuration: DestinationConfiguration.dialog(),
+    settings: DestinationSettings.dialog(),
   );
 }

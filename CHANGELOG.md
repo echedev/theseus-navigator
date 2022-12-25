@@ -1,3 +1,10 @@
+### 0.5.1
+2022-12-25
+
+- **BREAKING**: `DestinationConfiguration` renamed to `DestinationSettings`. The `configuration` field of `Destination` is renamed to `settings`.
+- Add support of Material 3 `NavigationBar` in `BottomNavigationBuilder`.
+- Fix: preserve destination states in `BottomNavigationBuilder` and `TabsNavigationBuilder`.
+
 ### 0.4.1
 2022-11-27
 
@@ -18,7 +25,7 @@
 2022-10-29
 
 - Fixes an issue when new route is requested by OS during resolving the current destination.
-- Added `redirectedFrom` property in `DestinationConfiguration`
+- Added `redirectedFrom` property in `DestinationSettings`
 - The `gotBack` property in `NavigationController` is changed to `backFrom`, which contains the previous destination when `goBack` action is performed.
 
 ### 0.3.2

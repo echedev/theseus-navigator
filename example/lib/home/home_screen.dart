@@ -56,8 +56,8 @@ class HomeScreen extends StatelessWidget {
                       parameters: CategoriesDestinationParameters(
                           parentCategory:
                               await CategoryRepository().getCategory('3')),
-                      configuration: CatalogDestinations
-                          .categories.configuration
+                      settings: CatalogDestinations
+                          .categories.settings
                           .copyWith(reset: true)));
                 },
                 child: const Text('Category 3')),

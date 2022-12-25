@@ -1,7 +1,7 @@
 #### theseus_navigator
 
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.4.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-94%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.5.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-95%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -31,7 +31,7 @@ It might look like this:
 
 **NavigationController** is responsible for managing the app navigation state within the scope of its destinations. It performs navigation actions, like `goTo(destination)` and `goBack()`, and builds the navigation stack.
 
-The **NavigationScheme** is an entry point to navigation, it orchestrates all destinations and navigators. It has a root navigator that manages top-level destinations, and, optionally, additional navigators to support nested navigation.
+The **NavigationScheme** is an entry point to navigation, it orchestrates all destinations and navigation controllers. It has a root navigation controller that manages top-level destinations, and, optionally, additional navigators to support nested navigation.
 
 Here is an example of usage:
 - Define destinations and navigation scheme
@@ -120,7 +120,7 @@ final mainDestination = Destination.transit(
   }
 );
 ```
-This constructor has an optional `builder` parameter with additional `child` argument, which represents the nested navigator UI and must be included in the resulting widget tree.
+This constructor has an optional `builder` parameter with additional `child` argument, which represents the nested content and must be included in the resulting widget tree.
 
 #### Path
 The destination is defined by its `uri`, which is built from the destination `path` and `parameters`.
@@ -212,27 +212,27 @@ final categoriesDestination = Destination<CategoriesDestinationParameters>(
   );
 ```
 
-#### Configuration
+#### Settings
 
-The `DestinationConfiguration` contains attributes that are related to appearance of the destination when user navigates to or from it.
+The `DestinationSettings` contains attributes that are used to determine a logic and behavior of updating the navigation state with the destination.
 
-`action` - defines how the navigation stack will be updated when navigate to the destination, can be **push** or **replace**.
+`action` - defines how the navigation stack will be changed on navigation to the destination, can be **push** or **replace**.
 
-`transition` - animations that would apply when destination content appears, can be **material**, **custom**, or **none**.
+`transition` - animations that would apply when the destination content appears, can be **material**, **custom**, or **none**.
 
 In case of **custom** transition, you have to provide `transitionBuilder` as well.
 
 There are two pre-defined factory methods:
 
-`material()` - returns a configuration that pushes a destination to the stack with a standard Material animations.  
-`dialog()` - display a destination as a modal dialog.  
-`quite()` - replace the current destination with a new one without any animations.
+- `material()` - returns a settings to pushes a destination to the stack with a standard Material animations.
+- `dialog()` - display a destination as a modal dialog.
+- `quite()` - replace the current destination with a new one without any animations.
 
 ```dart
 final catalogDestination = Destination(
   path: 'catalog',
   builder: (context, parameters) => CatalogScreen(),
-  configuration: const DestinationConfiguration.quiet(),
+  settings: const DestinationSettings.quiet(),
 );
 ```
 
@@ -242,7 +242,7 @@ The `NavigationController` is a core component of the package, which manages the
 
 It maintains the navigation stack of destinations and offers methods to update it, like `goTo(destination)` and `goBack()`.
 
-Navigation controller is a `ChangeNotifier`, and notifies the `NavigationScheme` on any update of navigation stack.
+Navigation controller is a `ChangeNotifier`, and notifies the `NavigationScheme` on any update of its navigation stack.
 
 You have an access to the whole navigation `stack`, and to the top most destination in the stack using `currentDestination` property.
 
@@ -295,7 +295,7 @@ final mainNavigator = NavigationController(
 ###### Navigation via Bottom navigation bar, Drawer and Tab bar
 
 The package includes implementations of `NavigatorBuilder` for most common cases:  
-- `BottomNavigationBuilder` - uses Flutter's `Scaffold` with `BottomNavigationBar` to wrap the current destination content and to switch destinations.
+- `BottomNavigationBuilder` - uses Flutter's `Scaffold` with `BottomNavigationBar` or Material 3 `NavigationBar` to wrap the current destination content and to switch destinations.
 - `DrawerNavigationBuilder` - allows to navigate using `Drawer` widget.
 - `TabsNavigationBuilder` - uses `TabBar` to navigate destinations
 
@@ -415,10 +415,6 @@ The following errors are currently supported:
 
 ###### Examples
 For more detailed code samples, please see the [example project](./example) which contains the working demo app.
-
-###### Coming Updates
-- Handling return values from destinations
-- Configurations for modal dialog and bottom sheet destinations
 
 ###### Useful Links
 [Material Design - Understanding Navigation](https://material.io/design/navigation/understanding-navigation.html)

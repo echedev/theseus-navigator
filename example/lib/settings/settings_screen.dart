@@ -60,6 +60,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onChanged: (value) => topLevelNavigationType.value = TopLevelNavigationType.bottom,
                       ),
                       RadioListTile<TopLevelNavigationType>(
+                        title: const Text('Bottom navigation bar - Material 3'),
+                        value: TopLevelNavigationType.bottomMaterial3,
+                        groupValue: value,
+                        onChanged: (value) => topLevelNavigationType.value = TopLevelNavigationType.bottomMaterial3,
+                      ),
+                      RadioListTile<TopLevelNavigationType>(
                         title: const Text('Drawer'),
                         value: TopLevelNavigationType.drawer,
                         groupValue: value,

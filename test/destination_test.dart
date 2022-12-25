@@ -86,15 +86,15 @@ void main() {
               destination2.parameters!.map, <String, String>{'parentId': '1'}),
           true);
     });
-    test('Configuration that display a dialog', () async {
-      final destination1 = TestDestinations.aboutWithDialogConfiguration;
-      expect(destination1.configuration.action, DestinationAction.push);
-      expect(destination1.configuration.transition, DestinationTransition.materialDialog);
+    test('Settings to display a dialog', () async {
+      final destination1 = TestDestinations.aboutWithDialogSettings;
+      expect(destination1.settings.action, DestinationAction.push);
+      expect(destination1.settings.transition, DestinationTransition.materialDialog);
     });
-    test('Configuration without visual effects on transition', () async {
-      final destination1 = TestDestinations.aboutWithQuietConfiguration;
-      expect(destination1.configuration.action, DestinationAction.replace);
-      expect(destination1.configuration.transition, DestinationTransition.none);
+    test('Settings without visual effects on transition', () async {
+      final destination1 = TestDestinations.aboutWithQuietSettings;
+      expect(destination1.settings.action, DestinationAction.replace);
+      expect(destination1.settings.transition, DestinationTransition.none);
     });
   });
 }

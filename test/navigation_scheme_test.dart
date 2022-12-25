@@ -94,7 +94,7 @@ void main() {
       test('Original destination is saved in the configuration of redirection destination', () async {
         await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
         expect(navigationScheme.currentDestination, TestDestinations.login);
-        expect(navigationScheme.currentDestination.configuration.redirectedFrom, TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.currentDestination.settings.redirectedFrom, TestDestinations.aboutWithInvalidRedirection);
       });
       test('User can navigate back from the redirected destination', () async {
         await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);

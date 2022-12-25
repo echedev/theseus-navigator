@@ -16,9 +16,6 @@ final navigationScheme = NavigationScheme(
     PrimaryDestinations.customTransition,
   ],
   errorDestination: PrimaryDestinations.error,
-  waitingOverlayBuilder: (context, destination) => const Scaffold(
-    body: Center(child: CircularProgressIndicator(),),
-  ),
 );
 
 class PrimaryDestinations {
@@ -34,7 +31,7 @@ class PrimaryDestinations {
   static final customTransition = Destination(
     path: '/customTransition',
     builder: (context, parameters) => const CustomTransitionScreen(),
-    configuration: DestinationConfiguration(
+    settings: DestinationSettings(
         action: DestinationAction.push,
         transition: DestinationTransition.custom,
         transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -72,17 +69,17 @@ class MainDestinations {
   static final home = Destination(
     path: '/home',
     navigator: homeNavigator,
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
   );
   static final catalog = Destination(
     path: '/catalog',
     navigator: catalogNavigator,
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
   );
   static final settings = Destination(
     path: '/settings',
     builder: (context, parameters) => const SettingsScreen(),
-    configuration: DestinationConfiguration.quiet(),
+    settings: DestinationSettings.quiet(),
     redirections: [
       Redirections.login,
     ],
@@ -115,6 +112,23 @@ class _MainNavigatorWrapper extends StatelessWidget {
         label: 'Catalog',
       ),
       BottomNavigationBarItem(
+        icon: Icon(Icons.more_horiz_rounded),
+        label: 'Settings',
+      ),
+    ],
+  );
+
+  static final bottomNavigationBuilderMaterial3 = BottomNavigationBuilder.navigationBar(
+    navigationBarItems: const <NavigationDestination>[
+      NavigationDestination(
+        icon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.list_rounded),
+        label: 'Catalog',
+      ),
+      NavigationDestination(
         icon: Icon(Icons.more_horiz_rounded),
         label: 'Settings',
       ),
@@ -166,6 +180,8 @@ class _MainNavigatorWrapper extends StatelessWidget {
         switch (value) {
           case TopLevelNavigationType.bottom:
             return bottomNavigationBuilder.build(context, navigator);
+          case TopLevelNavigationType.bottomMaterial3:
+            return bottomNavigationBuilderMaterial3.build(context, navigator);
           case TopLevelNavigationType.drawer:
             return drawerNavigationBuilder.build(context, navigator);
           case TopLevelNavigationType.tabs:

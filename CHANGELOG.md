@@ -1,5 +1,5 @@
 ### 0.5.0
-2022-12-24
+2022-12-25
 
 - **BREAKING**: `DestinationConfiguration` renamed to `DestinationSettings`. The `configuration` field of `Destination` is renamed to `settings`.
 - Add support of Material 3 `NavigationBar` in `BottomNavigationBuilder`.

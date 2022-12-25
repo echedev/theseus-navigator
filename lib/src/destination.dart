@@ -201,8 +201,7 @@ class Destination<T extends DestinationParameters> {
 
   /// Returns a copy of this destination with a different settings.
   ///
-  Destination<T> withSettings(DestinationSettings settings) =>
-      copyWith(
+  Destination<T> withSettings(DestinationSettings settings) => copyWith(
         settings: settings,
       );
 
@@ -284,19 +283,16 @@ class DestinationSettings {
   /// Creates a settings to push a destination to the top of navigation
   /// stack with a standard Material animations.
   ///
-  const factory DestinationSettings.material() =
-      _DefaultDestinationSettings;
+  const factory DestinationSettings.material() = _DefaultDestinationSettings;
 
   /// Creates a settings to displays a destination as a modal dialog.
   ///
-  const factory DestinationSettings.dialog() =
-      _DialogDestinationSettings;
+  const factory DestinationSettings.dialog() = _DialogDestinationSettings;
 
   /// Creates a settings to replaces the current destination with a new one
   /// with no animations.
   ///
-  const factory DestinationSettings.quiet() =
-      _QuietDestinationSettings;
+  const factory DestinationSettings.quiet() = _QuietDestinationSettings;
 
   /// How the destination will update the navigation stack.
   ///

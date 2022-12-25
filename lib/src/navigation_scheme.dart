@@ -256,8 +256,8 @@ class NavigationScheme with ChangeNotifier {
 
   void _handleError(Destination? destination) {
     if (errorDestination != null) {
-      goTo((errorDestination!).withSettings(errorDestination!.settings
-          .copyWith(redirectedFrom: destination)));
+      goTo((errorDestination!).withSettings(
+          errorDestination!.settings.copyWith(redirectedFrom: destination)));
     } else {
       throw UnknownDestinationException(destination);
     }
@@ -291,8 +291,7 @@ class NavigationScheme with ChangeNotifier {
         }
       } else {
         if (navigator.currentDestination.settings.reset) {
-          goTo(owner
-              .withSettings(owner.settings.copyWith(reset: true)));
+          goTo(owner.withSettings(owner.settings.copyWith(reset: true)));
         } else {
           goTo(owner);
         }
@@ -359,8 +358,7 @@ class NavigationScheme with ChangeNotifier {
           true)) {
         _destinationCompleters[destinationToComplete]?.complete();
       }
-      destinationToComplete =
-          destinationToComplete.settings.redirectedFrom;
+      destinationToComplete = destinationToComplete.settings.redirectedFrom;
     }
   }
 }

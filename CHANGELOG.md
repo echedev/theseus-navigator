@@ -2,7 +2,7 @@
 2022-12-24
 
 - **BREAKING**: `DestinationConfiguration` renamed to `DestinationSettings`. The `configuration` field of `Destination` is renamed to `settings`.
-- Fix: custom waiting view was not applied
+- Fix: preserve destination states in `BottomNavigationBuilder` and `TabsNavigationBuilder`.
 
 ### 0.4.1
 2022-11-27

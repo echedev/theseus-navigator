@@ -80,11 +80,10 @@ class TabsNavigationBuilder implements NavigatorBuilder {
       tabs: tabs,
       // TODO: This implementation doesn't respect the possible parameters of destinations (excluding current destination).
       // How this could be resolved?
-      tabContentBuilder: (tabIndex) =>
-          navigator.destinations[tabIndex].build(context),
-      parameters: parameters,
+      tabDestination: (tabIndex) => navigator.destinations[tabIndex],
       onTabSelected: (index) => navigator.goTo(navigator.destinations[index]),
       selectedIndex: navigator.destinations.indexOf(currentDestination),
+      parameters: parameters,
       appBarParameters:
           appBarParametersBuilder?.call(context, currentDestination),
       wrapInScaffold: wrapInScaffold,
@@ -96,7 +95,7 @@ class _TabsNavigationWrapper extends StatefulWidget {
   const _TabsNavigationWrapper({
     Key? key,
     required this.tabs,
-    required this.tabContentBuilder,
+    required this.tabDestination,
     required this.onTabSelected,
     required this.selectedIndex,
     required this.parameters,
@@ -106,7 +105,7 @@ class _TabsNavigationWrapper extends StatefulWidget {
 
   final List<Widget> tabs;
 
-  final Widget Function(int tabIndex) tabContentBuilder;
+  final Destination Function(int tabIndex) tabDestination;
 
   final void Function(int index) onTabSelected;
 
@@ -124,11 +123,19 @@ class _TabsNavigationWrapper extends StatefulWidget {
 
 class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper>
     with TickerProviderStateMixin {
+  final _content = <Widget>[];
+
   late final TabController _controller;
 
   @override
   void initState() {
     super.initState();
+    _content.addAll(List<Widget>.generate(
+        widget.tabs.length,
+        (index) => _TabDestinationContentWrapper(
+              keepState: widget.tabDestination(index).isFinalDestination,
+              child: widget.tabDestination(index).build(context),
+            )));
     _controller = TabController(length: widget.tabs.length, vsync: this);
     _controller.addListener(_onTabChanged);
     _controller.animateTo(widget.selectedIndex);
@@ -178,8 +185,7 @@ class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper>
     );
     final tabBarView = TabBarView(
       controller: _controller,
-      children: List<Widget>.generate(
-          widget.tabs.length, (index) => widget.tabContentBuilder(index)),
+      children: _content,
     );
     Widget result;
     if (widget.appBarParameters != null) {
@@ -248,6 +254,35 @@ class _TabsNavigationWrapperState extends State<_TabsNavigationWrapper>
 
   void _onTabChanged() {
     widget.onTabSelected(_controller.index);
+  }
+}
+
+class _TabDestinationContentWrapper extends StatefulWidget {
+  const _TabDestinationContentWrapper({
+    Key? key,
+    required this.keepState,
+    required this.child,
+  }) : super(key: key);
+
+  final bool keepState;
+
+  final Widget child;
+
+  @override
+  State<_TabDestinationContentWrapper> createState() =>
+      _TabDestinationContentWrapperState();
+}
+
+class _TabDestinationContentWrapperState
+    extends State<_TabDestinationContentWrapper>
+    with AutomaticKeepAliveClientMixin<_TabDestinationContentWrapper> {
+  @override
+  bool get wantKeepAlive => widget.keepState;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }
 

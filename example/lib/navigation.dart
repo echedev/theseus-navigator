@@ -118,6 +118,23 @@ class _MainNavigatorWrapper extends StatelessWidget {
     ],
   );
 
+  static final bottomNavigationBuilderMaterial3 = BottomNavigationBuilder.navigationBar(
+    navigationBarItems: const <NavigationDestination>[
+      NavigationDestination(
+        icon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.list_rounded),
+        label: 'Catalog',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.more_horiz_rounded),
+        label: 'Settings',
+      ),
+    ],
+  );
+
   static const drawerNavigationBuilder = DrawerNavigationBuilder(
       drawerItems: <DrawerItem>[
         DrawerItem(
@@ -163,6 +180,8 @@ class _MainNavigatorWrapper extends StatelessWidget {
         switch (value) {
           case TopLevelNavigationType.bottom:
             return bottomNavigationBuilder.build(context, navigator);
+          case TopLevelNavigationType.bottomMaterial3:
+            return bottomNavigationBuilderMaterial3.build(context, navigator);
           case TopLevelNavigationType.drawer:
             return drawerNavigationBuilder.build(context, navigator);
           case TopLevelNavigationType.tabs:

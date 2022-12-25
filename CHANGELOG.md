@@ -1,4 +1,4 @@
-### 0.5.0
+### 0.5.1
 2022-12-25
 
 - **BREAKING**: `DestinationConfiguration` renamed to `DestinationSettings`. The `configuration` field of `Destination` is renamed to `settings`.

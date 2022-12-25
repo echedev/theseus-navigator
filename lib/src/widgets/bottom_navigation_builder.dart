@@ -111,19 +111,6 @@ class _BottomNavigationWrapper extends StatefulWidget {
     this.material3 = false,
   }) : super(key: key);
 
-  factory _BottomNavigationWrapper.navigationBar({
-    required Destination destination,
-    required List<NavigationDestination> navigationBarItems,
-    required int selectedIndex,
-    required void Function(int) onSelectBottomTab,
-  }) =>
-      _BottomNavigationWrapper(
-        destination: destination,
-        navigationBarItems: navigationBarItems,
-        onSelectBottomTab: onSelectBottomTab,
-        selectedIndex: selectedIndex,
-      );
-
   final Destination destination;
 
   final List<BottomNavigationBarItem> items;

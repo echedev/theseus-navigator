@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../destination.dart';
 import '../navigation_controller.dart';
 import 'index.dart';
 
@@ -48,9 +49,8 @@ class BottomNavigationBuilder implements NavigatorBuilder {
   @override
   Widget build(BuildContext context, NavigationController navigator) {
     final currentDestination = navigator.currentDestination;
-    final content = currentDestination.build(context);
     return _BottomNavigationWrapper(
-      content: content,
+      destination: currentDestination,
       items: bottomNavigationItems,
       parameters: parameters,
       onSelectBottomTab: (index) =>
@@ -63,14 +63,14 @@ class BottomNavigationBuilder implements NavigatorBuilder {
 class _BottomNavigationWrapper extends StatefulWidget {
   const _BottomNavigationWrapper({
     Key? key,
-    required this.content,
+    required this.destination,
     required this.items,
     required this.onSelectBottomTab,
     required this.selectedIndex,
     required this.parameters,
   }) : super(key: key);
 
-  final Widget content;
+  final Destination destination;
 
   final List<BottomNavigationBarItem> items;
 
@@ -86,14 +86,27 @@ class _BottomNavigationWrapper extends StatefulWidget {
 }
 
 class _BottomNavigationWrapperState extends State<_BottomNavigationWrapper> {
+  final _content = <Destination, Widget>{};
+
+  final _indexes = <Destination, int>{};
+
   late final OverlayEntry _mainOverlay;
 
   @override
   void initState() {
     super.initState();
+    _content[widget.destination] = widget.destination.build(context);
+    _indexes[widget.destination] = widget.selectedIndex;
     _mainOverlay = OverlayEntry(
       builder: (context) => Scaffold(
-        body: widget.content,
+        body: Stack(
+          children: [
+            ..._content.entries.map((entry) => Offstage(
+              offstage: _indexes[entry.key] != widget.selectedIndex,
+              child: entry.value,
+            )).toList(),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           items: widget.items,
           currentIndex: widget.selectedIndex,
@@ -124,7 +137,19 @@ class _BottomNavigationWrapperState extends State<_BottomNavigationWrapper> {
   @override
   void didUpdateWidget(_BottomNavigationWrapper oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedIndex != widget.selectedIndex) {
+    bool needsRebuild = false;
+    if (!widget.destination.isFinalDestination) {
+      needsRebuild = true;
+      _content[widget.destination] = widget.destination.build(context);
+      _indexes[widget.destination] = widget.selectedIndex;
+    }
+    else if (oldWidget.selectedIndex != widget.selectedIndex
+              && !_content.containsKey(widget.destination)) {
+      needsRebuild = true;
+      _content[widget.destination] = widget.destination.build(context);
+      _indexes[widget.destination] = widget.selectedIndex;
+    }
+    if (needsRebuild) {
       _mainOverlay.markNeedsBuild();
     }
   }

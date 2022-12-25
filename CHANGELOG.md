@@ -1,3 +1,9 @@
+### 0.5.0
+2022-12-24
+
+- **BREAKING**: `DestinationConfiguration` renamed to `DestinationSettings`. The `configuration` field of `Destination` is renamed to `settings`.
+- Fix: custom waiting view was not applied
+
 ### 0.4.1
 2022-11-27
 

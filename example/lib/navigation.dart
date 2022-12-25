@@ -16,9 +16,6 @@ final navigationScheme = NavigationScheme(
     PrimaryDestinations.customTransition,
   ],
   errorDestination: PrimaryDestinations.error,
-  waitingOverlayBuilder: (context, destination) => const Scaffold(
-    body: Center(child: CircularProgressIndicator(),),
-  ),
 );
 
 class PrimaryDestinations {

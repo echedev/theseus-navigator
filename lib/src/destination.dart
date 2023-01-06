@@ -274,6 +274,7 @@ class DestinationSettings {
     this.redirectedFrom,
     this.reset = false,
     this.transitionBuilder,
+    this.updateHistory = true,
   }) : assert(
             (transition == DestinationTransition.custom &&
                     transitionBuilder != null) ||
@@ -326,6 +327,13 @@ class DestinationSettings {
   ///
   final RouteTransitionsBuilder? transitionBuilder;
 
+  /// Controls if the destination will be added to the navigation history.
+  ///
+  /// Currently it only affects to web applications. When set to *true*, which is
+  /// default, the url in the web browser address field will be updated with the [Destination.uri].
+  ///
+  final bool updateHistory;
+
   /// Creates a copy of this settings with the given fields replaced
   /// with the new values.
   ///
@@ -333,6 +341,7 @@ class DestinationSettings {
     // TODO: Add other properties
     Destination? redirectedFrom,
     bool? reset,
+    bool? updateHistory,
   }) =>
       DestinationSettings(
         action: action,
@@ -340,6 +349,7 @@ class DestinationSettings {
         redirectedFrom: redirectedFrom ?? this.redirectedFrom,
         reset: reset ?? this.reset,
         transitionBuilder: transitionBuilder,
+        updateHistory: updateHistory ?? this.updateHistory,
       );
 }
 

@@ -56,7 +56,12 @@ class TheseusRouteInformationParser
 
   @override
   // ignore: avoid_renaming_method_parameters
-  RouteInformation restoreRouteInformation(Destination destination) {
+  RouteInformation? restoreRouteInformation(Destination destination) {
+    if (!destination.settings.updateHistory) {
+      Log.d(runtimeType, 'restoreRouteInformation(): Would not restore route information for ${destination.uri}');
+      return null;
+    }
+    Log.d(runtimeType, 'restoreRouteInformation(): ${destination.uri}');
     return RouteInformation(location: destination.uri);
   }
 }

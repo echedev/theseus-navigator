@@ -22,6 +22,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('$runtimeType: build()');
     return Scaffold(
       appBar: AppBar(
         title: Text(title ?? 'Home'),

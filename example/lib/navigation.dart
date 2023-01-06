@@ -24,7 +24,7 @@ class PrimaryDestinations {
     builder: (context, parameters) => const LoginScreen(),
   );
   static final main = Destination(
-    path: '/',
+    path: '/main',
     isHome: true,
     navigator: mainNavigator,
   );
@@ -118,7 +118,8 @@ class _MainNavigatorWrapper extends StatelessWidget {
     ],
   );
 
-  static final bottomNavigationBuilderMaterial3 = BottomNavigationBuilder.navigationBar(
+  static final bottomNavigationBuilderMaterial3 =
+      BottomNavigationBuilder.navigationBar(
     navigationBarItems: const <NavigationDestination>[
       NavigationDestination(
         icon: Icon(Icons.home_rounded),
@@ -195,7 +196,9 @@ class _MainNavigatorWrapper extends StatelessWidget {
 class Redirections {
   static final login = Redirection(
     // validator: (destination) => SynchronousFuture(isLoggedIn.value),
-    validator: (destination) => Future.delayed(const Duration(seconds: 5), () => isLoggedIn.value),
-    destination: PrimaryDestinations.login,
+    validator: (destination) =>
+        Future.delayed(const Duration(seconds: 3), () => isLoggedIn.value),
+    destination: PrimaryDestinations.login.withSettings(
+        PrimaryDestinations.login.settings.copyWith(updateHistory: false)),
   );
 }

@@ -37,7 +37,8 @@ void main() {
         navigationScheme: navigationScheme,
       );
       parserNoError = TheseusRouteInformationParser(
-          navigationScheme: navigationSchemeNoError);
+        navigationScheme: navigationSchemeNoError,
+      );
     });
     test('Parsing supported uri should return a destination', () async {
       expect(
@@ -77,8 +78,19 @@ void main() {
           throwsA(isA<UnknownUriException>()));
     });
     test('Restore route information from the destination', () {
-      expect(parser.restoreRouteInformation(TestDestinations.home).location,
+      expect(parser.restoreRouteInformation(TestDestinations.home)?.location,
           '/home');
+    });
+    test(
+        'Do not restore route information for the destination when updating history is disabled in destination settings',
+        () {
+      expect(
+          parser
+              .restoreRouteInformation(TestDestinations.login.withSettings(
+                  TestDestinations.login.settings
+                      .copyWith(updateHistory: false)))
+              ?.location,
+          null);
     });
   });
 }

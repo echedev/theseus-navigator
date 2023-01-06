@@ -38,11 +38,9 @@ class HomeDestinations {
       final from = destination.parameters?.map['from'];
       if (from == '/home1') {
         return home1;
-      }
-      else if (from == '/home2') {
+      } else if (from == '/home2') {
         return home2;
-      }
-      else {
+      } else {
         return null;
       }
     },

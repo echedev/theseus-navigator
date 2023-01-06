@@ -1,3 +1,9 @@
+### 0.5.2
+2023-01-06
+
+- Added `updateHistory` property in `DestinationSettings` that allows to control if the destination will appear in the web browser history.
+- Demo app updated to better support web.
+
 ### 0.5.1
 2022-12-25
 

@@ -24,6 +24,7 @@ class HomeDestinations {
   static final home2 = Destination(
     path: '/home2',
     builder: (context, parameters) => const HomeScreen(title: 'Home 2'),
+    upwardDestinationBuilder: (destination) => home1,
   );
 
   static final dialog = Destination(
@@ -33,5 +34,17 @@ class HomeDestinations {
       message: 'This destination is shown as a dialog.',
     ),
     settings: DestinationSettings.dialog(),
+    upwardDestinationBuilder: (destination) {
+      final from = destination.parameters?.map['from'];
+      if (from == '/home1') {
+        return home1;
+      }
+      else if (from == '/home2') {
+        return home2;
+      }
+      else {
+        return null;
+      }
+    },
   );
 }

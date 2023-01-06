@@ -57,8 +57,7 @@ class HomeScreen extends StatelessWidget {
                       parameters: CategoriesDestinationParameters(
                           parentCategory:
                               await CategoryRepository().getCategory('3')),
-                      settings: CatalogDestinations
-                          .categories.settings
+                      settings: CatalogDestinations.categories.settings
                           .copyWith(reset: true)));
                 },
                 child: const Text('Category 3')),
@@ -67,7 +66,9 @@ class HomeScreen extends StatelessWidget {
             title: 'Dialog',
             description: '''Display a modal dialog''',
             onTap: () {
-              navigationScheme.goTo(HomeDestinations.dialog);
+              navigationScheme.goTo(HomeDestinations.dialog.withParameters(
+                  DestinationParameters(
+                      {'from': navigationScheme.currentDestination.path})));
             },
           ),
           InfoItem(
@@ -111,7 +112,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> _openPubDev() async {
-    if (!await launchUrl(Uri.parse('https://pub.dev/packages/theseus_navigator'))) {
+    if (!await launchUrl(
+        Uri.parse('https://pub.dev/packages/theseus_navigator'))) {
       throw 'Could not launch url';
     }
   }

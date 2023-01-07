@@ -10,7 +10,7 @@ Keeping those things in mind, a main goal of the package is to provide a navigat
 
 The package assumes that defining the navigation scheme of your app is one of the basic things that you should do when you start your project. The scheme includes all possible destinations to navigate and their relationships. Once you have designed the navigation of your app, you can start implementing it with Theseus Navigator.
 
-![Navigation scheme](https://github.com/echedev/theseus-navigator/blob/4c3b3d5213107f7cb128500936739d30c5e09787/assets/NavigationScheme.jpg)
+![Navigation scheme](/assets/NavigationScheme.jpg)
 
 ### Table of Contents
 

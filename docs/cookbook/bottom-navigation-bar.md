@@ -18,6 +18,8 @@ title: Bottom navigation bar
 
 ### 1. Design the navigation scheme
 
+![Navigator - Cookbook - Bottom navigation bar](https://user-images.githubusercontent.com/11990453/212497261-6fc97098-5948-4a47-91f2-f83e70d33bbc.jpg)
+
 Key points:
 
 - Based on the app requirements we will have two primary destinations, which correspond to the bottom navigation bar items.

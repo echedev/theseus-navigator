@@ -254,4 +254,4 @@ The following features are supported:
 <iframe src="https://zapp.run/embed/z11406mg1150?theme=dark&lazy=false" style="width: 100%; height: 720px; border: 0; overflow: hidden;"></iframe>
 
 #### Source code
-[Theseus Navigator - Cookbook - Bottom navigation bar 01](../../example/lib/cookbook/bottom_navigation_bar_01.dart).
+[Theseus Navigator - Cookbook - Bottom navigation bar 01](https://github.com/echedev/theseus-navigator/blob/c3434e5f9792385209c7cda8940e61b34d9c77e3/example/lib/cookbook/bottom_navigation_bar_01.dart).

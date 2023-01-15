@@ -241,13 +241,17 @@ class SettingsScreen extends StatelessWidget {
 
 We've implemented a nested navigation in the app, where primary destinations are switched by bottom navigation bar widget, and nested destiantions are pushed in the stack.
 
-<video src="https://user-images.githubusercontent.com/11990453/212546104-39f7a878-c78c-4606-a95c-087008f196e2.mp4" controls="controls" style="max-width: 730px;">
-</video>
-
-
 The following features are supported:
 - The state of screens, particulary the scroll position in the Task list screen, persists while switching bottom navigation bar items.
 - The State of the nested navigation, particulary the stack of screens in the "Tasks" section also persists.
 - When open a Task details screen by a deeplink, the navigation state of "Tasks" section is restored automatically, meaning the Task list screen is added to the stack below the Task details screen.
 
-You can find a full source code of this example [here](../../example/lib/cookbook/bottom_navigation_bar_01.dart).
+#### Video of this example
+<video src="https://user-images.githubusercontent.com/11990453/212546104-39f7a878-c78c-4606-a95c-087008f196e2.mp4" controls="controls" style="max-width: 730px;">
+</video>
+
+#### Play with live app
+<iframe src="https://zapp.run/embed/z11406mg1150?theme=dark&lazy=false" style="width: 100%; height: 720px; border: 0; overflow: hidden;"></iframe>
+
+#### Source code
+[Theseus Navigator - Cookbook - Bottom navigation bar 01](../../example/lib/cookbook/bottom_navigation_bar_01.dart).

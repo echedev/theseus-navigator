@@ -12,7 +12,7 @@ title: Bottom navigation bar
     - The Task details screen shoudl allow to navigate back to Task list screen.
     - When the Task details screen is opened and user switch to the "Settings" section by the bottom bar, the state of "Tasks" section should remain. Once switch back to "Tasks" section, user should still see the Task details screen and be able to return back to Task list. 
 - A state of screens should be persisted while switching between sections.
-    - Particulary, the scroll position on the Tasl list screen should persist when user switch to the "Settings" section and return back to "Tasks".
+    - Particulary, the scroll position on the Task list screen should persist when user switch to the "Settings" section and return back to "Tasks".
 
 ### HOW TO IMPLEMENT
 
@@ -26,19 +26,19 @@ Key points:
 
 - We have to explicitly define a root `NavigationController` because we want to use NavigationBar widget to switch primary destinations.
 
-- The primary `Destination` corresponding to the "Tasks" item of the bottom navigation bar will not display a content directly. It will keep a reference to a nested navigation controller.
+- The primary [`Destination`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/Destination-class.html) corresponding to the "Tasks" item of the bottom navigation bar will not display a content directly. It will keep a reference to a nested navigation controller.
 
-- Tasks navigation controller will manage of two netsted destinations. One of them will display a list of tasks, and abother will display task details.
+- Tasks navigation controller will manage of two nested destinations. One of them will display a list of tasks, and abother will display task details.
 
 - Task details destination should always return back to the Task list destination.
 
-- The primaru destination corresponding to the "Settings" item of the bottom navigation bar will display its content directly.
+- The primary destination corresponding to the "Settings" item of the bottom navigation bar will display its content directly.
 
 ### 2. Configure the navigation scheme in the code
 
 #### 2.1. Root navigation widget
 
-Create `NavigationScheme` instance with explicitly specified root `NavigationController` that uses NavigationBar as a navigation widget.
+Create [`NavigationScheme`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/NavigationScheme-class.html) instance with explicitly specified root [`NavigationController`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/NavigationController-class.html) that uses Flutter's [*NavigationBar*](https://api.flutter.dev/flutter/material/NavigationBar-class.html) as a navigation widget.
 
 ```dart
 final navigationScheme = NavigationScheme(
@@ -61,6 +61,8 @@ final navigationScheme = NavigationScheme(
 );
 ```
 
+> You can adjust appearance of the NavigationBar widget by specifying [navigationBarParameters](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/BottomNavigationBuilder/navigationBarParameters.html) of the `BottomNavigationBar.navigationBar` constructor. It contains all parameters which are supported by `NavigationBar` widget.
+ 
 #### 2.2. Primary destiantions
 
 Add primary destinations that corresponds to navigation bar items
@@ -90,6 +92,8 @@ final navigationScheme = NavigationScheme(
 ```
 The "Tasks" item destination will not display a content directly. It does keep a reference to a nested navigation controller.
 
+> We used [`Destination.transit`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/Destination/Destination.transit.html) named constructor for tasks root destination. It is a recommended way of defining nested navigation. This constructor also has a `builder` parameter with additional `child` argument, which allows to provide a wrapper widget subtree for nested content.
+
 #### 2.3. Tasks destinations
 
 For easier referencing tasks destinations we create them as static members of `TasksDestinations` class.
@@ -108,7 +112,7 @@ class TasksDestinations {
   );
 }
 ```
-Note that we specified `upwardDestinationBuilder` parameter of **taskDetails** destiantion, so it would return the **taskList** destination. This makes Task details screen to be always on top of Task list screen in the navigation stack, even if the user opened Task details screen directly, for example via a deeplink.
+Note that we specified [`upwardDestinationBuilder`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/Destination/upwardDestinationBuilder.html) parameter of **taskDetails** destiantion, so it would return the **taskList** destination. This makes Task details screen to be always on top of Task list screen in the navigation stack, even if the user opened Task details screen directly, for example via a deeplink.
 
 Then add tasks destinations to our navigation scheme in the scope of tasks navigation controller.
 
@@ -137,7 +141,7 @@ final navigationScheme = NavigationScheme(
 
 #### 3. Setup the app router
 
-The `NavigationScheme` provides custom RouterDelegate and RouteInformationParser, which you should pass to your MaterialApp widget:
+The `NavigationScheme` provides custom [*RouterDelegate*](https://api.flutter.dev/flutter/widgets/RouterDelegate-class.html) and [*RouteInformationParser*](https://api.flutter.dev/flutter/widgets/RouteInformationParser-class.html), which you should pass to your MaterialApp widget:
 
 ```dart
 class App extends StatelessWidget {
@@ -177,14 +181,14 @@ class TaskListScreen extends StatelessWidget {
   }
 }
 ```
-- In the 'onTap' handler we call the `goTo` method of our **navigationScheme** for navigating to the **taskDetails** destination.
-- We are using `withParameters` method to create a copy of the template **taskDetails** destination with specific task **id**.
+- In the 'onTap' handler we call the [`goTo`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/NavigationScheme/goTo.html) method of our **navigationScheme** for navigating to the **taskDetails** destination.
+- We are using [`withParameters`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/Destination/withParameters.html) method to create a copy of the template **taskDetails** destination with specific task **id**.
 
-> `DestinationParameters` is a base class that provides parameters as a *Map<String, String>* collection. It can be used for any destination, which is not specialized with certain type of parameters.
+> [`DestinationParameters`](https://pub.dev/documentation/theseus_navigator/latest/theseus_navigator/DestinationParameters-class.html) is a base class that provides parameters as a *Map<String, String>* collection. It can be used for any destination, which is not specialized with certain type of parameters.
 
 #### 5. Implement Task details screen
 
-A Task details screen just displays a name and id of provided task. The content is wrapped in a Scaffold widget, so the back arrow button will appear in the app bar to be able to return back to the Task list screen.
+A Task details screen just displays a name and id of provided task. The content is wrapped in a *Scaffold* widget, so the back arrow button will appear in the app bar to be able to return back to the Task list screen.
 
 ```dart
 class TaskDetailsScreen extends StatelessWidget {
@@ -235,4 +239,13 @@ class SettingsScreen extends StatelessWidget {
 
 ### RESULT
 
-You can find a full source code of this example here.
+We've implemented a nested navigation in the app, where primary destinations are switched by bottom navigation bar widget, and nested destiantions are pushed in the stack.
+
+[Bottom navigation bar demo](https://user-images.githubusercontent.com/11990453/212546104-39f7a878-c78c-4606-a95c-087008f196e2.mp4)
+
+The following features are supported:
+- The state of screens, particulary the scroll position in the Task list screen, persists while switching bottom navigation bar items.
+- The State of the nested navigation, particulary the stack of screens in the "Tasks" section also persists.
+- When open a Task details screen by a deeplink, the navigation state of "Tasks" section is restored automatically, meaning the Task list screen is added to the stack below the Task details screen.
+
+You can find a full source code of this example [here](../../example/lib/cookbook/bottom_navigation_bar_01.dart).

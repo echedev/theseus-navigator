@@ -241,7 +241,9 @@ class SettingsScreen extends StatelessWidget {
 
 We've implemented a nested navigation in the app, where primary destinations are switched by bottom navigation bar widget, and nested destiantions are pushed in the stack.
 
-[Bottom navigation bar demo](https://user-images.githubusercontent.com/11990453/212546104-39f7a878-c78c-4606-a95c-087008f196e2.mp4)
+<video src="https://user-images.githubusercontent.com/11990453/212546104-39f7a878-c78c-4606-a95c-087008f196e2.mp4" controls="controls" style="max-width: 730px;">
+</video>
+
 
 The following features are supported:
 - The state of screens, particulary the scroll position in the Task list screen, persists while switching bottom navigation bar items.

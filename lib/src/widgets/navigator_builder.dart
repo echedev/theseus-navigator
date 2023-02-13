@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../destination.dart';
 import '../navigation_controller.dart';
+import '../utils/log/log.dart';
 
 /// Builds a widget that wraps a content for [NavigationController].
 ///
@@ -38,6 +39,7 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
       key: navigator.key,
       pages: pages,
       onPopPage: (route, result) {
+        Log.d(runtimeType, 'onPopPage()');
         navigator.goBack();
         route.didPop(result);
         return true;

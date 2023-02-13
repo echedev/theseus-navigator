@@ -56,7 +56,10 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
                 ),
           ),
       ],
-      onPopPage: (route, result) => route.didPop(result),
+      onPopPage: (route, result) {
+        Log.d(runtimeType, 'onPopPage()');
+        return route.didPop(result);
+      },
     );
   }
 

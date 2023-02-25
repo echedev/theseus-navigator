@@ -154,31 +154,39 @@ class NavigationScheme with ChangeNotifier {
   NavigationController? findNavigator(Destination destination) =>
       _navigatorMatches[findDestination(destination.path)];
 
-  /// Opens the specified [destination].
+  /// Navigates to specified [destination].
   ///
   /// First, searches the navigation scheme for proper navigator for the destination.
-  /// If found, uses the navigator's [goTo] method to open the destination.
+  /// If found, uses the navigator's [goTo] method to navigate to the destination.
   /// Otherwise throws [UnknownDestinationException].
   ///
-  Future<void> goTo(Destination destination) {
+  Future<void> goTo(Destination destination) async {
+    if (currentDestination == destination) {
+      Log.d(runtimeType,
+          'goTo(): Ignore navigation to $destination. It is already the current destination.');
+      return;
+    }
+
     final navigator = findNavigator(destination);
     if (navigator == null) {
       _handleError(destination);
       return SynchronousFuture(null);
     }
     Log.d(runtimeType,
-        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.settings.redirectedFrom}');
+        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.settings.redirectedFrom}, currentDestination=$currentDestination');
     _shouldClose = false;
 
-    final completer = Completer<void>();
-    var destinationToComplete = destination;
-    _destinationCompleters[destinationToComplete] = completer;
-    while (!destinationToComplete.isFinalDestination) {
-      destinationToComplete =
-          destinationToComplete.navigator!.currentDestination;
-      _destinationCompleters[destinationToComplete] = completer;
+    var eventualDestination = destination;
+    if (navigator.keepUpwardDestination && navigator.stack.isNotEmpty) {
+      Log.d(runtimeType, 'goTo(): update upward destination');
+      eventualDestination =
+          _updateUpwardDestination(eventualDestination, navigator);
     }
-    navigator.goTo(destination);
+
+    final completer = Completer<void>();
+    _setupCompleter(eventualDestination, completer);
+
+    navigator.goTo(eventualDestination);
 
     return completer.future;
   }
@@ -263,12 +271,6 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
-  void _removeNavigatorListeners() {
-    for (var navigator in _navigatorListeners.keys) {
-      navigator.removeListener(_navigatorListeners[navigator]!);
-    }
-  }
-
   void _onNavigatorStateChanged(NavigationController navigator) {
     Log.d(runtimeType,
         'onNavigatorStateChanged(): navigator=${navigator.tag}, error=${navigator.error}, backFrom=${navigator.backFrom}, shouldClose=${navigator.shouldClose}');
@@ -301,6 +303,23 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
+  void _removeNavigatorListeners() {
+    for (var navigator in _navigatorListeners.keys) {
+      navigator.removeListener(_navigatorListeners[navigator]!);
+    }
+  }
+
+  void _setupCompleter(Destination destination, Completer completer) {
+    var destinationToComplete = destination;
+    _destinationCompleters[destinationToComplete] = completer;
+    // Setup the same completer for nested destinations
+    while (!destinationToComplete.isFinalDestination) {
+      destinationToComplete =
+          destinationToComplete.navigator!.currentDestination;
+      _destinationCompleters[destinationToComplete] = completer;
+    }
+  }
+
   void _updateCurrentDestination({required Destination? backFrom}) {
     // TODO: Do we need the stack here?
     List<Destination> newStack = List.from(_rootNavigator.stack);
@@ -328,6 +347,75 @@ class NavigationScheme with ChangeNotifier {
         return;
       }
       resolve();
+    }
+  }
+
+  Destination _addUpwardParameter(
+      Destination destination, String upwardDestinationUri,
+      {addUpwardDestinationBuilder = false}) {
+    final upwardParameter = <String, String>{
+      DestinationParameters.upwardParameterName: upwardDestinationUri
+    };
+    var resultDestination = destination.copyWith(
+        parameters: (destination.parameters?..map.addAll(upwardParameter)) ??
+            DestinationParameters(upwardParameter));
+    return resultDestination.hasUpwardDestinationBuilder ||
+            addUpwardDestinationBuilder
+        ? _addUpwardDestinationBuilder(resultDestination)
+        : resultDestination;
+  }
+
+  Destination _addUpwardDestinationBuilder(Destination destination) {
+    return destination.copyWith(
+      upwardDestinationBuilder: (updatedDestination) async =>
+          await _defaultUpwardDestinationBuilder(
+              updatedDestination, destination.upwardDestinationBuilder),
+    );
+  }
+
+  Future<Destination?> _defaultUpwardDestinationBuilder(
+      Destination destination,
+      Future<Destination?> Function(Destination)?
+          originalUpwardDestinationBuilder) async {
+    final upwardDestinationUri =
+        destination.parameters?.map[DestinationParameters.upwardParameterName];
+    if (upwardDestinationUri == null) {
+      return null;
+    }
+    final persistedUpwardDestination = await _routeParser.parseRouteInformation(
+        RouteInformation(location: upwardDestinationUri));
+    final nextPersistedUpwardDestinationUri =
+        persistedUpwardDestination.parameters?.map[DestinationParameters.upwardParameterName];
+    final originalUpwardDestination =
+        await originalUpwardDestinationBuilder?.call(destination);
+
+    if (originalUpwardDestination == null) {
+      return nextPersistedUpwardDestinationUri != null
+          ? _addUpwardParameter(
+              persistedUpwardDestination, nextPersistedUpwardDestinationUri,
+              addUpwardDestinationBuilder: true)
+          : persistedUpwardDestination;
+    } else {
+      if (originalUpwardDestination.path != persistedUpwardDestination.path) {
+        return _addUpwardParameter(
+            originalUpwardDestination, upwardDestinationUri,
+            addUpwardDestinationBuilder: true);
+      } else {
+        return nextPersistedUpwardDestinationUri != null
+            ? _addUpwardParameter(
+                originalUpwardDestination, nextPersistedUpwardDestinationUri,
+                addUpwardDestinationBuilder: true)
+            : originalUpwardDestination;
+      }
+    }
+  }
+
+  Destination _updateUpwardDestination(
+      Destination destination, NavigationController navigator) {
+    if (destination.settings.reset) {
+      return _addUpwardDestinationBuilder(destination);
+    } else {
+      return _addUpwardParameter(destination, navigator.currentDestination.uri);
     }
   }
 

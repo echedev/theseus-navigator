@@ -11,6 +11,8 @@ void main() {
 
   late NavigationController navigatorNotNotify;
 
+  late NavigationController navigatorAlwaysKeepUpward;
+
   group('Navigation Controller', () {
     setUp(() {
       navigator = NavigationController(
@@ -115,6 +117,32 @@ void main() {
         expect(navigatorNotNotify.stack.length, 1);
         // In case of exception the error is not set
         expect(navigatorNotNotify.error != null, false);
+      });
+    });
+    group('Persisting upward destination', ()
+    {
+      setUp(() {
+        navigator = NavigationController(
+          destinations: [
+            TestDestinations.home,
+            TestDestinations.catalog,
+            TestDestinations.about,
+          ],
+        );
+        navigatorAlwaysKeepUpward = NavigationController(
+          destinations: [
+            TestDestinations.home,
+            TestDestinations.catalog,
+            TestDestinations.about,
+          ],
+          builder: const DefaultNavigatorBuilder(keepUpwardDestinationMode: KeepUpwardDestinationMode.always),
+        );
+      });
+      test('Do not keep upward destination in auto mode by default', () {
+        expect(navigator.keepUpwardDestination, false);
+      });
+      test('Explicitly keep upward destination', () {
+        expect(navigatorAlwaysKeepUpward.keepUpwardDestination, true);
       });
     });
   });

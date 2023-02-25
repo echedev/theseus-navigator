@@ -89,12 +89,20 @@ void main() {
     test('Settings to display a dialog', () async {
       final destination1 = TestDestinations.aboutWithDialogSettings;
       expect(destination1.settings.action, DestinationAction.push);
-      expect(destination1.settings.transition, DestinationTransition.materialDialog);
+      expect(destination1.settings.transition,
+          DestinationTransition.materialDialog);
     });
     test('Settings without visual effects on transition', () async {
       final destination1 = TestDestinations.aboutWithQuietSettings;
       expect(destination1.settings.action, DestinationAction.replace);
       expect(destination1.settings.transition, DestinationTransition.none);
+    });
+  });
+  group('Destination Parameters', () {
+    test('Reserved parameters',
+        () {
+      expect(DestinationParameters.isReservedParameter('id'), false);
+      expect(DestinationParameters.isReservedParameter('upward'), true);
     });
   });
 }

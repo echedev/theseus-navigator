@@ -73,7 +73,7 @@ class TestDestinations {
     path: '/categories/{parentId}',
     builder: dummyBuilder,
     parser: CategoriesParser(),
-    upwardDestinationBuilder: (destination) {
+    upwardDestinationBuilder: (destination) async {
       return destination.parameters?.parent == null
           ? null
           : destination.withParameters(CategoriesParameters());

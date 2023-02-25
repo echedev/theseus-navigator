@@ -119,7 +119,8 @@ abstract class DestinationParser<T extends DestinationParameters> {
     final rawParameters = toMap(parameters);
     parameters
       ..map.clear()
-      ..map.addAll(rawParameters);
+      ..map.addAll(rawParameters)
+      ..map.addAll(_extractReservedParameters(parametersMap));
     return matchedDestination.withParameters(parameters);
   }
 
@@ -134,7 +135,9 @@ abstract class DestinationParser<T extends DestinationParameters> {
     if (destination.parameters == null) {
       parametersMap = const <String, String>{};
     } else {
-      parametersMap = destination.parser.toMap(destination.parameters!);
+      parametersMap = destination.parser.toMap(destination.parameters!)
+        ..addAll(_extractReservedParameters(
+            destination.parameters?.map ?? const <String, String>{}));
     }
     final pathParameters = _getPathParameters(destination.path, parametersMap);
     final queryParameters = _getQueryParameters(pathParameters, parametersMap);
@@ -188,6 +191,11 @@ abstract class DestinationParser<T extends DestinationParameters> {
     }
     return result;
   }
+
+  Map<String, String> _extractReservedParameters(
+          Map<String, String> parameters) =>
+      Map.fromEntries(parameters.entries.where(
+          (entry) => DestinationParameters.isReservedParameter(entry.key)));
 
   String _fillPathParameters(String path, Map<String, String> parameters) {
     final pathUri = Uri.parse(path);

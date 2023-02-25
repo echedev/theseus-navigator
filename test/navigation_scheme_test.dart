@@ -11,6 +11,8 @@ void main() {
 
   late NavigationScheme navigationSchemeNoError;
 
+  late NavigationScheme navigationSchemeKeepUpward;
+
   group('Navigation Scheme', () {
     setUp(() {
       navigationScheme = NavigationScheme(
@@ -91,15 +93,21 @@ void main() {
           ],
         );
       });
-      test('Original destination is saved in the configuration of redirection destination', () async {
-        await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
+      test(
+          'Original destination is saved in the configuration of redirection destination',
+          () async {
+        await navigationScheme
+            .goTo(TestDestinations.aboutWithInvalidRedirection);
         expect(navigationScheme.currentDestination, TestDestinations.login);
-        expect(navigationScheme.currentDestination.settings.redirectedFrom, TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.currentDestination.settings.redirectedFrom,
+            TestDestinations.aboutWithInvalidRedirection);
       });
       test('User can navigate back from the redirected destination', () async {
-        await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
+        await navigationScheme
+            .goTo(TestDestinations.aboutWithInvalidRedirection);
         navigationScheme.goBack();
-        expect(navigationScheme.currentDestination, TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.currentDestination,
+            TestDestinations.aboutWithInvalidRedirection);
       });
     });
     group('Error handling', () {
@@ -161,6 +169,72 @@ void main() {
             () async =>
                 await navigationSchemeNoError.goTo(TestDestinations.login),
             throwsA(isA<UnknownDestinationException>()));
+      });
+    });
+    group('Persisting of upward destination', () {
+      late NavigationScheme navigationSchemeKeepUpward;
+
+      setUp(() {
+        navigationSchemeKeepUpward = NavigationScheme(
+          navigator: NavigationController(
+            destinations: [
+              TestDestinations.home,
+              TestDestinations.login,
+              TestDestinations.about,
+            ],
+            builder: const DefaultNavigatorBuilder(
+                keepUpwardDestinationMode: KeepUpwardDestinationMode.always),
+          ),
+        );
+      });
+      test('Upward destination is not persisted by default on non-web platform',
+          () async {
+        await navigationScheme.goTo(TestDestinations.about);
+        expect(navigationScheme.currentDestination, TestDestinations.about);
+        expect(
+            navigationScheme.currentDestination.parameters?.map
+                    .containsKey([DestinationParameters.upwardParameterName]) ??
+                false,
+            false);
+      });
+      test(
+          'When enabled, the upward destination should persist in the requested destination parameters.',
+          () async {
+        final upwardDestination = navigationSchemeKeepUpward.currentDestination;
+        await navigationSchemeKeepUpward.goTo(TestDestinations.about);
+        expect(
+            TestDestinations.about
+                .isMatch(navigationSchemeKeepUpward.currentDestination.uri),
+            true);
+        expect(
+            navigationSchemeKeepUpward.currentDestination.parameters?.map
+                    .containsKey(DestinationParameters.upwardParameterName) ??
+                false,
+            true);
+        expect(
+            upwardDestination.uri,
+            navigationSchemeKeepUpward.currentDestination.parameters
+                ?.map[DestinationParameters.upwardParameterName]);
+      });
+      test(
+          'Navigation stack should be restored on navigation to a destination containing upward destination parameter.',
+          () async {
+        await navigationSchemeKeepUpward.goTo(TestDestinations.about);
+        final destinationWithUpward =
+            navigationSchemeKeepUpward.currentDestination;
+        await navigationSchemeKeepUpward.goTo(TestDestinations.login
+            .withSettings(
+                TestDestinations.login.settings.copyWith(reset: true)));
+        expect(navigationSchemeKeepUpward.currentDestination,
+            TestDestinations.login);
+        expect(navigationSchemeKeepUpward.rootNavigator.stack.length, 1);
+        await navigationSchemeKeepUpward.goTo(
+            destinationWithUpward.withSettings(
+                destinationWithUpward.settings.copyWith(reset: true)));
+        expect(navigationSchemeKeepUpward.currentDestination,
+            destinationWithUpward);
+        expect(navigationSchemeKeepUpward.rootNavigator.stack.length, 2);
+        expect(navigationSchemeKeepUpward.rootNavigator.stack[0], TestDestinations.home);
       });
     });
     group('Service', () {

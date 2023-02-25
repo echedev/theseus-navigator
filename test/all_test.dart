@@ -6,6 +6,7 @@ import 'redirection_test.dart' as redirection;
 import 'route_parser_test.dart' as route_parser;
 import 'router_delegate_test.dart' as router_delegate;
 import 'widgets/destination_widget_test.dart' as destination_widget;
+import 'widgets/navigator_builder_test.dart' as navigator_builder_widget;
 import 'widgets/router_delegate_widget_test.dart' as router_delegate_widget;
 
 void main() {
@@ -18,5 +19,6 @@ void main() {
   route_parser.main();
 
   destination_widget.main();
+  navigator_builder_widget.main();
   router_delegate_widget.main();
 }

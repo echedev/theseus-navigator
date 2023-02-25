@@ -20,14 +20,14 @@ import 'index.dart';
 /// - [NavigationController]
 /// - [Drawer]
 ///
-class DrawerNavigationBuilder implements NavigatorBuilder {
+class DrawerNavigationBuilder extends NavigatorBuilder {
   /// Creates a [DrawerNavigationBuilder] instance.
   ///
   const DrawerNavigationBuilder({
     required this.drawerItems,
     this.header,
     this.parameters,
-  });
+  }) : super();
 
   /// A list of [DrawerItems], that corresponds to the navigator's
   /// destination list.

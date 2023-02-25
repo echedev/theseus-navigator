@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'destination.dart';
@@ -114,6 +115,12 @@ class NavigationController with ChangeNotifier {
   ///
   bool get hasError => _error != null;
 
+  /// Indicates if persisting of upward destination is needed.
+  ///
+  bool get keepUpwardDestination =>
+      builder.keepUpwardDestination == KeepUpwardDestinationMode.always ||
+      builder.keepUpwardDestination == KeepUpwardDestinationMode.auto && kIsWeb;
+
   bool _shouldClose = false;
 
   /// Whether the navigator should close.
@@ -178,7 +185,7 @@ class NavigationController with ChangeNotifier {
       }
     }
     if (_isDestinationMatched(destination)) {
-      _updateStack(destination);
+      await _updateStack(destination);
       notifyListeners();
     } else {
       if (notifyOnError) {
@@ -214,7 +221,7 @@ class NavigationController with ChangeNotifier {
   bool _isDestinationMatched(Destination destination) =>
       destinations.any((element) => element.isMatch(destination.uri));
 
-  void _updateStack(Destination destination) {
+  Future<void> _updateStack(Destination destination) async {
     if (destination.settings.reset) {
       _stack.clear();
     } else {
@@ -222,7 +229,7 @@ class NavigationController with ChangeNotifier {
         _stack.removeLast();
       }
     }
-    final upwardStack = _buildUpwardStack(destination);
+    final upwardStack = await _buildUpwardStack(destination);
     if (upwardStack.isNotEmpty) {
       // Find first missing item of upward stack
       int startUpwardFrom = 0;
@@ -241,15 +248,46 @@ class NavigationController with ChangeNotifier {
     _stack.addLast(destination);
   }
 
-  List<Destination> _buildUpwardStack(Destination destination) {
+  Future<List<Destination>> _buildUpwardStack(Destination destination) async {
     final result = <Destination>[];
-    var upwardDestination = destination.upwardDestination;
+    var upwardDestination = await destination.upwardDestination;
     while (upwardDestination != null) {
       result.insert(0, upwardDestination);
-      upwardDestination = upwardDestination.upwardDestination;
+      upwardDestination = await upwardDestination.upwardDestination;
     }
     return result;
   }
+}
+
+/// Automatic persisting of upward destination.
+///
+/// Once keeping upward destination is enabled and the requested destination does not
+/// has custom [Destination.upwardDestinationBuilder], the following logic is applied by
+/// [NavigationController] and [NavigationScheme] on navigating to that destination:
+/// - Current destination's URI is set as a parameter of the requested destination.
+/// - [Destination.upwardDestinationBuilder] of the requested destination is set to
+/// built-in handler, which process the added URI of the previous destination.
+///
+/// Basically, persisting of upward destination make sense in web apps, to be able restore
+/// arbitrary navigation stack for selected destination when the user navigates to it
+/// through the browser history.
+/// To support this, the [auto] option is used in [DefaultNavigatorBuilder] by default.
+///
+/// When automatic persisting of upward destination is disabled by [none],
+/// you still able to implement your custom logic manually, by providing proper [Destination.upwardDestinationBuilder].
+///
+enum KeepUpwardDestinationMode {
+  /// Upward destination will be always kept
+  ///
+  always,
+
+  /// Upward destination will be only kept when the app is running on the Web platform.
+  ///
+  auto,
+
+  /// Upward destination will not be kept automatically.
+  ///
+  none,
 }
 
 /// Contains navigation error details

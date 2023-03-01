@@ -86,7 +86,7 @@ class MainDestinations {
   );
 }
 
-class MainNavigatorBuilder implements NavigatorBuilder {
+class MainNavigatorBuilder extends NavigatorBuilder {
   @override
   Widget build(BuildContext context, NavigationController navigator) {
     return _MainNavigatorWrapper(navigator: navigator);

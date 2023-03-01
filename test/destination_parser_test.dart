@@ -132,19 +132,19 @@ void main() {
             }),
             true);
       });
-      test('Query parameters - Keep reserved parameters - upward', () async {
+      test('Query parameters - Keep reserved parameters - state', () async {
         final destination1 = TestDestinations.categoriesTyped;
         const parentCategory1 = Category(id: '1', name: 'Category 1');
         final destination2 = destination1
             .withParameters(CategoriesParameters(parent: parentCategory1));
         final result = await categoriesParser.parseParameters(
-            '/categories/1?upward=/settings/about', destination2);
+            '/categories/1?state=/settings/about', destination2);
         expect(result.parameters is CategoriesParameters, true);
         expect(result.parameters!.map.isNotEmpty, true);
         expect(
             mapEquals(result.parameters!.map, <String, String>{
               'parentId': '1',
-              'upward': TestDestinations.about.path
+              'state': TestDestinations.about.path
             }),
             true);
       });

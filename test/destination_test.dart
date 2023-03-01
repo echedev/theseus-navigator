@@ -102,7 +102,7 @@ void main() {
     test('Reserved parameters',
         () {
       expect(DestinationParameters.isReservedParameter('id'), false);
-      expect(DestinationParameters.isReservedParameter('upward'), true);
+      expect(DestinationParameters.isReservedParameter('state'), true);
     });
   });
 }

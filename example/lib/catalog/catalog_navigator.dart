@@ -20,7 +20,7 @@ class CatalogDestinations {
         CategoryListScreen(parentCategory: parameters?.parentCategory),
     parser:
         CategoriesDestinationParser(categoryRepository: CategoryRepository()),
-    upwardDestinationBuilder: (destination) =>
+    upwardDestinationBuilder: (destination) async =>
         destination.parameters?.parentCategory == null
             ? null
             : destination.withParameters(CategoriesDestinationParameters(

@@ -1,5 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
@@ -171,11 +173,11 @@ void main() {
             throwsA(isA<UnknownDestinationException>()));
       });
     });
-    group('Persisting of upward destination', () {
-      late NavigationScheme navigationSchemeKeepUpward;
+    group('Persisting of navigation state in destination parameters', () {
+      late NavigationScheme navigationSchemeKeepState;
 
       setUp(() {
-        navigationSchemeKeepUpward = NavigationScheme(
+        navigationSchemeKeepState = NavigationScheme(
           navigator: NavigationController(
             destinations: [
               TestDestinations.home,
@@ -183,58 +185,58 @@ void main() {
               TestDestinations.about,
             ],
             builder: const DefaultNavigatorBuilder(
-                keepUpwardDestinationMode: KeepUpwardDestinationMode.always),
+                keepStateInParameters: KeepingStateInParameters.always),
           ),
         );
       });
-      test('Upward destination is not persisted by default on non-web platform',
+      test('Navigation state is not persisted by default on non-web platform',
           () async {
         await navigationScheme.goTo(TestDestinations.about);
         expect(navigationScheme.currentDestination, TestDestinations.about);
         expect(
             navigationScheme.currentDestination.parameters?.map
-                    .containsKey([DestinationParameters.upwardParameterName]) ??
+                    .containsKey([DestinationParameters.stateParameterName]) ??
                 false,
             false);
       });
       test(
-          'When enabled, the upward destination should persist in the requested destination parameters.',
+          'When enabled, the navigation state should persist in the requested destination parameters.',
           () async {
-        final upwardDestination = navigationSchemeKeepUpward.currentDestination;
-        await navigationSchemeKeepUpward.goTo(TestDestinations.about);
+        final upwardDestination = navigationSchemeKeepState.currentDestination;
+        await navigationSchemeKeepState.goTo(TestDestinations.about);
         expect(
             TestDestinations.about
-                .isMatch(navigationSchemeKeepUpward.currentDestination.uri),
+                .isMatch(navigationSchemeKeepState.currentDestination.uri),
             true);
         expect(
-            navigationSchemeKeepUpward.currentDestination.parameters?.map
-                    .containsKey(DestinationParameters.upwardParameterName) ??
+            navigationSchemeKeepState.currentDestination.parameters?.map
+                    .containsKey(DestinationParameters.stateParameterName) ??
                 false,
             true);
-        expect(
-            upwardDestination.uri,
-            navigationSchemeKeepUpward.currentDestination.parameters
-                ?.map[DestinationParameters.upwardParameterName]);
+        final persistedState = jsonDecode(navigationSchemeKeepState.currentDestination.parameters
+            ?.map[DestinationParameters.stateParameterName] ?? '');
+        expect(persistedState['/'].contains(upwardDestination.uri), true);
       });
       test(
-          'Navigation stack should be restored on navigation to a destination containing upward destination parameter.',
+          'Navigation stack should be restored on navigation to a destination containing navigation state in parameters.',
           () async {
-        await navigationSchemeKeepUpward.goTo(TestDestinations.about);
-        final destinationWithUpward =
-            navigationSchemeKeepUpward.currentDestination;
-        await navigationSchemeKeepUpward.goTo(TestDestinations.login
+        await navigationSchemeKeepState.goTo(TestDestinations.about);
+        final destinationWithState =
+            navigationSchemeKeepState.currentDestination;
+        await navigationSchemeKeepState.goTo(TestDestinations.login
             .withSettings(
                 TestDestinations.login.settings.copyWith(reset: true)));
-        expect(navigationSchemeKeepUpward.currentDestination,
-            TestDestinations.login);
-        expect(navigationSchemeKeepUpward.rootNavigator.stack.length, 1);
-        await navigationSchemeKeepUpward.goTo(
-            destinationWithUpward.withSettings(
-                destinationWithUpward.settings.copyWith(reset: true)));
-        expect(navigationSchemeKeepUpward.currentDestination,
-            destinationWithUpward);
-        expect(navigationSchemeKeepUpward.rootNavigator.stack.length, 2);
-        expect(navigationSchemeKeepUpward.rootNavigator.stack[0], TestDestinations.home);
+        expect(navigationSchemeKeepState.currentDestination.path,
+            TestDestinations.login.path);
+        expect(navigationSchemeKeepState.rootNavigator.stack.length, 1);
+        print('test');
+        await navigationSchemeKeepState.goTo(
+            destinationWithState.withSettings(
+                destinationWithState.settings.copyWith(reset: true)));
+        expect(navigationSchemeKeepState.currentDestination,
+            destinationWithState);
+        expect(navigationSchemeKeepState.rootNavigator.stack.length, 2);
+        expect(navigationSchemeKeepState.rootNavigator.stack[0], TestDestinations.home);
       });
     });
     group('Service', () {

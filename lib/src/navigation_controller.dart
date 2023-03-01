@@ -115,11 +115,20 @@ class NavigationController with ChangeNotifier {
   ///
   bool get hasError => _error != null;
 
-  /// Indicates if persisting of upward destination is needed.
+  /// Indicates if persisting of navigation state in destination parameters is needed.
   ///
-  bool get keepUpwardDestination =>
-      builder.keepUpwardDestination == KeepUpwardDestinationMode.always ||
-      builder.keepUpwardDestination == KeepUpwardDestinationMode.auto && kIsWeb;
+  /// When it is *true*, the following is happened on navigation to a destination:
+  /// - If [DestinationSettings.reset] is not set in the requested destination,
+  /// the current navigation state is saved in the requested destination parameters.
+  /// Particularly, the [currentDestination] is saved in the [DestinationParameters.upwardParameterName]
+  /// parameter, and current destination of each nested [NavigationController]
+  /// is saved in the [DestinationParameters.nestedParameterName] parameter of the requested destination.
+  /// - If [DestinationSettings.reset] is *true*, the navigation state is restored
+  /// from the requested destination parameters.
+  ///
+  bool get keepStateInParameters =>
+      builder.keepStateInParameters == KeepingStateInParameters.always ||
+      builder.keepStateInParameters == KeepingStateInParameters.auto && kIsWeb;
 
   bool _shouldClose = false;
 
@@ -218,6 +227,13 @@ class NavigationController with ChangeNotifier {
     notifyListeners();
   }
 
+  void resetStack(List<Destination> destinations) {
+    _stack.clear();
+    for (final destination in destinations) {
+      _stack.add(destination);
+    }
+  }
+
   bool _isDestinationMatched(Destination destination) =>
       destinations.any((element) => element.isMatch(destination.uri));
 
@@ -259,33 +275,33 @@ class NavigationController with ChangeNotifier {
   }
 }
 
-/// Automatic persisting of upward destination.
+/// Automatic persisting of navigation state.
 ///
-/// Once keeping upward destination is enabled and the requested destination does not
-/// has custom [Destination.upwardDestinationBuilder], the following logic is applied by
-/// [NavigationController] and [NavigationScheme] on navigating to that destination:
-/// - Current destination's URI is set as a parameter of the requested destination.
-/// - [Destination.upwardDestinationBuilder] of the requested destination is set to
-/// built-in handler, which process the added URI of the previous destination.
+/// Once persisting of navigation state in destination parameters is enabled,
+/// the current stack will be serialized and saved in the [DestinationParameters.stateParameterName]
+/// parameter on navigation to a destination.
+/// When the destination with persisted navigation state is requested by the platform,
+/// the navigation stack will be deserialized from the parameter and explicitly set in the
+/// navigation controller.
 ///
-/// Basically, persisting of upward destination make sense in web apps, to be able restore
-/// arbitrary navigation stack for selected destination when the user navigates to it
-/// through the browser history.
-/// To support this, the [auto] option is used in [DefaultNavigatorBuilder] by default.
+/// Basically, persisting of navigation state in destination parameters make sense in web apps,
+/// to be able to restore arbitrary navigation stack when the user navigates to a destination
+/// through the browser history or a deeplink.
+/// To support this, the [auto] option is used in [NavigatorBuilder] by default.
 ///
-/// When automatic persisting of upward destination is disabled by [none],
+/// When automatic persisting of navigation state is disabled,
 /// you still able to implement your custom logic manually, by providing proper [Destination.upwardDestinationBuilder].
 ///
-enum KeepUpwardDestinationMode {
-  /// Upward destination will be always kept
+enum KeepingStateInParameters {
+  /// The navigation state will be always kept
   ///
   always,
 
-  /// Upward destination will be only kept when the app is running on the Web platform.
+  /// The navigation state will be only kept when the app is running on the Web platform.
   ///
   auto,
 
-  /// Upward destination will not be kept automatically.
+  /// The navigation state will not be kept automatically.
   ///
   none,
 }

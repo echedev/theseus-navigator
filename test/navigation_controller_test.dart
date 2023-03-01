@@ -11,7 +11,7 @@ void main() {
 
   late NavigationController navigatorNotNotify;
 
-  late NavigationController navigatorAlwaysKeepUpward;
+  late NavigationController navigatorAlwaysKeepState;
 
   group('Navigation Controller', () {
     setUp(() {
@@ -119,7 +119,7 @@ void main() {
         expect(navigatorNotNotify.error != null, false);
       });
     });
-    group('Persisting upward destination', ()
+    group('Persisting of navigation state in destination parameters', ()
     {
       setUp(() {
         navigator = NavigationController(
@@ -129,20 +129,20 @@ void main() {
             TestDestinations.about,
           ],
         );
-        navigatorAlwaysKeepUpward = NavigationController(
+        navigatorAlwaysKeepState = NavigationController(
           destinations: [
             TestDestinations.home,
             TestDestinations.catalog,
             TestDestinations.about,
           ],
-          builder: const DefaultNavigatorBuilder(keepUpwardDestinationMode: KeepUpwardDestinationMode.always),
+          builder: const DefaultNavigatorBuilder(keepStateInParameters: KeepingStateInParameters.always),
         );
       });
-      test('Do not keep upward destination in auto mode by default', () {
-        expect(navigator.keepUpwardDestination, false);
+      test('Do not keep navigation state in auto mode on non-web platform', () {
+        expect(navigator.keepStateInParameters, false);
       });
-      test('Explicitly keep upward destination', () {
-        expect(navigatorAlwaysKeepUpward.keepUpwardDestination, true);
+      test('Explicitly keep navigation state', () {
+        expect(navigatorAlwaysKeepState.keepStateInParameters, true);
       });
     });
   });

@@ -217,8 +217,7 @@ class Destination<T extends DestinationParameters> {
   Destination<T> withParameters(T parameters) {
     final rawParameters = parser.toMap(parameters);
     return copyWith(
-      parameters: parameters
-        ..map.addAll(rawParameters),
+      parameters: parameters..map.addAll(rawParameters),
     );
   }
 
@@ -458,12 +457,14 @@ class DestinationParameters {
 
   /// Reserved query parameter name.
   ///
-  /// It is used for automatic persisting of upward destination.
+  /// It is used for automatic persisting of navigation state.
   /// Do not use this name for your custom parameters.
   ///
-  static const String upwardParameterName = 'upward';
+  static const String stateParameterName = 'state';
 
-  static const _reservedParameterNames = <String>{upwardParameterName};
+  static const _reservedParameterNames = <String>{
+    stateParameterName,
+  };
 
   /// Contains parameter values parsed from the destination's URI.
   ///

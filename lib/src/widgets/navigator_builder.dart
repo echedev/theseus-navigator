@@ -19,12 +19,13 @@ abstract class NavigatorBuilder {
   /// Does not keep upward destination by default.
   ///
   const NavigatorBuilder({
-    this.keepUpwardDestination = KeepUpwardDestinationMode.none,
-  });
+    KeepingStateInParameters? keepStateInParameters,
+  }) : keepStateInParameters =
+            keepStateInParameters ?? KeepingStateInParameters.auto;
 
   /// Automatic persisting of upward destination.
   ///
-  final KeepUpwardDestinationMode keepUpwardDestination;
+  final KeepingStateInParameters keepStateInParameters;
 
   /// Returns a widget that wraps a content of navigator's destinations.
   ///
@@ -37,14 +38,12 @@ abstract class NavigatorBuilder {
 class DefaultNavigatorBuilder extends NavigatorBuilder {
   /// Creates an instance of [DefaultNavigatorBuilder].
   ///
-  /// Set [NavigatorBuilder.keepUpwardDestination] to [KeepUpwardDestinationMode.auto]
+  /// Set [NavigatorBuilder.keepStateInParameters] to [KeepingStateInParameters.auto]
   /// by default to allow persisting navigation stack in the web browser history.
   ///
   const DefaultNavigatorBuilder({
-    KeepUpwardDestinationMode? keepUpwardDestinationMode,
-  }) : super(
-            keepUpwardDestination:
-                keepUpwardDestinationMode ?? KeepUpwardDestinationMode.auto);
+    KeepingStateInParameters? keepStateInParameters,
+  }) : super(keepStateInParameters: keepStateInParameters);
 
   @override
   Widget build(BuildContext context, NavigationController navigator) {

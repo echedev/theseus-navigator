@@ -45,10 +45,12 @@ class HomeScreen extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     primary: Theme.of(context).colorScheme.secondary,
                     side: BorderSide(
-                        width: 2.0, color: Theme.of(context).colorScheme.secondary),
+                        width: 2.0,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   onPressed: _openPubDev,
-                  child: const Text('Open Theseus Navigator package in Pub.dev'),
+                  child:
+                      const Text('Open Theseus Navigator package in Pub.dev'),
                 ),
               ),
               const InfoItem(
@@ -63,12 +65,14 @@ class HomeScreen extends StatelessWidget {
                     '''Opens screen for specific category, deeply in the categories hierarchy. The bottom navigation bar will be switched to the Catalog tab, and the parent category screens will be added to the navigation stack''',
                 child: ElevatedButton(
                     onPressed: () async {
-                      navigationScheme.goTo(CatalogDestinations.categories.copyWith(
-                          parameters: CategoriesDestinationParameters(
-                              parentCategory:
-                                  await CategoryRepository().getCategory('3')),
-                          settings: CatalogDestinations.categories.settings
-                              .copyWith(reset: true)));
+                      navigationScheme
+                          .goTo(CatalogDestinations.categories.copyWith(
+                        parameters: CategoriesDestinationParameters(
+                            parentCategory:
+                                await CategoryRepository().getCategory('3')),
+                        settings: CatalogDestinations.categories.settings
+                            .copyWith(reset: true),
+                      ));
                     },
                     child: const Text('Category 3')),
               ),

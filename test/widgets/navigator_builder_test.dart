@@ -7,16 +7,16 @@ void main() {
     test('Default keep upward destination mode is "auto"', () {
       const navigatorBuilder = DefaultNavigatorBuilder();
       expect(
-          navigatorBuilder.keepUpwardDestination ==
-              KeepUpwardDestinationMode.auto,
+          navigatorBuilder.keepStateInParameters ==
+              KeepingStateInParameters.auto,
           true);
     });
     test('Explicit keep upward destination mode', () {
       const navigatorBuilder = DefaultNavigatorBuilder(
-          keepUpwardDestinationMode: KeepUpwardDestinationMode.always);
+          keepStateInParameters: KeepingStateInParameters.always);
       expect(
-          navigatorBuilder.keepUpwardDestination ==
-              KeepUpwardDestinationMode.always,
+          navigatorBuilder.keepStateInParameters ==
+              KeepingStateInParameters.always,
           true);
     });
   });

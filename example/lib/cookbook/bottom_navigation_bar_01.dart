@@ -46,7 +46,7 @@ class TasksDestinations {
   static final taskDetails = Destination(
     path: '/task/{id}',
     builder: (context, parameters) => TaskDetailsScreen(taskId: parameters?.map['id']),
-    upwardDestinationBuilder: (destination) => taskList,
+    upwardDestinationBuilder: (destination) async => taskList,
   );
 }
 

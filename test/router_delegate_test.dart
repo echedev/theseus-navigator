@@ -51,7 +51,7 @@ void main() {
           'New route with custom "upwardDestinationBuilder" is pushed to the app',
           () async {
         final destination = TestDestinations.categoriesTyped.withParameters(
-            CategoriesParameters(parent: categoriesDataSource[0]));
+            CategoriesParameters(parent: categoriesDataSource[1]));
         await delegate.setNewRoutePath(destination);
         expect(navigationScheme.currentDestination, destination);
         expect(

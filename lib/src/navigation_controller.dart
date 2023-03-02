@@ -319,5 +319,5 @@ class NavigationControllerError {
   final Destination? destination;
 
   @override
-  String toString() => '$runtimeType={destination: $destination}';
+  String toString() => '$runtimeType: destination=$destination';
 }

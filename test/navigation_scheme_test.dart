@@ -13,8 +13,6 @@ void main() {
 
   late NavigationScheme navigationSchemeNoError;
 
-  late NavigationScheme navigationSchemeKeepUpward;
-
   group('Navigation Scheme', () {
     setUp(() {
       navigationScheme = NavigationScheme(
@@ -67,8 +65,13 @@ void main() {
         await navigationScheme.goTo(TestDestinations.about);
         expect(navigationScheme.currentDestination, TestDestinations.about);
       });
-      test('Navigate to nested destination', () async {
+      test('Navigate to transit destination makes the current destination set to first nested destination', () async {
         await navigationScheme.goTo(TestDestinations.catalog);
+        expect(
+            navigationScheme.currentDestination, TestDestinations.categories);
+      });
+      test('Navigate to nested destination', () async {
+        await navigationScheme.goTo(TestDestinations.categories);
         expect(
             navigationScheme.currentDestination, TestDestinations.categories);
       });
@@ -102,6 +105,8 @@ void main() {
             .goTo(TestDestinations.aboutWithInvalidRedirection);
         expect(navigationScheme.currentDestination, TestDestinations.login);
         expect(navigationScheme.currentDestination.settings.redirectedFrom,
+            TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.redirectedFrom,
             TestDestinations.aboutWithInvalidRedirection);
       });
       test('User can navigate back from the redirected destination', () async {

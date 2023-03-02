@@ -335,11 +335,14 @@ class NavigationScheme with ChangeNotifier {
   void _setupCompleter(Destination destination, Completer completer) {
     var destinationToComplete = destination;
     _destinationCompleters[destinationToComplete] = completer;
-    // Setup the same completer for nested destinations
+    // Setup the same completer for nested destinations,
+    // if they don't have their own non-completed ones
     while (!destinationToComplete.isFinalDestination) {
       destinationToComplete =
           destinationToComplete.navigator!.currentDestination;
-      _destinationCompleters[destinationToComplete] = completer;
+      if (_destinationCompleters[destinationToComplete]?.isCompleted ?? true) {
+        _destinationCompleters[destinationToComplete] = completer;
+      }
     }
   }
 
@@ -395,7 +398,7 @@ class NavigationScheme with ChangeNotifier {
     rawParametersWithState
         .addAll(destination.parameters?.map ?? const <String, String>{});
     final parametersWithState = await destination.parser
-        .toDestinationParameters(rawParametersWithState);
+        .parametersFromMap(rawParametersWithState);
     return destination.withParameters(parametersWithState);
   }
 
@@ -407,7 +410,7 @@ class NavigationScheme with ChangeNotifier {
   Future<Destination> _removeStateFromParameters(
           Destination destination) async =>
       destination.withParameters(await destination.parser
-          .toDestinationParameters((Map.from(
+          .parametersFromMap((Map.from(
               destination.parameters?.map ?? const <String, String>{}))
             ..remove(DestinationParameters.stateParameterName)));
 
@@ -466,6 +469,10 @@ class NavigationScheme with ChangeNotifier {
         _destinationCompleters[destinationToComplete]?.complete();
       }
       destinationToComplete = destinationToComplete.settings.redirectedFrom;
+    }
+    final owner = _navigatorOwners[findNavigator(destination)];
+    if (owner != null && (!(_destinationCompleters[owner]?.isCompleted ?? true))) {
+      _destinationCompleters[owner]?.complete();
     }
   }
 }

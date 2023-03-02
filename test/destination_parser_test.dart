@@ -19,6 +19,7 @@ void main() {
       });
       test('Parse parameter name', () {
         expect(parser.parsePathParameterName('{id}'), 'id');
+        expect(() => parser.parsePathParameterName(':id'), throwsA(isA<Exception>()));
       });
     });
     group('Matching URI', () {
@@ -85,7 +86,7 @@ void main() {
       });
       test('1 path parameter - Typed parameters', () async {
         final destination1 = TestDestinations.categoriesTyped;
-        const parentCategory1 = Category(id: '1', name: 'Category 1');
+        const parentCategory1 = Category(id: 1, name: 'Category 1');
         final destination2 = destination1
             .withParameters(CategoriesParameters(parent: parentCategory1));
         final result1 =
@@ -119,7 +120,7 @@ void main() {
       });
       test('Query parameters - Clear unused for typed parameters', () async {
         final destination1 = TestDestinations.categoriesTyped;
-        const parentCategory1 = Category(id: '1', name: 'Category 1');
+        const parentCategory1 = Category(id: 1, name: 'Category 1');
         final destination2 = destination1
             .withParameters(CategoriesParameters(parent: parentCategory1));
         final result = await categoriesParser.parseParameters(
@@ -134,7 +135,7 @@ void main() {
       });
       test('Query parameters - Keep reserved parameters - state', () async {
         final destination1 = TestDestinations.categoriesTyped;
-        const parentCategory1 = Category(id: '1', name: 'Category 1');
+        const parentCategory1 = Category(id: 1, name: 'Category 1');
         final destination2 = destination1
             .withParameters(CategoriesParameters(parent: parentCategory1));
         final result = await categoriesParser.parseParameters(

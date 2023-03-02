@@ -51,8 +51,8 @@ void main() {
     });
     test('Parsing URI - typed parameters', () async {
       final destination1 = TestDestinations.categoriesTyped;
-      const parentCategory1 = Category(id: '1', name: 'Category 1');
-      const parentCategory2 = Category(id: '2', name: 'Category 2');
+      const parentCategory1 = Category(id: 1, name: 'Category 1');
+      const parentCategory2 = Category(id: 2, name: 'Category 2');
       final destination2 = destination1
           .withParameters(CategoriesParameters(parent: parentCategory1));
       final destination3 = destination1
@@ -76,7 +76,7 @@ void main() {
     });
     test('Applying parameters - Typed parameters', () async {
       final destination1 = TestDestinations.categoriesTyped;
-      const parentCategory1 = Category(id: '1', name: 'Category 1');
+      const parentCategory1 = Category(id: 1, name: 'Category 1');
       final destination2 = destination1
           .withParameters(CategoriesParameters(parent: parentCategory1));
       expect(destination2.parameters is CategoriesParameters, true);

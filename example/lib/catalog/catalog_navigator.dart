@@ -44,7 +44,7 @@ class CategoriesDestinationParser
   final CategoryRepository categoryRepository;
 
   @override
-  Future<CategoriesDestinationParameters> toDestinationParameters(
+  Future<CategoriesDestinationParameters> parametersFromMap(
       Map<String, String> map) async {
     final parentCategoryId = map['parentCategoryId'];
     if (parentCategoryId == null) {
@@ -62,7 +62,7 @@ class CategoriesDestinationParser
   }
 
   @override
-  Map<String, String> toMap(CategoriesDestinationParameters parameters) {
+  Map<String, String> parametersToMap(CategoriesDestinationParameters parameters) {
     final result = <String, String>{};
     if (parameters.parentCategory != null) {
       result['parentCategoryId'] = parameters.parentCategory!.id;

@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
 
-import 'common/common.dart';
+import 'common/index.dart';
 
 void main() {
   late NavigationController navigator;
@@ -12,6 +12,8 @@ void main() {
   late NavigationController navigatorNotNotify;
 
   late NavigationController navigatorAlwaysKeepState;
+
+  late NavigationController navigatorUpward;
 
   group('Navigation Controller', () {
     setUp(() {
@@ -83,6 +85,14 @@ void main() {
         expect(navigator.backFrom, TestDestinations.catalog);
         expect(navigator.shouldClose, false);
       });
+      test('Navigate to another destination with "replace" action', () async {
+        await navigator.goTo(TestDestinations.catalog.withSettings(
+            TestDestinations.catalog.settings
+                .copyWith(action: DestinationAction.replace)));
+        expect(navigator.currentDestination, TestDestinations.catalog);
+        expect(navigator.stack.length, 1);
+        expect(navigator.backFrom, null);
+      });
       test('Navigate to the same destination will not change the stack',
           () async {
         await navigator.goTo(TestDestinations.home);
@@ -100,12 +110,58 @@ void main() {
         expect(navigator.shouldClose, true);
       });
     });
+    group('Upward navigation', () {
+      setUp(() {
+        navigatorUpward = NavigationController(
+          destinations: [
+            TestDestinations.home,
+            TestDestinations.categoriesTyped,
+            TestDestinations.about,
+          ],
+        );
+      });
+      test('Missed destinations should be added to the stack', () async {
+        final categories1 = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[0]));
+        final categories2 = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[1]));
+        final categories3 = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[2]));
+        await navigatorUpward.goTo(categories3);
+        expect(navigatorUpward.currentDestination, categories3);
+        expect(navigatorUpward.stack.length, 4);
+        expect(navigatorUpward.stack[1], categories1);
+        expect(navigatorUpward.stack[2], categories2);
+        expect(navigatorUpward.backFrom, null);
+        expect(navigatorUpward.shouldClose, false);
+      });
+      test('Upward destinations should not be duplicated, if some of them are already in the stack', () async {
+        final categories1 = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[0]));
+        final categories2 = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[1]));
+        final categories3 = TestDestinations.categoriesTyped.withParameters(
+            CategoriesParameters(parent: categoriesDataSource[2]));
+        await navigatorUpward.goTo(categories1);
+        expect(navigatorUpward.currentDestination, categories1);
+        expect(navigatorUpward.stack.length, 2);
+        await navigatorUpward.goTo(categories3);
+        expect(navigatorUpward.currentDestination, categories3);
+        expect(navigatorUpward.stack.length, 4);
+        expect(navigatorUpward.stack[1], categories1);
+        expect(navigatorUpward.stack[2], categories2);
+        expect(navigatorUpward.backFrom, null);
+        expect(navigatorUpward.shouldClose, false);
+      });
+    });
     group('Error handling', () {
       test('Navigation to nonexistent destination should set error', () async {
         await navigator.goTo(TestDestinations.login);
         expect(navigator.currentDestination, TestDestinations.home);
         expect(navigator.stack.length, 1);
         expect(navigator.error != null, true);
+        expect(navigator.error.toString(),
+            'NavigationControllerError: destination=/login');
       });
       test(
           'Throw exception when navigate to non-existent destination and the navigator is configured to not notify on errors ',
@@ -119,8 +175,7 @@ void main() {
         expect(navigatorNotNotify.error != null, false);
       });
     });
-    group('Persisting of navigation state in destination parameters', ()
-    {
+    group('Persisting of navigation state in destination parameters', () {
       setUp(() {
         navigator = NavigationController(
           destinations: [
@@ -135,7 +190,8 @@ void main() {
             TestDestinations.catalog,
             TestDestinations.about,
           ],
-          builder: const DefaultNavigatorBuilder(keepStateInParameters: KeepingStateInParameters.always),
+          builder: const DefaultNavigatorBuilder(
+              keepStateInParameters: KeepingStateInParameters.always),
         );
       });
       test('Do not keep navigation state in auto mode on non-web platform', () {

@@ -11,7 +11,7 @@ import 'exceptions.dart';
 /// When subclassed, the certain type of destination parameters must be provided.
 ///
 /// There are two methods, that must be implemented in the specific parser:
-/// [toDestinationParameters] and [toMap].
+/// [parametersFromMap] and [parametersToMap].
 ///
 /// If typed parameters are not required, the [DefaultDestinationParser] is used.
 ///
@@ -33,7 +33,7 @@ abstract class DestinationParser<T extends DestinationParameters> {
   /// This method is used by [parseParameters()] to generate the destination object
   /// from the given URI string.
   ///
-  Future<T> toDestinationParameters(Map<String, String> map);
+  Future<T> parametersFromMap(Map<String, String> map);
 
   /// Converts destination [parameters] object of type [T] to a map.
   ///
@@ -41,7 +41,7 @@ abstract class DestinationParser<T extends DestinationParameters> {
   /// parameter's value.
   /// This method is used by [uri()] to generate the destination's URI string.
   ///
-  Map<String, String> toMap(T parameters);
+  Map<String, String> parametersToMap(T parameters);
 
   /// Checks if the [destination] matches the [uri].
   ///
@@ -98,7 +98,7 @@ abstract class DestinationParser<T extends DestinationParameters> {
   /// Parses parameter values from the specified URI for matched destination.
   ///
   /// Returns the copy of [matchedDestination] with actual parameter values parsed from the [uri].
-  /// Uses [toDestinationParameters] implementation to create parameters object of
+  /// Uses [parametersFromMap] implementation to create parameters object of
   /// type [T].
   ///
   /// Also it ensures that raw parameters value in [DestinationParameters.map] are valid.
@@ -115,8 +115,8 @@ abstract class DestinationParser<T extends DestinationParameters> {
     final parametersMap = <String, String>{}
       ..addAll(_parsePathParameters(parsedUri, matchedDestination))
       ..addAll(parsedUri.queryParameters);
-    final T parameters = await toDestinationParameters(parametersMap);
-    final rawParameters = toMap(parameters);
+    final T parameters = await parametersFromMap(parametersMap);
+    final rawParameters = parametersToMap(parameters);
     parameters
       ..map.clear()
       ..map.addAll(rawParameters)
@@ -128,14 +128,14 @@ abstract class DestinationParser<T extends DestinationParameters> {
   ///
   /// The [Destination.path] is used for building the URI path segment.
   /// The URI query segment is built using [Destination.parameters] converted
-  /// by [toMap] implementation from the [Destination.parser].
+  /// by [parametersToMap] implementation from the [Destination.parser].
   ///
   String uri(Destination destination) {
     late final Map<String, String> parametersMap;
     if (destination.parameters == null) {
       parametersMap = const <String, String>{};
     } else {
-      parametersMap = destination.parser.toMap(destination.parameters!)
+      parametersMap = destination.parser.parametersToMap(destination.parameters!)
         ..addAll(_extractReservedParameters(
             destination.parameters?.map ?? const <String, String>{}));
     }
@@ -229,11 +229,11 @@ class DefaultDestinationParser
   const DefaultDestinationParser() : super();
 
   @override
-  Future<DestinationParameters> toDestinationParameters(
+  Future<DestinationParameters> parametersFromMap(
           Map<String, String> map) =>
       SynchronousFuture(DestinationParameters(map));
 
   @override
-  Map<String, String> toMap(DestinationParameters parameters) =>
+  Map<String, String> parametersToMap(DestinationParameters parameters) =>
       Map.of(parameters.map);
 }

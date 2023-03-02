@@ -147,10 +147,6 @@ class Destination<T extends DestinationParameters> {
   late final Widget Function(BuildContext context, T? parameters, Widget child)?
       _transitBuilder;
 
-  /// Indicates if the [upwardDestinationBuilder] is provided.
-  ///
-  bool get hasUpwardDestinationBuilder => upwardDestinationBuilder != null;
-
   /// Whether this destination is final, i.e. it builds a content
   ///
   /// Final destinations must have a [builder] function provided.
@@ -215,7 +211,7 @@ class Destination<T extends DestinationParameters> {
   /// are updated as well.
   ///
   Destination<T> withParameters(T parameters) {
-    final rawParameters = parser.toMap(parameters);
+    final rawParameters = parser.parametersToMap(parameters);
     return copyWith(
       parameters: parameters..map.addAll(rawParameters),
     );
@@ -345,12 +341,13 @@ class DestinationSettings {
   ///
   DestinationSettings copyWith({
     // TODO: Add other properties
+    DestinationAction? action,
     Destination? redirectedFrom,
     bool? reset,
     bool? updateHistory,
   }) =>
       DestinationSettings(
-        action: action,
+        action: action ?? this.action,
         transition: transition,
         redirectedFrom: redirectedFrom ?? this.redirectedFrom,
         reset: reset ?? this.reset,

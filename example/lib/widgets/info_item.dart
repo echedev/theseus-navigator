@@ -9,6 +9,8 @@ class InfoItem extends StatelessWidget {
     required this.title,
     required this.description,
     this.child,
+    this.isAccentStyle = false,
+    this.isCentered = false,
     this.isDarkStyle = false,
     this.onTap,
   }) : super(key: key);
@@ -19,16 +21,23 @@ class InfoItem extends StatelessWidget {
 
   final Widget? child;
 
+  final bool isAccentStyle;
+
+  final bool isCentered;
+
   final bool isDarkStyle;
 
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final cardColor = isAccentStyle
+        ? Theme.of(context).colorScheme.secondary.withOpacity(0.24)
+        : (isDarkStyle ? Theme.of(context).colorScheme.primary : null);
     return Padding(
         padding: const EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
         child: Card(
-          color: isDarkStyle ? Theme.of(context).colorScheme.primary : null,
+          color: cardColor,
           child: InkWell(
             onTap: onTap,
             child: Container(
@@ -39,13 +48,16 @@ class InfoItem extends StatelessWidget {
                     title,
                     style: GoogleFonts.robotoMono(
                       fontWeight: FontWeight.bold,
-                      color: Colors.lightBlueAccent,
+                      color: isAccentStyle
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.lightBlueAccent,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),
                     child: Text(
                       description,
+                      textAlign: isCentered ? TextAlign.center : null,
                       style: isDarkStyle
                           ? Theme.of(context).textTheme.bodyText1!.copyWith(
                                 color: Colors.white,

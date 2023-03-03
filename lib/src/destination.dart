@@ -33,12 +33,12 @@ class Destination<T extends DestinationParameters> {
   Destination({
     required this.path,
     this.builder,
-    DestinationSettings? settings,
     this.isHome = false,
     this.navigator,
     this.parameters,
     this.parser = const DefaultDestinationParser(),
     this.redirections = const <Redirection>[],
+    DestinationSettings? settings,
     this.tag,
     this.upwardDestinationBuilder,
   })  : assert(navigator != null || builder != null,
@@ -72,9 +72,9 @@ class Destination<T extends DestinationParameters> {
     this.redirections = const <Redirection>[],
     this.tag,
   })  : builder = null,
-        settings = DestinationSettings.material(),
         parameters = null,
         parser = const DefaultDestinationParser(),
+        settings = DestinationSettings.material(),
         upwardDestinationBuilder = null,
         _transitBuilder = builder;
 
@@ -91,10 +91,6 @@ class Destination<T extends DestinationParameters> {
   ///
   final Widget Function(BuildContext context, T? parameters)? builder;
 
-  /// Defines a way of how this destination will appear.
-  ///
-  late final DestinationSettings settings;
-
   /// Whether the destination is the home destination.
   ///
   /// The home destination matches the '/' or empty path, beside of its specific [path].
@@ -108,7 +104,10 @@ class Destination<T extends DestinationParameters> {
   ///
   final NavigationController? navigator;
 
-  /// Optional parameters, that are used to build content.
+  /// Parameters of the destination.
+  ///
+  /// If the type *T* is not specified for the destination, then default [DestinationParameters]
+  /// type is used.
   ///
   final T? parameters;
 
@@ -126,6 +125,10 @@ class Destination<T extends DestinationParameters> {
   ///
   final List<Redirection> redirections;
 
+  /// Defines a way of how this destination will appear.
+  ///
+  late final DestinationSettings settings;
+
   /// An optional label to identify a destination.
   ///
   /// It will be the same for all destinations of the kind, regardless actual
@@ -138,15 +141,11 @@ class Destination<T extends DestinationParameters> {
   /// A [NavigationController] uses this method to create the underlay destination for the
   /// current one, using its parameters.
   ///
-  final Destination? Function(Destination<T> destination)?
+  final Future<Destination?> Function(Destination<T> destination)?
       upwardDestinationBuilder;
 
   late final Widget Function(BuildContext context, T? parameters, Widget child)?
       _transitBuilder;
-
-  /// Indicates if the [upwardDestinationBuilder] is provided.
-  ///
-  bool get hasUpwardDestinationBuilder => upwardDestinationBuilder != null;
 
   /// Whether this destination is final, i.e. it builds a content
   ///
@@ -157,7 +156,8 @@ class Destination<T extends DestinationParameters> {
 
   /// Return a destination that should be displayed on reverse navigation.
   ///
-  Destination? get upwardDestination => upwardDestinationBuilder?.call(this);
+  Future<Destination?> get upwardDestination async =>
+      upwardDestinationBuilder?.call(this);
 
   /// A full URI of the destination, with parameters placeholders replaced with
   /// actual parameter values.
@@ -207,14 +207,13 @@ class Destination<T extends DestinationParameters> {
 
   /// Returns a copy of this destination with different parameters.
   ///
-  /// For typed parameters ensures that raw parameter values in [DestinationParameters.map] are valid.
+  /// For typed parameters ensures that raw parameter values in [DestinationParameters.map]
+  /// are updated as well.
   ///
   Destination<T> withParameters(T parameters) {
-    final rawParameters = parser.toMap(parameters);
+    final rawParameters = parser.parametersToMap(parameters);
     return copyWith(
-      parameters: parameters
-        ..map.clear()
-        ..map.addAll(rawParameters),
+      parameters: parameters..map.addAll(rawParameters),
     );
   }
 
@@ -222,19 +221,22 @@ class Destination<T extends DestinationParameters> {
   /// with the new values.
   ///
   Destination<T> copyWith({
-    DestinationSettings? settings,
     T? parameters,
+    DestinationSettings? settings,
+    Future<Destination?> Function(Destination<T> destination)?
+        upwardDestinationBuilder,
   }) =>
       Destination<T>(
         path: path,
         builder: builder,
         navigator: navigator,
-        settings: settings ?? this.settings,
         parameters: parameters ?? this.parameters,
         parser: parser,
         redirections: redirections,
+        settings: settings ?? this.settings,
         tag: tag,
-        upwardDestinationBuilder: upwardDestinationBuilder,
+        upwardDestinationBuilder:
+            upwardDestinationBuilder ?? this.upwardDestinationBuilder,
       );
 
   /// Destinations are equal when their URI string are equal.
@@ -339,12 +341,13 @@ class DestinationSettings {
   ///
   DestinationSettings copyWith({
     // TODO: Add other properties
+    DestinationAction? action,
     Destination? redirectedFrom,
     bool? reset,
     bool? updateHistory,
   }) =>
       DestinationSettings(
-        action: action,
+        action: action ?? this.action,
         transition: transition,
         redirectedFrom: redirectedFrom ?? this.redirectedFrom,
         reset: reset ?? this.reset,
@@ -416,7 +419,7 @@ enum DestinationTransition {
 
 /// Base destination parameters.
 ///
-/// Extend this abstract class to define your custom parameters class.
+/// Extend this class to define your custom parameters class.
 /// Use [Destination<YourCustomDestinationParameters>()] to make a destination
 /// aware of your custom parameters.
 ///
@@ -449,9 +452,28 @@ class DestinationParameters {
   DestinationParameters([Map<String, String>? map])
       : map = map ?? <String, String>{};
 
+  /// Reserved query parameter name.
+  ///
+  /// It is used for automatic persisting of navigation state.
+  /// Do not use this name for your custom parameters.
+  ///
+  static const String stateParameterName = 'state';
+
+  static const _reservedParameterNames = <String>{
+    stateParameterName,
+  };
+
   /// Contains parameter values parsed from the destination's URI.
   ///
   /// The parameter name is a [MapEntry.key], and the value is [MapEntry.value].
   ///
   late final Map<String, String> map;
+
+  /// Check if a provided parameter name is reserved
+  ///
+  /// This function is used by [DestinationParser] to synchronize internal raw parameter
+  /// values with parsed parameter object properties and build destination URI.
+  ///
+  static bool isReservedParameter(String parameterName) =>
+      _reservedParameterNames.contains(parameterName);
 }

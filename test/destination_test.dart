@@ -51,8 +51,8 @@ void main() {
     });
     test('Parsing URI - typed parameters', () async {
       final destination1 = TestDestinations.categoriesTyped;
-      const parentCategory1 = Category(id: '1', name: 'Category 1');
-      const parentCategory2 = Category(id: '2', name: 'Category 2');
+      const parentCategory1 = Category(id: 1, name: 'Category 1');
+      const parentCategory2 = Category(id: 2, name: 'Category 2');
       final destination2 = destination1
           .withParameters(CategoriesParameters(parent: parentCategory1));
       final destination3 = destination1
@@ -76,7 +76,7 @@ void main() {
     });
     test('Applying parameters - Typed parameters', () async {
       final destination1 = TestDestinations.categoriesTyped;
-      const parentCategory1 = Category(id: '1', name: 'Category 1');
+      const parentCategory1 = Category(id: 1, name: 'Category 1');
       final destination2 = destination1
           .withParameters(CategoriesParameters(parent: parentCategory1));
       expect(destination2.parameters is CategoriesParameters, true);
@@ -89,12 +89,20 @@ void main() {
     test('Settings to display a dialog', () async {
       final destination1 = TestDestinations.aboutWithDialogSettings;
       expect(destination1.settings.action, DestinationAction.push);
-      expect(destination1.settings.transition, DestinationTransition.materialDialog);
+      expect(destination1.settings.transition,
+          DestinationTransition.materialDialog);
     });
     test('Settings without visual effects on transition', () async {
       final destination1 = TestDestinations.aboutWithQuietSettings;
       expect(destination1.settings.action, DestinationAction.replace);
       expect(destination1.settings.transition, DestinationTransition.none);
+    });
+  });
+  group('Destination Parameters', () {
+    test('Reserved parameters',
+        () {
+      expect(DestinationParameters.isReservedParameter('id'), false);
+      expect(DestinationParameters.isReservedParameter('state'), true);
     });
   });
 }

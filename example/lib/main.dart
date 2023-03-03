@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Colors.blueGrey,
             secondary: Colors.amber,
-            secondaryContainer: Colors.blue,
+            // secondaryContainer: Colors.blue,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

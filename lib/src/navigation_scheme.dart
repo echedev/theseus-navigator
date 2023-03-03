@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -154,31 +155,41 @@ class NavigationScheme with ChangeNotifier {
   NavigationController? findNavigator(Destination destination) =>
       _navigatorMatches[findDestination(destination.path)];
 
-  /// Opens the specified [destination].
+  /// Navigates to specified [destination].
   ///
   /// First, searches the navigation scheme for proper navigator for the destination.
-  /// If found, uses the navigator's [goTo] method to open the destination.
+  /// If found, uses the navigator's [goTo] method to navigate to the destination.
   /// Otherwise throws [UnknownDestinationException].
   ///
-  Future<void> goTo(Destination destination) {
+  Future<void> goTo(Destination destination) async {
+    if (currentDestination == destination) {
+      Log.d(runtimeType,
+          'goTo(): Ignore navigation to $destination. It is already the current destination.');
+      return;
+    }
+
     final navigator = findNavigator(destination);
     if (navigator == null) {
       _handleError(destination);
       return SynchronousFuture(null);
     }
     Log.d(runtimeType,
-        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.settings.redirectedFrom}');
+        'goTo(): navigator=${navigator.tag}, destination=$destination, redirectedFrom=${destination.settings.redirectedFrom}, currentDestination=$currentDestination');
     _shouldClose = false;
 
     final completer = Completer<void>();
-    var destinationToComplete = destination;
-    _destinationCompleters[destinationToComplete] = completer;
-    while (!destinationToComplete.isFinalDestination) {
-      destinationToComplete =
-          destinationToComplete.navigator!.currentDestination;
-      _destinationCompleters[destinationToComplete] = completer;
+    _setupCompleter(destination, completer);
+
+    if (navigator.keepStateInParameters &&
+        navigator.stack.isNotEmpty &&
+        navigator.currentDestination != destination &&
+        destination.settings.reset &&
+        _hasStateInParameters(destination)) {
+      Log.d(runtimeType, 'goTo(): Restore navigation state');
+      _restoreStateFromParameters(destination, navigator);
+    } else {
+      navigator.goTo(destination);
     }
-    navigator.goTo(destination);
 
     return completer.future;
   }
@@ -216,11 +227,29 @@ class NavigationScheme with ChangeNotifier {
         }
       },
     );
+
+    final destinationsToComplete = <Destination>{};
+
+    final navigator = findNavigator(_currentDestination);
+    if (navigator == null) {
+      _handleError(_currentDestination);
+      return SynchronousFuture(null);
+    }
+    if (navigator.keepStateInParameters &&
+        (!_currentDestination.settings.reset ||
+            !_hasStateInParameters(_currentDestination))) {
+      Log.d(runtimeType, 'resolve(): Save navigation state');
+      destinationsToComplete.add(_currentDestination);
+      _currentDestination = await _saveStateInParameters(_currentDestination);
+    }
+
     final requestedDestination = _currentDestination;
+    destinationsToComplete.add(requestedDestination);
+
     final resolvedDestination = await _resolveDestination(requestedDestination);
     isResolvingTimer.cancel();
     Log.d(runtimeType,
-        'resolve(): requestedDestination=$requestedDestination, resolvedDestination=$resolvedDestination');
+        'resolve(): requestedDestination=$requestedDestination, resolvedDestination=$resolvedDestination, currentDestination=$_currentDestination');
     if (requestedDestination != _currentDestination) {
       _isResolving = false;
       notifyListeners();
@@ -228,7 +257,9 @@ class NavigationScheme with ChangeNotifier {
     }
     if (resolvedDestination == requestedDestination) {
       _isResolving = false;
-      _completeResolvedDestination(requestedDestination);
+      for (var destination in destinationsToComplete) {
+        _completeResolvedDestination(destination);
+      }
       notifyListeners();
       return;
     }
@@ -260,12 +291,6 @@ class NavigationScheme with ChangeNotifier {
           errorDestination!.settings.copyWith(redirectedFrom: destination)));
     } else {
       throw UnknownDestinationException(destination);
-    }
-  }
-
-  void _removeNavigatorListeners() {
-    for (var navigator in _navigatorListeners.keys) {
-      navigator.removeListener(_navigatorListeners[navigator]!);
     }
   }
 
@@ -301,9 +326,27 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
+  void _removeNavigatorListeners() {
+    for (var navigator in _navigatorListeners.keys) {
+      navigator.removeListener(_navigatorListeners[navigator]!);
+    }
+  }
+
+  void _setupCompleter(Destination destination, Completer completer) {
+    var destinationToComplete = destination;
+    _destinationCompleters[destinationToComplete] = completer;
+    // Setup the same completer for nested destinations,
+    // if they don't have their own non-completed ones
+    while (!destinationToComplete.isFinalDestination) {
+      destinationToComplete =
+          destinationToComplete.navigator!.currentDestination;
+      if (_destinationCompleters[destinationToComplete]?.isCompleted ?? true) {
+        _destinationCompleters[destinationToComplete] = completer;
+      }
+    }
+  }
+
   void _updateCurrentDestination({required Destination? backFrom}) {
-    // TODO: Do we need the stack here?
-    List<Destination> newStack = List.from(_rootNavigator.stack);
     // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
     _shouldClose = _rootNavigator.shouldClose;
     if (_shouldClose) {
@@ -315,7 +358,6 @@ class NavigationScheme with ChangeNotifier {
 
     Destination newDestination = _rootNavigator.currentDestination;
     while (!newDestination.isFinalDestination) {
-      newStack.addAll(newDestination.navigator!.stack);
       newDestination = newDestination.navigator!.currentDestination;
     }
     Log.d(runtimeType,
@@ -329,6 +371,74 @@ class NavigationScheme with ChangeNotifier {
       }
       resolve();
     }
+  }
+
+  Future<Destination> _saveStateInParameters(Destination destination) async {
+    Future<List<String>> getCleanUris(List<Destination> stack) async {
+      final result = <String>[];
+      for (final destination in stack.where(
+          (destination) => destination.settings.redirectedFrom == null)) {
+        result.add((await _removeStateFromParameters(destination)).uri);
+      }
+      return result;
+    }
+
+    final stateMap = <String, List<String>>{
+      '/': await getCleanUris(_rootNavigator.stack),
+    };
+    for (final navigator in _navigatorOwners.keys) {
+      if (navigator.keepStateInParameters) {
+        stateMap[_navigatorOwners[navigator]!.path] =
+            await getCleanUris(navigator.stack);
+      }
+    }
+    final rawParametersWithState = <String, String>{
+      DestinationParameters.stateParameterName: jsonEncode(stateMap)
+    };
+    rawParametersWithState
+        .addAll(destination.parameters?.map ?? const <String, String>{});
+    final parametersWithState = await destination.parser
+        .parametersFromMap(rawParametersWithState);
+    return destination.withParameters(parametersWithState);
+  }
+
+  bool _hasStateInParameters(Destination destination) =>
+      destination.parameters?.map
+          .containsKey(DestinationParameters.stateParameterName) ??
+      false;
+
+  Future<Destination> _removeStateFromParameters(
+          Destination destination) async =>
+      destination.withParameters(await destination.parser
+          .parametersFromMap((Map.from(
+              destination.parameters?.map ?? const <String, String>{}))
+            ..remove(DestinationParameters.stateParameterName)));
+
+  Future<void> _restoreStateFromParameters(
+      Destination destination, NavigationController navigator) async {
+    final stateValue =
+        destination.parameters?.map[DestinationParameters.stateParameterName];
+    if (stateValue == null) {
+      navigator.goTo(destination);
+      return;
+    }
+
+    final stateMap = jsonDecode(stateValue);
+
+    for (final key in stateMap.keys) {
+      final eventualNavigator = key == '/'
+          ? _rootNavigator
+          : (await _routeParser
+                  .parseRouteInformation(RouteInformation(location: key)))
+              .navigator!;
+      final destinations = <Destination>[];
+      for (final uri in stateMap[key]) {
+        destinations.add(await _routeParser
+            .parseRouteInformation(RouteInformation(location: uri)));
+      }
+      eventualNavigator.resetStack(destinations);
+    }
+    _updateCurrentDestination(backFrom: null);
   }
 
   Future<Destination> _resolveDestination(Destination destination) async {
@@ -359,6 +469,10 @@ class NavigationScheme with ChangeNotifier {
         _destinationCompleters[destinationToComplete]?.complete();
       }
       destinationToComplete = destinationToComplete.settings.redirectedFrom;
+    }
+    final owner = _navigatorOwners[findNavigator(destination)];
+    if (owner != null && (!(_destinationCompleters[owner]?.isCompleted ?? true))) {
+      _destinationCompleters[owner]?.complete();
     }
   }
 }

@@ -8,6 +8,8 @@ import '../common/index.dart';
 void main() {
   late NavigationScheme navigationScheme;
 
+  late NavigationScheme navigationSchemeCustomWaiting;
+
   group('TheseusRouterDelegate Widgets', () {
     setUp(() {
       navigationScheme = NavigationScheme(
@@ -18,13 +20,25 @@ void main() {
         ],
         errorDestination: TestDestinations.error,
       );
+      navigationSchemeCustomWaiting = NavigationScheme(
+        destinations: [
+          TestDestinations.home,
+          TestDestinations.catalog,
+          TestDestinations.aboutWithRedirection,
+        ],
+        errorDestination: TestDestinations.error,
+        waitingOverlayBuilder: (context, destination) => Container(
+          key: const Key('_TheseusCustomWaitingOverlay_'),
+          color: Colors.red,
+        ),
+      );
     });
     testWidgets('Delegate builds root Navigator', (tester) async {
       await tester.pumpWidget(_mainWrapper(navigationScheme: navigationScheme));
       await tester.pumpAndSettle();
       expect(find.byKey(navigationScheme.rootNavigator.key), findsOneWidget);
     });
-    testWidgets('Show waiting overlay when resolving the destination',
+    testWidgets('Show waiting overlay while resolving the destination',
         (tester) async {
       const waitingOverlayKey = Key('_TheseusWaitingOverlay_');
       await tester.pumpWidget(_mainWrapper(navigationScheme: navigationScheme));
@@ -35,6 +49,23 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pump();
       expect(find.byKey(waitingOverlayKey), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.byKey(waitingOverlayKey), findsNothing);
+    });
+    testWidgets('If provided, show custom waiting overlay while resolving the destination',
+        (tester) async {
+      const waitingOverlayKey = Key('_TheseusCustomWaitingOverlay_');
+      await tester.pumpWidget(
+          _mainWrapper(navigationScheme: navigationSchemeCustomWaiting));
+      await tester.pumpAndSettle();
+      expect(find.byKey(navigationSchemeCustomWaiting.rootNavigator.key),
+          findsOneWidget);
+      expect(find.byKey(waitingOverlayKey), findsNothing);
+      navigationSchemeCustomWaiting.goTo(TestDestinations.aboutWithRedirection);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      expect(find.byKey(waitingOverlayKey), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
       expect(find.byKey(waitingOverlayKey), findsNothing);
     });

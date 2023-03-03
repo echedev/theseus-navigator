@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'destination.dart';
@@ -56,7 +55,10 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
                 ),
           ),
       ],
-      onPopPage: (route, result) => route.didPop(result),
+      onPopPage: (route, result) {
+        Log.d(runtimeType, 'onPopPage()');
+        return route.didPop(result);
+      },
     );
   }
 
@@ -78,11 +80,15 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   @override
   // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
+    if (destination == navigationScheme.currentDestination) {
+      Log.d(runtimeType, 'setNewRoutePath(): Ignore navigation to $destination. It is already the current destination.');
+      return;
+    }
     Log.d(runtimeType, 'setNewRoutePath(): destination=$destination');
     // The current navigation stack is reset if the new destination is not an error.
     final reset = destination != navigationScheme.errorDestination;
-    return SynchronousFuture(navigationScheme.goTo(
-        destination.withSettings(destination.settings.copyWith(reset: reset))));
+    return navigationScheme.goTo(
+        destination.withSettings(destination.settings.copyWith(reset: reset)));
   }
 
   @override

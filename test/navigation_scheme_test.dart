@@ -1,5 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:theseus_navigator/theseus_navigator.dart';
@@ -63,8 +65,13 @@ void main() {
         await navigationScheme.goTo(TestDestinations.about);
         expect(navigationScheme.currentDestination, TestDestinations.about);
       });
-      test('Navigate to nested destination', () async {
+      test('Navigate to transit destination makes the current destination set to first nested destination', () async {
         await navigationScheme.goTo(TestDestinations.catalog);
+        expect(
+            navigationScheme.currentDestination, TestDestinations.categories);
+      });
+      test('Navigate to nested destination', () async {
+        await navigationScheme.goTo(TestDestinations.categories);
         expect(
             navigationScheme.currentDestination, TestDestinations.categories);
       });
@@ -91,15 +98,23 @@ void main() {
           ],
         );
       });
-      test('Original destination is saved in the configuration of redirection destination', () async {
-        await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
+      test(
+          'Original destination is saved in the configuration of redirection destination',
+          () async {
+        await navigationScheme
+            .goTo(TestDestinations.aboutWithInvalidRedirection);
         expect(navigationScheme.currentDestination, TestDestinations.login);
-        expect(navigationScheme.currentDestination.settings.redirectedFrom, TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.currentDestination.settings.redirectedFrom,
+            TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.redirectedFrom,
+            TestDestinations.aboutWithInvalidRedirection);
       });
       test('User can navigate back from the redirected destination', () async {
-        await navigationScheme.goTo(TestDestinations.aboutWithInvalidRedirection);
+        await navigationScheme
+            .goTo(TestDestinations.aboutWithInvalidRedirection);
         navigationScheme.goBack();
-        expect(navigationScheme.currentDestination, TestDestinations.aboutWithInvalidRedirection);
+        expect(navigationScheme.currentDestination,
+            TestDestinations.aboutWithInvalidRedirection);
       });
     });
     group('Error handling', () {
@@ -161,6 +176,71 @@ void main() {
             () async =>
                 await navigationSchemeNoError.goTo(TestDestinations.login),
             throwsA(isA<UnknownDestinationException>()));
+      });
+    });
+    group('Persisting of navigation state in destination parameters', () {
+      late NavigationScheme navigationSchemeKeepState;
+
+      setUp(() {
+        navigationSchemeKeepState = NavigationScheme(
+          navigator: NavigationController(
+            destinations: [
+              TestDestinations.home,
+              TestDestinations.login,
+              TestDestinations.about,
+            ],
+            builder: const DefaultNavigatorBuilder(
+                keepStateInParameters: KeepingStateInParameters.always),
+          ),
+        );
+      });
+      test('Navigation state is not persisted by default on non-web platform',
+          () async {
+        await navigationScheme.goTo(TestDestinations.about);
+        expect(navigationScheme.currentDestination, TestDestinations.about);
+        expect(
+            navigationScheme.currentDestination.parameters?.map
+                    .containsKey([DestinationParameters.stateParameterName]) ??
+                false,
+            false);
+      });
+      test(
+          'When enabled, the navigation state should persist in the requested destination parameters.',
+          () async {
+        final upwardDestination = navigationSchemeKeepState.currentDestination;
+        await navigationSchemeKeepState.goTo(TestDestinations.about);
+        expect(
+            TestDestinations.about
+                .isMatch(navigationSchemeKeepState.currentDestination.uri),
+            true);
+        expect(
+            navigationSchemeKeepState.currentDestination.parameters?.map
+                    .containsKey(DestinationParameters.stateParameterName) ??
+                false,
+            true);
+        final persistedState = jsonDecode(navigationSchemeKeepState.currentDestination.parameters
+            ?.map[DestinationParameters.stateParameterName] ?? '');
+        expect(persistedState['/'].contains(upwardDestination.uri), true);
+      });
+      test(
+          'Navigation stack should be restored on navigation to a destination containing navigation state in parameters.',
+          () async {
+        await navigationSchemeKeepState.goTo(TestDestinations.about);
+        final destinationWithState =
+            navigationSchemeKeepState.currentDestination;
+        await navigationSchemeKeepState.goTo(TestDestinations.login
+            .withSettings(
+                TestDestinations.login.settings.copyWith(reset: true)));
+        expect(navigationSchemeKeepState.currentDestination.path,
+            TestDestinations.login.path);
+        expect(navigationSchemeKeepState.rootNavigator.stack.length, 1);
+        await navigationSchemeKeepState.goTo(
+            destinationWithState.withSettings(
+                destinationWithState.settings.copyWith(reset: true)));
+        expect(navigationSchemeKeepState.currentDestination,
+            destinationWithState);
+        expect(navigationSchemeKeepState.rootNavigator.stack.length, 2);
+        expect(navigationSchemeKeepState.rootNavigator.stack[0], TestDestinations.home);
       });
     });
     group('Service', () {

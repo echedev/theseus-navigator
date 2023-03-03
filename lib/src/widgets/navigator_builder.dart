@@ -2,26 +2,48 @@ import 'package:flutter/material.dart';
 
 import '../destination.dart';
 import '../navigation_controller.dart';
+import '../utils/log/log.dart';
 
-/// Builds a widget that wraps a content for [NavigationController].
+/// Builds a navigation widget.
+///
+/// It is used by [NavigationController] to build a navigation widget sub-tree
+/// around a content of destinations, managed by this navigation controller.
 ///
 /// See also:
 /// - [DefaultNavigatorBuilder]
 /// - [BottomNavigationBuilder]
 ///
 abstract class NavigatorBuilder {
+  /// Creates an instance of [NavigatorBuilder].
+  ///
+  /// Does not keep upward destination by default.
+  ///
+  const NavigatorBuilder({
+    KeepingStateInParameters? keepStateInParameters,
+  }) : keepStateInParameters =
+            keepStateInParameters ?? KeepingStateInParameters.auto;
+
+  /// Automatic persisting of upward destination.
+  ///
+  final KeepingStateInParameters keepStateInParameters;
+
   /// Returns a widget that wraps a content of navigator's destinations.
   ///
   Widget build(BuildContext context, NavigationController navigator);
 }
 
-/// Implementation of [NavigatorBuilder] that wraps destination's content into
-/// [Navigator] widget.
+/// Implementation of [NavigatorBuilder] that manages a stack of destinations using
+/// Flutter's [Navigator] widget.
 ///
-class DefaultNavigatorBuilder implements NavigatorBuilder {
-  /// Creates default navigator builder.
+class DefaultNavigatorBuilder extends NavigatorBuilder {
+  /// Creates an instance of [DefaultNavigatorBuilder].
   ///
-  const DefaultNavigatorBuilder();
+  /// Set [NavigatorBuilder.keepStateInParameters] to [KeepingStateInParameters.auto]
+  /// by default to allow persisting navigation stack in the web browser history.
+  ///
+  const DefaultNavigatorBuilder({
+    KeepingStateInParameters? keepStateInParameters,
+  }) : super(keepStateInParameters: keepStateInParameters);
 
   @override
   Widget build(BuildContext context, NavigationController navigator) {
@@ -38,6 +60,7 @@ class DefaultNavigatorBuilder implements NavigatorBuilder {
       key: navigator.key,
       pages: pages,
       onPopPage: (route, result) {
+        Log.d(runtimeType, 'onPopPage()');
         navigator.goBack();
         route.didPop(result);
         return true;

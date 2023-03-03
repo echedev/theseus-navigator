@@ -19,6 +19,7 @@ void main() {
       });
       test('Parse parameter name', () {
         expect(parser.parsePathParameterName('{id}'), 'id');
+        expect(() => parser.parsePathParameterName(':id'), throwsA(isA<Exception>()));
       });
     });
     group('Matching URI', () {
@@ -85,7 +86,7 @@ void main() {
       });
       test('1 path parameter - Typed parameters', () async {
         final destination1 = TestDestinations.categoriesTyped;
-        const parentCategory1 = Category(id: '1', name: 'Category 1');
+        const parentCategory1 = Category(id: 1, name: 'Category 1');
         final destination2 = destination1
             .withParameters(CategoriesParameters(parent: parentCategory1));
         final result1 =
@@ -116,6 +117,37 @@ void main() {
             await parser.parseParameters('/categories?q=1', destination1) ==
                 destination2,
             false);
+      });
+      test('Query parameters - Clear unused for typed parameters', () async {
+        final destination1 = TestDestinations.categoriesTyped;
+        const parentCategory1 = Category(id: 1, name: 'Category 1');
+        final destination2 = destination1
+            .withParameters(CategoriesParameters(parent: parentCategory1));
+        final result = await categoriesParser.parseParameters(
+            '/categories/1?q=query', destination2);
+        expect(result.parameters is CategoriesParameters, true);
+        expect(result.parameters!.map.isNotEmpty, true);
+        expect(
+            mapEquals(result.parameters!.map, <String, String>{
+              'parentId': '1',
+            }),
+            true);
+      });
+      test('Query parameters - Keep reserved parameters - state', () async {
+        final destination1 = TestDestinations.categoriesTyped;
+        const parentCategory1 = Category(id: 1, name: 'Category 1');
+        final destination2 = destination1
+            .withParameters(CategoriesParameters(parent: parentCategory1));
+        final result = await categoriesParser.parseParameters(
+            '/categories/1?state=/settings/about', destination2);
+        expect(result.parameters is CategoriesParameters, true);
+        expect(result.parameters!.map.isNotEmpty, true);
+        expect(
+            mapEquals(result.parameters!.map, <String, String>{
+              'parentId': '1',
+              'state': TestDestinations.about.path
+            }),
+            true);
       });
       test('Exception on not matching destination', () async {
         final destination1 = TestDestinations.home;

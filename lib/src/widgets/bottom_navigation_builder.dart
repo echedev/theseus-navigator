@@ -22,7 +22,7 @@ import 'index.dart';
 /// - [NavigationController]
 /// - [BottomNavigationBar]
 ///
-class BottomNavigationBuilder implements NavigatorBuilder {
+class BottomNavigationBuilder extends NavigatorBuilder {
   /// Creates a [BottomNavigationBuilder] instance.
   ///
   const BottomNavigationBuilder({
@@ -31,7 +31,8 @@ class BottomNavigationBuilder implements NavigatorBuilder {
     this.navigationBarItems = const <NavigationDestination>[],
     this.navigationBarParameters = const NavigationBarParameters(),
     bool? material3,
-  }) : _material3 = material3 ?? false;
+  }) : _material3 = material3 ?? false,
+        super();
 
   /// Creates a [BottomNavigationBuilder] instance that uses Material 3 [NavigationBar]
   /// widget.

@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'destination.dart';
@@ -114,6 +115,21 @@ class NavigationController with ChangeNotifier {
   ///
   bool get hasError => _error != null;
 
+  /// Indicates if persisting of navigation state in destination parameters is needed.
+  ///
+  /// When it is *true*, the following is happened on navigation to a destination:
+  /// - If [DestinationSettings.reset] is not set in the requested destination,
+  /// the current navigation state is saved in the requested destination parameters.
+  /// Particularly, the [currentDestination] is saved in the [DestinationParameters.upwardParameterName]
+  /// parameter, and current destination of each nested [NavigationController]
+  /// is saved in the [DestinationParameters.nestedParameterName] parameter of the requested destination.
+  /// - If [DestinationSettings.reset] is *true*, the navigation state is restored
+  /// from the requested destination parameters.
+  ///
+  bool get keepStateInParameters =>
+      builder.keepStateInParameters == KeepingStateInParameters.always ||
+      builder.keepStateInParameters == KeepingStateInParameters.auto && kIsWeb;
+
   bool _shouldClose = false;
 
   /// Whether the navigator should close.
@@ -178,7 +194,7 @@ class NavigationController with ChangeNotifier {
       }
     }
     if (_isDestinationMatched(destination)) {
-      _updateStack(destination);
+      await _updateStack(destination);
       notifyListeners();
     } else {
       if (notifyOnError) {
@@ -211,10 +227,23 @@ class NavigationController with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Explicitly set the navigation stack.
+  ///
+  /// The current navigation stack is replaces with the provided [destinations].
+  ///
+  /// This method doesn't notify listeners on changed made with the navigation stack.
+  ///
+  void resetStack(List<Destination> destinations) {
+    _stack.clear();
+    for (final destination in destinations) {
+      _stack.add(destination);
+    }
+  }
+
   bool _isDestinationMatched(Destination destination) =>
       destinations.any((element) => element.isMatch(destination.uri));
 
-  void _updateStack(Destination destination) {
+  Future<void> _updateStack(Destination destination) async {
     if (destination.settings.reset) {
       _stack.clear();
     } else {
@@ -222,7 +251,7 @@ class NavigationController with ChangeNotifier {
         _stack.removeLast();
       }
     }
-    final upwardStack = _buildUpwardStack(destination);
+    final upwardStack = await _buildUpwardStack(destination);
     if (upwardStack.isNotEmpty) {
       // Find first missing item of upward stack
       int startUpwardFrom = 0;
@@ -241,15 +270,46 @@ class NavigationController with ChangeNotifier {
     _stack.addLast(destination);
   }
 
-  List<Destination> _buildUpwardStack(Destination destination) {
+  Future<List<Destination>> _buildUpwardStack(Destination destination) async {
     final result = <Destination>[];
-    var upwardDestination = destination.upwardDestination;
+    var upwardDestination = await destination.upwardDestination;
     while (upwardDestination != null) {
       result.insert(0, upwardDestination);
-      upwardDestination = upwardDestination.upwardDestination;
+      upwardDestination = await upwardDestination.upwardDestination;
     }
     return result;
   }
+}
+
+/// Automatic persisting of navigation state.
+///
+/// Once persisting of navigation state in destination parameters is enabled,
+/// the current stack will be serialized and saved in the [DestinationParameters.stateParameterName]
+/// parameter on navigation to a destination.
+/// When the destination with persisted navigation state is requested by the platform,
+/// the navigation stack will be deserialized from the parameter and explicitly set in the
+/// navigation controller.
+///
+/// Basically, persisting of navigation state in destination parameters make sense in web apps,
+/// to be able to restore arbitrary navigation stack when the user navigates to a destination
+/// through the browser history or a deeplink.
+/// To support this, the [auto] option is used in [NavigatorBuilder] by default.
+///
+/// When automatic persisting of navigation state is disabled,
+/// you still able to implement your custom logic manually, by providing proper [Destination.upwardDestinationBuilder].
+///
+enum KeepingStateInParameters {
+  /// The navigation state will be always kept
+  ///
+  always,
+
+  /// The navigation state will be only kept when the app is running on the Web platform.
+  ///
+  auto,
+
+  /// The navigation state will not be kept automatically.
+  ///
+  none,
 }
 
 /// Contains navigation error details
@@ -265,5 +325,5 @@ class NavigationControllerError {
   final Destination? destination;
 
   @override
-  String toString() => '$runtimeType={destination: $destination}';
+  String toString() => '$runtimeType: destination=$destination';
 }

@@ -1,3 +1,11 @@
+### 0.6.0
+2023-03-03
+- Added support of persisting of navigation state in destination parameters. This allows to restore the navigation state from a deeplink.
+
+**BREAKING**:
+- The `upwardDestinationBuidler` function changed to be asynchronous.
+- In `DestinationParser` methods `toDestinationParameters` and `toMap` are renamed to `parametersFromMap` and `parametersToMap`.
+
 ### 0.5.2
 2023-01-06
 

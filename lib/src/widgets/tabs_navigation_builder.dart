@@ -25,7 +25,7 @@ import 'index.dart';
 /// - [NavigationController]
 /// - [TabBar]
 ///
-class TabsNavigationBuilder implements NavigatorBuilder {
+class TabsNavigationBuilder extends NavigatorBuilder {
   /// Creates a [TabsNavigationBuilder] instance.
   ///
   const TabsNavigationBuilder({
@@ -33,7 +33,7 @@ class TabsNavigationBuilder implements NavigatorBuilder {
     this.parameters = const TabBarParameters(),
     this.appBarParametersBuilder,
     this.wrapInScaffold = true,
-  });
+  }) : super();
 
   /// Typically a list of [Tab] widgets, that corresponds to the navigator's
   /// destination list.

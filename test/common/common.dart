@@ -73,10 +73,17 @@ class TestDestinations {
     path: '/categories/{parentId}',
     builder: dummyBuilder,
     parser: CategoriesParser(),
-    upwardDestinationBuilder: (destination) {
-      return destination.parameters?.parent == null
-          ? null
-          : destination.withParameters(CategoriesParameters());
+    upwardDestinationBuilder: (destination) async {
+      final parameters = destination.parameters;
+      if (parameters == null) {
+        return null;
+      }
+      final parent = parameters.parent;
+      if (parent == null || parent.id == 1) {
+        return null;
+      }
+      return destination.withParameters(
+          CategoriesParameters(parent: categoriesDataSource[parent.id - 2]));
     },
   );
   static final categoriesBrands = Destination(
@@ -99,5 +106,6 @@ class TestNavigators {
       TestDestinations.categories,
       TestDestinations.categoriesBrands,
     ],
+    tag: 'Catalog'
   );
 }

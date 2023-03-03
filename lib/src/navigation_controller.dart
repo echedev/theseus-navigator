@@ -227,6 +227,12 @@ class NavigationController with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Explicitly set the navigation stack.
+  ///
+  /// The current navigation stack is replaces with the provided [destinations].
+  ///
+  /// This method doesn't notify listeners on changed made with the navigation stack.
+  ///
   void resetStack(List<Destination> destinations) {
     _stack.clear();
     for (final destination in destinations) {

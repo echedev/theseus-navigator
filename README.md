@@ -1,5 +1,3 @@
-#### theseus_navigator
-
 # Theseus Navigator
 <a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.5.2-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-95%25-green" alt="Coverage"></a>
 
@@ -9,8 +7,10 @@ Theseus Navigator package aims to simplify implementing a navigation in your app
 - Strongly-typed parameters
 - Deep links
 - Nested navigation
+- Dynamic upward navigation
 - Redirections
-- Implementation of common navigation cases
+- Persisting of navigation state
+- Common navigation widgets
 
 ![Theseus Navigator Demo](./assets/TheseusNavigatorDemo.gif)
 
@@ -182,7 +182,7 @@ class CategoriesDestinationParser extends DestinationParser<CategoriesDestinatio
   final CategoryRepository categoryRepository;
 
   @override
-  Future<CategoriesDestinationParameters> toDestinationParameters(Map<String, String> map) async {
+  Future<CategoriesDestinationParameters> parametersFromMap(Map<String, String> map) async {
     final category = await categoryRepository.getCategory(map['parentCategoryId'] ?? '');
     return CategoriesDestinationParameters(
       parentCategory: category,
@@ -190,7 +190,7 @@ class CategoriesDestinationParser extends DestinationParser<CategoriesDestinatio
   }
 
   @override
-  Map<String, String> toMap(CategoryListParameters parameters) {
+  Map<String, String> parametersToMap(CategoryListParameters parameters) {
     final result = <String, String>{};
     if (parameters.parentCategory != null) {
       result['parentCategoryId'] = parameters.parentCategory!.id;
@@ -265,11 +265,11 @@ NavigationController allows you to wrap destinations with your custom navigation
 
 This is required when you would like to navigate destinations through the `BottomNavigationBar`, `TabBar`, `Drawer` or some other way.
 
-To do this, you have to implement the `NavigatorBuilder` class:
+To do this, you have to extend the `NavigatorBuilder` class and override its `build` method:
 
 ```dart
-class CustomNavigatorBuilder implements NavigatorBuilder {
-  const CustomNavigatorBuilder();
+class CustomNavigatorBuilder extends NavigatorBuilder {
+  const CustomNavigatorBuilder() : super();
 
   @override
   Widget build(BuildContext context, NavigationController navigator) {

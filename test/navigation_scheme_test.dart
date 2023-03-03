@@ -234,7 +234,6 @@ void main() {
         expect(navigationSchemeKeepState.currentDestination.path,
             TestDestinations.login.path);
         expect(navigationSchemeKeepState.rootNavigator.stack.length, 1);
-        print('test');
         await navigationSchemeKeepState.goTo(
             destinationWithState.withSettings(
                 destinationWithState.settings.copyWith(reset: true)));

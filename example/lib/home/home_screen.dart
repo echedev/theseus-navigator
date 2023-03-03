@@ -22,15 +22,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('$runtimeType: build()');
     return BackButtonListener(
       onBackButtonPressed: () async {
-        print('$runtimeType: onBackButtonPressed()');
         return false;
       },
       child: WillPopScope(
         onWillPop: () async {
-          print('$runtimeType: onWillPop()');
           return true;
         },
         child: Scaffold(
@@ -39,19 +36,14 @@ class HomeScreen extends StatelessWidget {
           ),
           body: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    primary: Theme.of(context).colorScheme.secondary,
-                    side: BorderSide(
-                        width: 2.0,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                  onPressed: _openPubDev,
-                  child:
-                      const Text('Open Theseus Navigator package in Pub.dev'),
-                ),
+              InfoItem(
+                title: 'Theseus Navigator',
+                description: 'A demo app of Theseus Navigator package.\nversion 0.6.0',
+                isAccentStyle: true,
+                isCentered: true,
+                child: ElevatedButton(
+                    onPressed: _openPubDev,
+                    child: const Text('Open on PUB.DEV')),
               ),
               const InfoItem(
                 title: 'Primary destinations',

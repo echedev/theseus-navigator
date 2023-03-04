@@ -392,13 +392,12 @@ class NavigationScheme with ChangeNotifier {
             await getCleanUris(navigator.stack);
       }
     }
-    final rawParametersWithState = <String, String>{
-      DestinationParameters.stateParameterName: jsonEncode(stateMap)
-    };
-    rawParametersWithState
-        .addAll(destination.parameters?.map ?? const <String, String>{});
+
     final parametersWithState = await destination.parser
-        .parametersFromMap(rawParametersWithState);
+        .parametersFromMap(destination.parameters?.map ?? <String, String>{});
+    parametersWithState.map.addAll(<String, String>{
+      DestinationParameters.stateParameterName: jsonEncode(stateMap)
+    });
     return destination.withParameters(parametersWithState);
   }
 
@@ -409,9 +408,8 @@ class NavigationScheme with ChangeNotifier {
 
   Future<Destination> _removeStateFromParameters(
           Destination destination) async =>
-      destination.withParameters(await destination.parser
-          .parametersFromMap((Map.from(
-              destination.parameters?.map ?? const <String, String>{}))
+      destination.withParameters(await destination.parser.parametersFromMap(
+          (Map.from(destination.parameters?.map ?? const <String, String>{}))
             ..remove(DestinationParameters.stateParameterName)));
 
   Future<void> _restoreStateFromParameters(
@@ -471,7 +469,8 @@ class NavigationScheme with ChangeNotifier {
       destinationToComplete = destinationToComplete.settings.redirectedFrom;
     }
     final owner = _navigatorOwners[findNavigator(destination)];
-    if (owner != null && (!(_destinationCompleters[owner]?.isCompleted ?? true))) {
+    if (owner != null &&
+        (!(_destinationCompleters[owner]?.isCompleted ?? true))) {
       _destinationCompleters[owner]?.complete();
     }
   }

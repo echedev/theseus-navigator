@@ -1,4 +1,4 @@
-### 0.6.0
+### 0.6.1
 2023-03-03
 - Added support of persisting of navigation state in destination parameters. This allows to restore the navigation state from a deeplink.
 

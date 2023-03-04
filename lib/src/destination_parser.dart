@@ -135,7 +135,8 @@ abstract class DestinationParser<T extends DestinationParameters> {
     if (destination.parameters == null) {
       parametersMap = const <String, String>{};
     } else {
-      parametersMap = destination.parser.parametersToMap(destination.parameters!)
+      parametersMap = destination.parser
+          .parametersToMap(destination.parameters!)
         ..addAll(_extractReservedParameters(
             destination.parameters?.map ?? const <String, String>{}));
     }
@@ -229,8 +230,7 @@ class DefaultDestinationParser
   const DefaultDestinationParser() : super();
 
   @override
-  Future<DestinationParameters> parametersFromMap(
-          Map<String, String> map) =>
+  Future<DestinationParameters> parametersFromMap(Map<String, String> map) =>
       SynchronousFuture(DestinationParameters(map));
 
   @override

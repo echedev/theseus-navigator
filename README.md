@@ -16,8 +16,6 @@ It provides a simple API, does not require code generation and uses Flutter's Ro
 
 <video src="https://user-images.githubusercontent.com/11990453/222739184-70301935-167b-4fa5-af90-f5f15f5cb67a.mp4" controls="controls"></video>
 
-![Demo video](https://user-images.githubusercontent.com/11990453/222739184-70301935-167b-4fa5-af90-f5f15f5cb67a.mp4)
-
 *Note: The package is still in progress, and APIs might change. Any feedback, like missing features, better API suggestions, bug reports and other is appreciated.*
 
 You can check all supported features in the [Theseus Navigator Demo app](https://theseus-navigator.eche.dev/).

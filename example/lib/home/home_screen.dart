@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               InfoItem(
                 title: 'Theseus Navigator',
-                description: 'A demo app of Theseus Navigator package.\nversion 0.6.1',
+                description: 'A demo app of Theseus Navigator package.\nversion 0.6.2',
                 isAccentStyle: true,
                 isCentered: true,
                 child: ElevatedButton(

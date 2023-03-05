@@ -54,4 +54,5 @@ plugins:
 
 header_pages:
   - index.md
+  - news/index.md
   - cookbook/index.md

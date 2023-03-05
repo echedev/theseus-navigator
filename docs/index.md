@@ -3,6 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: home
+list_title: News
 ---
 
 Theseus Navigator is a navigation library made on top of Flutter Router and Navigator 2.0 APIs.
@@ -18,13 +19,3 @@ Keeping those things in mind, a main goal of the package is to provide a navigat
 The package assumes that defining the navigation scheme of your app is one of the basic things that you should do when you start your project. The scheme includes all possible destinations to navigate and their relationships. Once you have designed the navigation of your app, you can start implementing it with Theseus Navigator.
 
 ![NavigationScheme](https://user-images.githubusercontent.com/11990453/211164242-2e2db77e-91a7-41f0-992d-e2195d65f0f6.jpg)
-
-### Table of Contents
-
-* Navigation scheme
-* Destinations
-* Navigation controller
-* Nested navigation
-* Deeplinks
-* Redirections
-* Navigation UI patterns

@@ -56,6 +56,16 @@ class NavigationScheme with ChangeNotifier {
         );
     _routerDelegate = TheseusRouterDelegate(navigationScheme: this);
     _routeParser = TheseusRouteInformationParser(navigationScheme: this);
+    _config = RouterConfig(
+      routerDelegate: _routerDelegate,
+      routeInformationParser: _routeParser,
+      routeInformationProvider: PlatformRouteInformationProvider(
+        initialRouteInformation: const RouteInformation(
+          location: '/',
+        ),
+      ),
+      backButtonDispatcher: RootBackButtonDispatcher(),
+    );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
     _updateCurrentDestination(backFrom: null);
@@ -75,6 +85,15 @@ class NavigationScheme with ChangeNotifier {
   ///
   final Widget Function(BuildContext context, Destination destination)?
       waitingOverlayBuilder;
+
+  late final RouterConfig<Destination> _config;
+
+  /// A configuration for [Router] widget.
+  ///
+  /// Provides custom [TheseusRouterDelegate] and [TheseusRouteInformationParser],
+  /// which implements Theseus Navigator functionality.
+  ///
+  RouterConfig<Destination> get config => _config;
 
   late Destination _currentDestination;
 

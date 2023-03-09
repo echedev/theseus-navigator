@@ -34,7 +34,8 @@ class HomeDestinations {
       message: 'This destination is shown as a dialog.',
     ),
     settings: DestinationSettings.dialog(),
-    upwardDestinationBuilder: (destination) async {
+    upwardDestinationBuilder:
+        (Destination<DestinationParameters> destination) async {
       final from = destination.parameters?.map['from'];
       if (from == '/home1') {
         return home1;

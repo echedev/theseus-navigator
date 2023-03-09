@@ -1,4 +1,8 @@
-### 0.6.2
+### 0.6.3
+2023-03-09
+- Added `config` getter in the navigation scheme, which allows to setup a `MaterialApp` with `routerConfig` parameter.
+
+### 0.6.1
 2023-03-03
 - Added support of persisting of navigation state in destination parameters. This allows to restore the navigation state from a deeplink.
 

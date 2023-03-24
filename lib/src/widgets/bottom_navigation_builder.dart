@@ -31,7 +31,7 @@ class BottomNavigationBuilder extends NavigatorBuilder {
     this.navigationBarItems = const <NavigationDestination>[],
     this.navigationBarParameters = const NavigationBarParameters(),
     bool? material3,
-  }) : _material3 = material3 ?? false,
+  })  : _material3 = material3 ?? false,
         super();
 
   /// Creates a [BottomNavigationBuilder] instance that uses Material 3 [NavigationBar]

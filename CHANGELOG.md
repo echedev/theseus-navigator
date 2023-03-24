@@ -1,4 +1,4 @@
-### 0.6.4
+### 0.6.5
 2023-03-24
 - Fixed redirection from home destination.
 

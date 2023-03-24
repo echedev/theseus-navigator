@@ -1,3 +1,7 @@
+### 0.6.4
+2023-03-24
+- Fixed redirection from home destination.
+
 ### 0.6.3
 2023-03-09
 - Added `config` getter in the navigation scheme, which allows to setup a `MaterialApp` with `routerConfig` parameter.

@@ -68,7 +68,7 @@ class NavigationScheme with ChangeNotifier {
     );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
-    _updateCurrentDestination(backFrom: null);
+    _updateCurrentDestination(backFrom: null, isInitializing: true);
   }
 
   /// The destination to redirect in case of error.
@@ -365,7 +365,10 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
-  void _updateCurrentDestination({required Destination? backFrom}) {
+  void _updateCurrentDestination({
+    required Destination? backFrom,
+    bool isInitializing = false,
+  }) {
     // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
     _shouldClose = _rootNavigator.shouldClose;
     if (_shouldClose) {
@@ -382,6 +385,7 @@ class NavigationScheme with ChangeNotifier {
     Log.d(runtimeType,
         'updateCurrentDestination(): currentDestination=$_currentDestination, newDestination=$newDestination');
     if (_currentDestination != newDestination ||
+        isInitializing ||
         newDestination.settings.reset) {
       _currentDestination = newDestination;
       if (_currentDestination == backFrom?.settings.redirectedFrom) {

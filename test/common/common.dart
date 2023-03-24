@@ -14,11 +14,22 @@ class TestDestinations {
     builder: dummyBuilder,
     isHome: true,
   );
+  static final homeRedirectionApplied = Destination(
+    path: '/home',
+    builder: dummyBuilder,
+    isHome: true,
+    redirections: [
+      Redirection(
+        destination: TestDestinations.login,
+        validator: (destination) async => false,
+      ),
+    ],
+  );
   static final about = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
   );
-  static final aboutWithRedirection = Destination(
+  static final aboutRedirectionNotApplied = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
     redirections: [
@@ -29,7 +40,7 @@ class TestDestinations {
       ),
     ],
   );
-  static final aboutWithInvalidRedirection = Destination(
+  static final aboutRedirectionApplied = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
     redirections: [

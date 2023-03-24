@@ -13,6 +13,8 @@ void main() {
 
   late NavigationScheme navigationSchemeNoError;
 
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('Navigation Scheme', () {
     setUp(() {
       navigationScheme = NavigationScheme(
@@ -93,28 +95,39 @@ void main() {
         navigationScheme = NavigationScheme(
           destinations: [
             TestDestinations.home,
-            TestDestinations.aboutWithInvalidRedirection,
+            TestDestinations.aboutRedirectionApplied,
             TestDestinations.login,
           ],
         );
+      });
+      test('Home destination can be redirected', () async {
+        final navigationScheme = NavigationScheme(
+          destinations: [
+            TestDestinations.homeRedirectionApplied,
+            TestDestinations.login,
+          ],
+        );
+        await Future.delayed(const Duration(seconds: 1));
+        expect(navigationScheme.currentDestination,
+            TestDestinations.login);
       });
       test(
           'Original destination is saved in the configuration of redirection destination',
           () async {
         await navigationScheme
-            .goTo(TestDestinations.aboutWithInvalidRedirection);
+            .goTo(TestDestinations.aboutRedirectionApplied);
         expect(navigationScheme.currentDestination, TestDestinations.login);
         expect(navigationScheme.currentDestination.settings.redirectedFrom,
-            TestDestinations.aboutWithInvalidRedirection);
+            TestDestinations.aboutRedirectionApplied);
         expect(navigationScheme.redirectedFrom,
-            TestDestinations.aboutWithInvalidRedirection);
+            TestDestinations.aboutRedirectionApplied);
       });
       test('User can navigate back from the redirected destination', () async {
         await navigationScheme
-            .goTo(TestDestinations.aboutWithInvalidRedirection);
+            .goTo(TestDestinations.aboutRedirectionApplied);
         navigationScheme.goBack();
         expect(navigationScheme.currentDestination,
-            TestDestinations.aboutWithInvalidRedirection);
+            TestDestinations.aboutRedirectionApplied);
       });
     });
     group('Error handling', () {
@@ -205,7 +218,7 @@ void main() {
             false);
       });
       test(
-          'When enabled, the navigation state should persist in the requested destination parameters.',
+          'When enabled, the navigation state should persist in the parameters of requested destination.',
           () async {
         final upwardDestination = navigationSchemeKeepState.currentDestination;
         await navigationSchemeKeepState.goTo(TestDestinations.about);
@@ -220,7 +233,9 @@ void main() {
             true);
         final persistedState = jsonDecode(navigationSchemeKeepState.currentDestination.parameters
             ?.map[DestinationParameters.stateParameterName] ?? '');
-        expect(persistedState['/'].contains(upwardDestination.uri), true);
+        print(persistedState);
+        print(upwardDestination);
+        expect(persistedState['/'].contains(upwardDestination.path), true);
       });
       test(
           'Navigation stack should be restored on navigation to a destination containing navigation state in parameters.',

@@ -233,8 +233,6 @@ void main() {
             true);
         final persistedState = jsonDecode(navigationSchemeKeepState.currentDestination.parameters
             ?.map[DestinationParameters.stateParameterName] ?? '');
-        print(persistedState);
-        print(upwardDestination);
         expect(persistedState['/'].contains(upwardDestination.path), true);
       });
       test(

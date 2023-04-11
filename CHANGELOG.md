@@ -1,4 +1,4 @@
-### 0.7.0
+### 0.7.1
 2023-04-11
 - Support of navigation back from redirection destination in case when it was reached by 'replace' method.
 

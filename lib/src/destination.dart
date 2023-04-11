@@ -264,14 +264,14 @@ class Destination<T extends DestinationParameters> {
 /// [quiet] - replace the previous destination with the current one without animations.
 ///
 /// See also:
-/// - [DestinationAction]
+/// - [TransitionMethod]
 /// - [DestinationTransition]
 ///
 class DestinationSettings {
   /// Creates an instance of [DestinationSettings].
   ///
   const DestinationSettings({
-    required this.action,
+    required this.transitionMethod,
     required this.transition,
     this.redirectedFrom,
     this.reset = false,
@@ -300,9 +300,9 @@ class DestinationSettings {
   /// How the destination will update the navigation stack.
   ///
   /// See also:
-  ///  - [DestinationAction]
+  ///  - [TransitionMethod]
   ///
-  final DestinationAction action;
+  final TransitionMethod transitionMethod;
 
   /// Visual effects that would be applied on updating the stack with the destination.
   ///
@@ -341,13 +341,13 @@ class DestinationSettings {
   ///
   DestinationSettings copyWith({
     // TODO: Add other properties
-    DestinationAction? action,
+    TransitionMethod? transitionMethod,
     Destination? redirectedFrom,
     bool? reset,
     bool? updateHistory,
   }) =>
       DestinationSettings(
-        action: action ?? this.action,
+        transitionMethod: transitionMethod ?? this.transitionMethod,
         transition: transition,
         redirectedFrom: redirectedFrom ?? this.redirectedFrom,
         reset: reset ?? this.reset,
@@ -359,7 +359,7 @@ class DestinationSettings {
 class _DefaultDestinationSettings extends DestinationSettings {
   const _DefaultDestinationSettings()
       : super(
-          action: DestinationAction.push,
+          transitionMethod: TransitionMethod.push,
           transition: DestinationTransition.material,
         );
 }
@@ -367,7 +367,7 @@ class _DefaultDestinationSettings extends DestinationSettings {
 class _DialogDestinationSettings extends DestinationSettings {
   const _DialogDestinationSettings()
       : super(
-          action: DestinationAction.push,
+          transitionMethod: TransitionMethod.push,
           transition: DestinationTransition.materialDialog,
         );
 }
@@ -375,14 +375,14 @@ class _DialogDestinationSettings extends DestinationSettings {
 class _QuietDestinationSettings extends DestinationSettings {
   const _QuietDestinationSettings()
       : super(
-          action: DestinationAction.replace,
+          transitionMethod: TransitionMethod.replace,
           transition: DestinationTransition.none,
         );
 }
 
-/// An action that is used to update the navigation stack with the destination.
+/// A way of transition to the destination.
 ///
-enum DestinationAction {
+enum TransitionMethod {
   /// The destination will be added to the navigation stack.
   /// On navigation back, the destination will be removed from the stack
   /// and previous destination will be restored.

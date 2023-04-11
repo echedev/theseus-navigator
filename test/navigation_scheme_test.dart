@@ -142,7 +142,7 @@ void main() {
             Redirection(
               destination: TestDestinations.login.copyWith(
                   settings: DestinationSettings.material()
-                      .copyWith(action: DestinationAction.replace)),
+                      .copyWith(transitionMethod: TransitionMethod.replace)),
               validator: (destination) async => isValid,
             ),
           ],

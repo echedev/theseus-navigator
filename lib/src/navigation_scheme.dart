@@ -227,7 +227,7 @@ class NavigationScheme with ChangeNotifier {
   ///
   Future<void> goBack() async {
     if (currentDestination.settings.redirectedFrom != null &&
-        currentDestination.settings.action == DestinationAction.replace) {
+        currentDestination.settings.transitionMethod == TransitionMethod.replace) {
       return goTo(currentDestination.settings.redirectedFrom!);
     }
     final navigator = findNavigator(_currentDestination);

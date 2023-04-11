@@ -215,7 +215,7 @@ final categoriesDestination = Destination<CategoriesDestinationParameters>(
 
 The `DestinationSettings` contains attributes that are used to determine a logic and behavior of updating the navigation state with the destination.
 
-`action` - defines how the navigation stack will be changed on navigation to the destination, can be **push** or **replace**.
+`transitionMethod` - defines how the navigation stack will be changed on navigation to the destination, can be **push** or **replace**.
 
 `transition` - animations that would apply when the destination content appears, can be **material**, **custom**, or **none**.
 

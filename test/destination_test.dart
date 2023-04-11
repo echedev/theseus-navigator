@@ -88,13 +88,13 @@ void main() {
     });
     test('Settings to display a dialog', () async {
       final destination1 = TestDestinations.aboutWithDialogSettings;
-      expect(destination1.settings.action, DestinationAction.push);
+      expect(destination1.settings.transitionMethod, TransitionMethod.push);
       expect(destination1.settings.transition,
           DestinationTransition.materialDialog);
     });
     test('Settings without visual effects on transition', () async {
       final destination1 = TestDestinations.aboutWithQuietSettings;
-      expect(destination1.settings.action, DestinationAction.replace);
+      expect(destination1.settings.transitionMethod, TransitionMethod.replace);
       expect(destination1.settings.transition, DestinationTransition.none);
     });
   });

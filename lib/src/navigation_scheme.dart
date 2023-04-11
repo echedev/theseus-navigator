@@ -213,12 +213,23 @@ class NavigationScheme with ChangeNotifier {
     return completer.future;
   }
 
-  /// Close the current destination.
+  /// Return to previous destination.
   ///
-  /// If the current destination is the last one, this requests closing the app by
-  /// setting the [shouldClose] flag.
+  /// In case when the current destination was reached with [TransitionMethod.replace] by a redirection,
+  /// this method will navigate to original destination.
   ///
-  void goBack() {
+  /// Otherwise, the current destination will be removed from the navigation stack of the
+  /// current navigation controller, and the next destination in the stack will become the current one.
+  ///
+  /// If the current destination is the only one in the stack of its navigation controller,
+  /// this will try to return back in the parent navigation controller, which eventually
+  /// might cause request of closing the app by setting the [shouldClose] flag.
+  ///
+  Future<void> goBack() async {
+    if (currentDestination.settings.redirectedFrom != null &&
+        currentDestination.settings.action == DestinationAction.replace) {
+      return goTo(currentDestination.settings.redirectedFrom!);
+    }
     final navigator = findNavigator(_currentDestination);
     if (navigator == null) {
       _handleError(_currentDestination);

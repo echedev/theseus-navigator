@@ -112,11 +112,8 @@ class TestDestinations {
 }
 
 class TestNavigators {
-  static final catalog = NavigationController(
-    destinations: [
-      TestDestinations.categories,
-      TestDestinations.categoriesBrands,
-    ],
-    tag: 'Catalog'
-  );
+  static final catalog = NavigationController(destinations: [
+    TestDestinations.categories,
+    TestDestinations.categoriesBrands,
+  ], tag: 'Catalog');
 }

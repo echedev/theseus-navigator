@@ -1,4 +1,11 @@
-### 0.6.4
+### 0.7.1
+2023-04-11
+- Support of navigation back from redirection destination in case when it was reached by 'replace' method.
+
+**BREAKING**:
+- The `DestinationAction` is renamed to `TransitionMethod` and the `action` field of `Destination` is renamed to `transitionMethod`.
+
+### 0.6.5
 2023-03-24
 - Fixed redirection from home destination.
 

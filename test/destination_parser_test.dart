@@ -19,7 +19,8 @@ void main() {
       });
       test('Parse parameter name', () {
         expect(parser.parsePathParameterName('{id}'), 'id');
-        expect(() => parser.parsePathParameterName(':id'), throwsA(isA<Exception>()));
+        expect(() => parser.parsePathParameterName(':id'),
+            throwsA(isA<Exception>()));
       });
     });
     group('Matching URI', () {

@@ -1,5 +1,5 @@
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.6.4-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-95%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.7.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-95%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -215,7 +215,7 @@ final categoriesDestination = Destination<CategoriesDestinationParameters>(
 
 The `DestinationSettings` contains attributes that are used to determine a logic and behavior of updating the navigation state with the destination.
 
-`action` - defines how the navigation stack will be changed on navigation to the destination, can be **push** or **replace**.
+`transitionMethod` - defines how the navigation stack will be changed on navigation to the destination, can be **push** or **replace**.
 
 `transition` - animations that would apply when the destination content appears, can be **material**, **custom**, or **none**.
 

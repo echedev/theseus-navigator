@@ -99,8 +99,7 @@ void main() {
     });
   });
   group('Destination Parameters', () {
-    test('Reserved parameters',
-        () {
+    test('Reserved parameters', () {
       expect(DestinationParameters.isReservedParameter('id'), false);
       expect(DestinationParameters.isReservedParameter('state'), true);
     });

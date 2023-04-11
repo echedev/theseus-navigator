@@ -31,8 +31,8 @@ class CategoriesParser extends DestinationParser<CategoriesParameters> {
       Map<String, String> map) async {
     Category? parentCategory;
     if (map.containsKey('parentId')) {
-      parentCategory = categoriesDataSource
-          .firstWhere((element) => element.id == int.tryParse(map['parentId'] ?? ''));
+      parentCategory = categoriesDataSource.firstWhere(
+          (element) => element.id == int.tryParse(map['parentId'] ?? ''));
     }
     return CategoriesParameters(parent: parentCategory);
   }

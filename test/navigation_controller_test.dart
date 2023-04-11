@@ -135,7 +135,9 @@ void main() {
         expect(navigatorUpward.backFrom, null);
         expect(navigatorUpward.shouldClose, false);
       });
-      test('Upward destinations should not be duplicated, if some of them are already in the stack', () async {
+      test(
+          'Upward destinations should not be duplicated, if some of them are already in the stack',
+          () async {
         final categories1 = TestDestinations.categoriesTyped.withParameters(
             CategoriesParameters(parent: categoriesDataSource[0]));
         final categories2 = TestDestinations.categoriesTyped.withParameters(

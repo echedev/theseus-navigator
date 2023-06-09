@@ -478,7 +478,8 @@ class NavigationScheme with ChangeNotifier {
     // Check redirections that are defined for given destination
     for (var redirection in destination.redirections) {
       if (!(await redirection.validate(destination))) {
-        return await _resolveDestination(redirection.destination);
+        return await _resolveDestination(
+            await redirection.resolve(destination));
       }
     }
     // In case of nested destination, validate the owner

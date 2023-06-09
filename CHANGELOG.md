@@ -1,3 +1,7 @@
+### 0.8.0
+2023-06-09
+- Added ability to dynamically identify a destination for redirection.
+
 ### 0.7.1
 2023-04-11
 - Support of navigation back from redirection destination in case when it was reached by 'replace' method.

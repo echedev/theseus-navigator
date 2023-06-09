@@ -390,6 +390,8 @@ In the example above, when the user navigates to Settings screen, first the `val
 
 Validator function in redirection could be asynchronous. In case it runs for a long time, the waiting overlay widget is displayed until the destination resolved. You can customize the waiting overlay by providing `waitingOverlayBuilder` parameter of `NavigationScheme`.
 
+It is also possible to dynamically identify a destination for redirection by providing `resolver` function instead of fixed `destination`.
+
 ## Error handling
 
 If the `errorDestination` is specified in the **NavigationScheme**, user wil be redirected to this destination when trying to navigate to nonexistent screen.

@@ -45,7 +45,8 @@ class TasksDestinations {
 
   static final taskDetails = Destination(
     path: '/task/{id}',
-    builder: (context, parameters) => TaskDetailsScreen(taskId: parameters?.map['id']),
+    builder: (context, DestinationParameters? parameters) =>
+        TaskDetailsScreen(taskId: parameters?.map['id']),
     upwardDestinationBuilder: (destination) async => taskList,
   );
 }
@@ -68,14 +69,21 @@ class TaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tasks'),),
+      appBar: AppBar(
+        title: const Text('Tasks'),
+      ),
       body: ListView(
-        children: [...tasks.map((e) => ListTile(
-          title: Text(e.name),
-          subtitle: Text(e.id),
-          onTap: () => navigationScheme.goTo(TasksDestinations.taskDetails
-              .withParameters(DestinationParameters({'id': e.id}))),
-        )).toList()],
+        children: [
+          ...tasks
+              .map((e) => ListTile(
+                    title: Text(e.name),
+                    subtitle: Text(e.id),
+                    onTap: () => navigationScheme.goTo(TasksDestinations
+                        .taskDetails
+                        .withParameters(DestinationParameters({'id': e.id}))),
+                  ))
+              .toList()
+        ],
       ),
     );
   }
@@ -91,9 +99,13 @@ class TaskDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final task = tasks.firstWhereOrNull((element) => element.id == taskId,);
+    final task = tasks.firstWhereOrNull(
+      (element) => element.id == taskId,
+    );
     return Scaffold(
-      appBar: AppBar(title: const Text('Task details'),),
+      appBar: AppBar(
+        title: const Text('Task details'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -114,7 +126,9 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings'),),
+      appBar: AppBar(
+        title: const Text('Settings'),
+      ),
       body: Center(child: Text(runtimeType.toString())),
     );
   }

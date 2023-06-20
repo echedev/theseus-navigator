@@ -67,7 +67,9 @@ class Destination<T extends DestinationParameters> {
   Destination.transit({
     required this.path,
     required this.navigator,
-    Widget Function(BuildContext context, T? parameters, Widget child)? builder,
+    Widget Function(
+            BuildContext context, T? parameters, WidgetBuilder childBuilder)?
+        builder,
     this.isHome = false,
     this.redirections = const <Redirection>[],
     this.tag,
@@ -144,7 +146,8 @@ class Destination<T extends DestinationParameters> {
   final Future<Destination?> Function(Destination<T> destination)?
       upwardDestinationBuilder;
 
-  late final Widget Function(BuildContext context, T? parameters, Widget child)?
+  late final Widget Function(
+          BuildContext context, T? parameters, WidgetBuilder childBuilder)?
       _transitBuilder;
 
   /// Whether this destination is final, i.e. it builds a content
@@ -177,11 +180,11 @@ class Destination<T extends DestinationParameters> {
     if (isFinalDestination) {
       return builder!(context, parameters);
     } else {
-      final nestedContent = navigator!.build(context);
       if (_transitBuilder != null) {
-        return _transitBuilder!(context, parameters, nestedContent);
+        return _transitBuilder!(context, parameters,
+            (nestedContext) => navigator!.build(nestedContext));
       } else {
-        return nestedContent;
+        return navigator!.build(context);
       }
     }
   }

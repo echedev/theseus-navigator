@@ -67,11 +67,11 @@ class TestDestinations {
   static final catalogTransit = Destination.transit(
     path: '/catalog',
     navigator: TestNavigators.catalog,
-    builder: (context, parameters, child) {
+    builder: (context, parameters, childBuilder) {
       return Column(
         children: [
           const Text('Catalog'),
-          Expanded(child: child),
+          Expanded(child: childBuilder(context)),
         ],
       );
     },

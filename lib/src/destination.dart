@@ -60,7 +60,7 @@ class Destination<T extends DestinationParameters> {
   /// Creates a destination that provides a navigator with nested destinations.
   ///
   /// An optional [builder] parameter is basically the same like normal [Destination.builder],
-  /// but has additional [child] parameter, which contains the nested content that built by [navigator].
+  /// but has additional [childBuilder] parameter, which provides the nested content that built by [navigator].
   /// The implementation of [builder] function must include this child widget sub-tree
   /// in the result for correct displaying the nested content.
   ///

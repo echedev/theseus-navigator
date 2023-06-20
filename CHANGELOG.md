@@ -1,6 +1,7 @@
 ### 0.8.0
-2023-06-09
+2023-06-20
 - Added ability to dynamically identify a destination for redirection.
+- Fixed: a context passed to nested navigator builder
 
 ### 0.7.1
 2023-04-11

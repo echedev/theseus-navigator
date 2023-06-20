@@ -109,17 +109,17 @@ By using `Destination.transit()` constructor it is also possible to wrap the nes
 final mainDestination = Destination.transit(
   path: '/',
   navigator: mainNavigator,
-  builder: (context, parameters, child) {
+  builder: (context, parameters, childBuilder) {
     return Column(
       children: [
         const Text('Parent destination'),
-        Expanded(child: child),
+        Expanded(child: childBuilder(context)),
       ],  
     );
   }
 );
 ```
-This constructor has an optional `builder` parameter with additional `child` argument, which represents the nested content and must be included in the resulting widget tree.
+This constructor has an optional `builder` parameter with additional `childBuilder` argument, which represents the nested content and must be included in the resulting widget tree.
 
 #### Path
 The destination is defined by its `uri`, which is built from the destination `path` and `parameters`.

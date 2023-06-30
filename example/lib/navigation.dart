@@ -32,7 +32,7 @@ class PrimaryDestinations {
     path: '/customTransition',
     builder: (context, parameters) => const CustomTransitionScreen(),
     settings: DestinationSettings(
-        action: DestinationAction.push,
+        transitionMethod: TransitionMethod.push,
         transition: DestinationTransition.custom,
         transitionBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 1.0);

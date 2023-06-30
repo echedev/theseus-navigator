@@ -14,6 +14,8 @@ void main() {
 
   late List<String> log;
 
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   void currentDestinationListener() {
     log.add(navigationScheme.currentDestination.uri);
   }
@@ -63,19 +65,22 @@ void main() {
       });
       test(
           'Pushing the same route as the current one should not cause notifying router delegate by navigation scheme',
-              () async {
-            final destination = TestDestinations.home;
-            await delegate.setNewRoutePath(destination);
+          () async {
+        // Navigation scheme notifies once on initialization
+        expect(log.length, 1);
 
-            expect(log.length, 0);
-            expect(navigationScheme.currentDestination, destination);
-            expect(
-                navigationScheme
-                    .findNavigator(navigationScheme.currentDestination)
-                    ?.stack
-                    .length,
-                1);
-          });
+        final destination = TestDestinations.home;
+        await delegate.setNewRoutePath(destination);
+
+        expect(log.length, 1);
+        expect(navigationScheme.currentDestination, destination);
+        expect(
+            navigationScheme
+                .findNavigator(navigationScheme.currentDestination)
+                ?.stack
+                .length,
+            1);
+      });
     });
     group('Pop route', () {
       test(

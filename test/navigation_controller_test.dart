@@ -51,20 +51,20 @@ void main() {
       });
     });
     group('Navigation', () {
-      test('Navigate to another destination with "push" action', () async {
+      test('Navigate to another destination by "push" method', () async {
         await navigator.goTo(TestDestinations.catalog);
         expect(navigator.currentDestination, TestDestinations.catalog);
         expect(navigator.stack.length, 2);
         expect(navigator.backFrom, null);
       });
-      test('Navigate to another 2 destinations with "push" action', () async {
+      test('Navigate to another 2 destinations by "push" method', () async {
         await navigator.goTo(TestDestinations.catalog);
         await navigator.goTo(TestDestinations.about);
         expect(navigator.currentDestination, TestDestinations.about);
         expect(navigator.stack.length, 3);
         expect(navigator.backFrom, null);
       });
-      test('Navigate to another destination with "push" action and return back',
+      test('Navigate to another destination by "push" method and return back',
           () async {
         await navigator.goTo(TestDestinations.catalog);
         navigator.goBack();
@@ -74,7 +74,7 @@ void main() {
         expect(navigator.shouldClose, false);
       });
       test(
-          'Navigate to another 2 destinations with "push" action and return back to initial destination',
+          'Navigate to another 2 destinations by "push" method and return back to initial destination',
           () async {
         await navigator.goTo(TestDestinations.catalog);
         await navigator.goTo(TestDestinations.about);
@@ -85,10 +85,10 @@ void main() {
         expect(navigator.backFrom, TestDestinations.catalog);
         expect(navigator.shouldClose, false);
       });
-      test('Navigate to another destination with "replace" action', () async {
+      test('Navigate to another destination by "replace" method', () async {
         await navigator.goTo(TestDestinations.catalog.withSettings(
             TestDestinations.catalog.settings
-                .copyWith(action: DestinationAction.replace)));
+                .copyWith(transitionMethod: TransitionMethod.replace)));
         expect(navigator.currentDestination, TestDestinations.catalog);
         expect(navigator.stack.length, 1);
         expect(navigator.backFrom, null);
@@ -135,7 +135,9 @@ void main() {
         expect(navigatorUpward.backFrom, null);
         expect(navigatorUpward.shouldClose, false);
       });
-      test('Upward destinations should not be duplicated, if some of them are already in the stack', () async {
+      test(
+          'Upward destinations should not be duplicated, if some of them are already in the stack',
+          () async {
         final categories1 = TestDestinations.categoriesTyped.withParameters(
             CategoriesParameters(parent: categoriesDataSource[0]));
         final categories2 = TestDestinations.categoriesTyped.withParameters(

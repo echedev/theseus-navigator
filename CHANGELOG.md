@@ -1,3 +1,19 @@
+### 0.8.0
+2023-06-20
+- Added ability to dynamically identify a destination for redirection.
+- Fixed: a context passed to nested navigator builder
+
+### 0.7.1
+2023-04-11
+- Support of navigation back from redirection destination in case when it was reached by 'replace' method.
+
+**BREAKING**:
+- The `DestinationAction` is renamed to `TransitionMethod` and the `action` field of `Destination` is renamed to `transitionMethod`.
+
+### 0.6.5
+2023-03-24
+- Fixed redirection from home destination.
+
 ### 0.6.3
 2023-03-09
 - Added `config` getter in the navigation scheme, which allows to setup a `MaterialApp` with `routerConfig` parameter.

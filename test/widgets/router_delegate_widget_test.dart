@@ -16,7 +16,7 @@ void main() {
         destinations: [
           TestDestinations.home,
           TestDestinations.catalog,
-          TestDestinations.aboutWithRedirection,
+          TestDestinations.aboutRedirectionNotApplied,
         ],
         errorDestination: TestDestinations.error,
       );
@@ -24,7 +24,7 @@ void main() {
         destinations: [
           TestDestinations.home,
           TestDestinations.catalog,
-          TestDestinations.aboutWithRedirection,
+          TestDestinations.aboutRedirectionNotApplied,
         ],
         errorDestination: TestDestinations.error,
         waitingOverlayBuilder: (context, destination) => Container(
@@ -45,14 +45,15 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(navigationScheme.rootNavigator.key), findsOneWidget);
       expect(find.byKey(waitingOverlayKey), findsNothing);
-      navigationScheme.goTo(TestDestinations.aboutWithRedirection);
+      navigationScheme.goTo(TestDestinations.aboutRedirectionNotApplied);
       await tester.pump(const Duration(seconds: 1));
       await tester.pump();
       expect(find.byKey(waitingOverlayKey), findsOneWidget);
       await tester.pumpAndSettle();
       expect(find.byKey(waitingOverlayKey), findsNothing);
     });
-    testWidgets('If provided, show custom waiting overlay while resolving the destination',
+    testWidgets(
+        'If provided, show custom waiting overlay while resolving the destination',
         (tester) async {
       const waitingOverlayKey = Key('_TheseusCustomWaitingOverlay_');
       await tester.pumpWidget(
@@ -61,7 +62,8 @@ void main() {
       expect(find.byKey(navigationSchemeCustomWaiting.rootNavigator.key),
           findsOneWidget);
       expect(find.byKey(waitingOverlayKey), findsNothing);
-      navigationSchemeCustomWaiting.goTo(TestDestinations.aboutWithRedirection);
+      navigationSchemeCustomWaiting
+          .goTo(TestDestinations.aboutRedirectionNotApplied);
       await tester.pump(const Duration(seconds: 1));
       await tester.pump();
       expect(find.byKey(waitingOverlayKey), findsOneWidget);

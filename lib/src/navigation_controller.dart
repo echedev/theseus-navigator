@@ -247,7 +247,7 @@ class NavigationController with ChangeNotifier {
     if (destination.settings.reset) {
       _stack.clear();
     } else {
-      if (destination.settings.action == DestinationAction.replace) {
+      if (destination.settings.transitionMethod == TransitionMethod.replace) {
         _stack.removeLast();
       }
     }

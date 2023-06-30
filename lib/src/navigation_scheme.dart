@@ -68,7 +68,7 @@ class NavigationScheme with ChangeNotifier {
     );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
-    _updateCurrentDestination(backFrom: null);
+    _updateCurrentDestination(backFrom: null, isInitializing: true);
   }
 
   /// The destination to redirect in case of error.
@@ -213,12 +213,24 @@ class NavigationScheme with ChangeNotifier {
     return completer.future;
   }
 
-  /// Close the current destination.
+  /// Return to previous destination.
   ///
-  /// If the current destination is the last one, this requests closing the app by
-  /// setting the [shouldClose] flag.
+  /// In case when the current destination was reached with [TransitionMethod.replace] by a redirection,
+  /// this method will navigate to original destination.
   ///
-  void goBack() {
+  /// Otherwise, the current destination will be removed from the navigation stack of the
+  /// current navigation controller, and the next destination in the stack will become the current one.
+  ///
+  /// If the current destination is the only one in the stack of its navigation controller,
+  /// this will try to return back in the parent navigation controller, which eventually
+  /// might cause request of closing the app by setting the [shouldClose] flag.
+  ///
+  Future<void> goBack() async {
+    if (currentDestination.settings.redirectedFrom != null &&
+        currentDestination.settings.transitionMethod ==
+            TransitionMethod.replace) {
+      return goTo(currentDestination.settings.redirectedFrom!);
+    }
     final navigator = findNavigator(_currentDestination);
     if (navigator == null) {
       _handleError(_currentDestination);
@@ -365,7 +377,10 @@ class NavigationScheme with ChangeNotifier {
     }
   }
 
-  void _updateCurrentDestination({required Destination? backFrom}) {
+  void _updateCurrentDestination({
+    required Destination? backFrom,
+    bool isInitializing = false,
+  }) {
     // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
     _shouldClose = _rootNavigator.shouldClose;
     if (_shouldClose) {
@@ -382,6 +397,7 @@ class NavigationScheme with ChangeNotifier {
     Log.d(runtimeType,
         'updateCurrentDestination(): currentDestination=$_currentDestination, newDestination=$newDestination');
     if (_currentDestination != newDestination ||
+        isInitializing ||
         newDestination.settings.reset) {
       _currentDestination = newDestination;
       if (_currentDestination == backFrom?.settings.redirectedFrom) {
@@ -462,7 +478,8 @@ class NavigationScheme with ChangeNotifier {
     // Check redirections that are defined for given destination
     for (var redirection in destination.redirections) {
       if (!(await redirection.validate(destination))) {
-        return await _resolveDestination(redirection.destination);
+        return await _resolveDestination(
+            await redirection.resolve(destination));
       }
     }
     // In case of nested destination, validate the owner

@@ -57,7 +57,7 @@ class DefaultNavigatorBuilder extends NavigatorBuilder {
       ));
     }
     return Navigator(
-      key: navigator.key,
+      key: ValueKey(navigator.tag),
       pages: pages,
       onPopPage: (route, result) {
         Log.d(runtimeType, 'onPopPage()');

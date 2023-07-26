@@ -1,3 +1,7 @@
+### 0.8.1
+2023-07-26
+- Removed unnecessary global keys
+
 ### 0.8.0
 2023-06-20
 - Added ability to dynamically identify a destination for redirection.

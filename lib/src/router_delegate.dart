@@ -22,7 +22,6 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
     required this.navigationScheme,
   }) {
     Log.d(runtimeType, 'TheseusRouterDelegate():');
-    _key = GlobalKey<NavigatorState>(debugLabel: 'TheseusNavigator');
     navigationScheme.addListener(_onCurrentDestinationChanged);
   }
 
@@ -34,13 +33,11 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   ///
   final NavigationScheme navigationScheme;
 
-  late final GlobalKey<NavigatorState> _key;
-
   @override
   Widget build(BuildContext context) {
     Log.d(runtimeType, 'build(): isResolving=${navigationScheme.isResolving}');
     return Navigator(
-      key: _key,
+      key: const ValueKey('TheseusNavigator'),
       pages: [
         MaterialPage(
           key: const ValueKey('TheseusRootPage'),

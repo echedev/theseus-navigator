@@ -31,8 +31,7 @@ import 'widgets/index.dart';
 class NavigationController with ChangeNotifier {
   /// Creates navigation controller instance.
   ///
-  /// Add initial destination to the navigation stack and creates a [GlobalKey] for
-  /// a [Navigator] widget.
+  /// Adds initial destination to the navigation stack.
   ///
   NavigationController({
     required this.destinations,
@@ -42,7 +41,6 @@ class NavigationController with ChangeNotifier {
     this.tag = '',
   }) {
     _stack.add(destinations[initialDestinationIndex]);
-    key = GlobalKey<NavigatorState>(debugLabel: tag);
   }
 
   /// List of destinations, which this navigator operate of.
@@ -91,10 +89,6 @@ class NavigationController with ChangeNotifier {
   /// It is used in the debug logs to identify entries related to this navigator.
   ///
   final String? tag;
-
-  /// Provides the global key for corresponding [Navigator] widget.
-  ///
-  late final GlobalKey<NavigatorState> key;
 
   Destination? _backFrom;
 

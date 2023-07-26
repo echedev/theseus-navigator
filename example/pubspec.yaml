@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   collection: ^1.16.0
   cupertino_icons: ^1.0.2
-  google_fonts: ^2.1.0
+  google_fonts: ^5.1.0
   theseus_navigator:
     path: ../
   url_launcher: ^6.1.6

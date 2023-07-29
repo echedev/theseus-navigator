@@ -1,11 +1,12 @@
 ### 0.8.1
 2023-07-26
 - Removed unnecessary global keys
+- Fixed: Missing initial destination when `NavigationScheme.config` is used for configuring MaterialApp
 
 ### 0.8.0
 2023-06-20
-- Added ability to dynamically identify a destination for redirection.
-- Fixed: a context passed to nested navigator builder
+- Added support of dynamic destination for redirection.
+- Fixed: Wrong context passed to nested navigator builder
 
 ### 0.7.1
 2023-04-11

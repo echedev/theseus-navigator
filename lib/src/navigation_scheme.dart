@@ -60,8 +60,8 @@ class NavigationScheme with ChangeNotifier {
       routerDelegate: _routerDelegate,
       routeInformationParser: _routeParser,
       routeInformationProvider: PlatformRouteInformationProvider(
-        initialRouteInformation: const RouteInformation(
-          location: '/',
+        initialRouteInformation: RouteInformation(
+          location: WidgetsBinding.instance.platformDispatcher.defaultRouteName,
         ),
       ),
       backButtonDispatcher: RootBackButtonDispatcher(),

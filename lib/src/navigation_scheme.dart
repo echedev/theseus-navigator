@@ -60,8 +60,8 @@ class NavigationScheme with ChangeNotifier {
       routerDelegate: _routerDelegate,
       routeInformationParser: _routeParser,
       routeInformationProvider: PlatformRouteInformationProvider(
-        initialRouteInformation: const RouteInformation(
-          location: '/',
+        initialRouteInformation: RouteInformation(
+          location: WidgetsBinding.instance.platformDispatcher.defaultRouteName,
         ),
       ),
       backButtonDispatcher: RootBackButtonDispatcher(),
@@ -478,7 +478,8 @@ class NavigationScheme with ChangeNotifier {
     // Check redirections that are defined for given destination
     for (var redirection in destination.redirections) {
       if (!(await redirection.validate(destination))) {
-        return await _resolveDestination(redirection.destination);
+        return await _resolveDestination(
+            await redirection.resolve(destination));
       }
     }
     // In case of nested destination, validate the owner

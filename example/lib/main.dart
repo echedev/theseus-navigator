@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Theseus Navigator Demo',
       theme: Theme.of(context).copyWith(
-          toggleableActiveColor: Colors.amber,
           dividerColor: Colors.transparent,
           colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Colors.blueGrey,
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              primary: Colors.amber,
+              backgroundColor: Colors.amber,
             ),
           ),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(

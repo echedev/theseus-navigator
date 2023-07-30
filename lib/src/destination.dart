@@ -60,14 +60,16 @@ class Destination<T extends DestinationParameters> {
   /// Creates a destination that provides a navigator with nested destinations.
   ///
   /// An optional [builder] parameter is basically the same like normal [Destination.builder],
-  /// but has additional [child] parameter, which contains the nested content that built by [navigator].
+  /// but has additional [childBuilder] parameter, which provides the nested content that built by [navigator].
   /// The implementation of [builder] function must include this child widget sub-tree
   /// in the result for correct displaying the nested content.
   ///
   Destination.transit({
     required this.path,
     required this.navigator,
-    Widget Function(BuildContext context, T? parameters, Widget child)? builder,
+    Widget Function(
+            BuildContext context, T? parameters, WidgetBuilder childBuilder)?
+        builder,
     this.isHome = false,
     this.redirections = const <Redirection>[],
     this.tag,
@@ -144,7 +146,8 @@ class Destination<T extends DestinationParameters> {
   final Future<Destination?> Function(Destination<T> destination)?
       upwardDestinationBuilder;
 
-  late final Widget Function(BuildContext context, T? parameters, Widget child)?
+  late final Widget Function(
+          BuildContext context, T? parameters, WidgetBuilder childBuilder)?
       _transitBuilder;
 
   /// Whether this destination is final, i.e. it builds a content
@@ -177,11 +180,11 @@ class Destination<T extends DestinationParameters> {
     if (isFinalDestination) {
       return builder!(context, parameters);
     } else {
-      final nestedContent = navigator!.build(context);
       if (_transitBuilder != null) {
-        return _transitBuilder!(context, parameters, nestedContent);
+        return _transitBuilder!(context, parameters,
+            (nestedContext) => navigator!.build(nestedContext));
       } else {
-        return nestedContent;
+        return navigator!.build(context);
       }
     }
   }

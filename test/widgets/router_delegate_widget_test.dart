@@ -36,14 +36,14 @@ void main() {
     testWidgets('Delegate builds root Navigator', (tester) async {
       await tester.pumpWidget(_mainWrapper(navigationScheme: navigationScheme));
       await tester.pumpAndSettle();
-      expect(find.byKey(navigationScheme.rootNavigator.key), findsOneWidget);
+      expect(find.byKey(ValueKey(navigationScheme.rootNavigator.tag)), findsOneWidget);
     });
     testWidgets('Show waiting overlay while resolving the destination',
         (tester) async {
       const waitingOverlayKey = Key('_TheseusWaitingOverlay_');
       await tester.pumpWidget(_mainWrapper(navigationScheme: navigationScheme));
       await tester.pumpAndSettle();
-      expect(find.byKey(navigationScheme.rootNavigator.key), findsOneWidget);
+      expect(find.byKey(ValueKey(navigationScheme.rootNavigator.tag)), findsOneWidget);
       expect(find.byKey(waitingOverlayKey), findsNothing);
       navigationScheme.goTo(TestDestinations.aboutRedirectionNotApplied);
       await tester.pump(const Duration(seconds: 1));
@@ -59,7 +59,7 @@ void main() {
       await tester.pumpWidget(
           _mainWrapper(navigationScheme: navigationSchemeCustomWaiting));
       await tester.pumpAndSettle();
-      expect(find.byKey(navigationSchemeCustomWaiting.rootNavigator.key),
+      expect(find.byKey(ValueKey(navigationSchemeCustomWaiting.rootNavigator.tag)),
           findsOneWidget);
       expect(find.byKey(waitingOverlayKey), findsNothing);
       navigationSchemeCustomWaiting

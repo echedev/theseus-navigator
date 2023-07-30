@@ -1,5 +1,5 @@
 # Theseus Navigator
-<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.7.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-95%25-green" alt="Coverage"></a>
+<a href="https://pub.dev/packages/theseus_navigator"><img src="https://img.shields.io/badge/pub-0.8.1-yellow" alt="pub version"></a>&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"></a>&nbsp;<a href="./test"><img src="https://img.shields.io/badge/coverage-95%25-green" alt="Coverage"></a>
 
 Theseus Navigator package aims to simplify implementing a navigation in your app, and supports the following features:
 
@@ -109,17 +109,17 @@ By using `Destination.transit()` constructor it is also possible to wrap the nes
 final mainDestination = Destination.transit(
   path: '/',
   navigator: mainNavigator,
-  builder: (context, parameters, child) {
+  builder: (context, parameters, childBuilder) {
     return Column(
       children: [
         const Text('Parent destination'),
-        Expanded(child: child),
+        Expanded(child: childBuilder(context)),
       ],  
     );
   }
 );
 ```
-This constructor has an optional `builder` parameter with additional `child` argument, which represents the nested content and must be included in the resulting widget tree.
+This constructor has an optional `builder` parameter with additional `childBuilder` argument, which represents the nested content and must be included in the resulting widget tree.
 
 #### Path
 The destination is defined by its `uri`, which is built from the destination `path` and `parameters`.
@@ -256,7 +256,7 @@ final mainNavigator = NavigationController(
   tag = 'Main',
 );
 ```
-`tag` attribute value is used in `GlobalKey` for the `Navigator` widget, and also allows to find logs related to this NavigationController instance.
+The `tag` attribute value is used as a key of the `Navigator` widget, and also allows to find logs related to this NavigationController instance.
 
 #### Navigator Builder
 
@@ -389,6 +389,8 @@ final settingsDestination = Destination(
 In the example above, when the user navigates to Settings screen, first the `validator` function of specified redirection will be called. If it return *false*, then user will be redirected to the Login screen.
 
 Validator function in redirection could be asynchronous. In case it runs for a long time, the waiting overlay widget is displayed until the destination resolved. You can customize the waiting overlay by providing `waitingOverlayBuilder` parameter of `NavigationScheme`.
+
+It is also possible to dynamically identify a destination for redirection by providing `resolver` function instead of fixed `destination`.
 
 ## Error handling
 

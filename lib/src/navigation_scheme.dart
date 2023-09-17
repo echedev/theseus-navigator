@@ -61,7 +61,7 @@ class NavigationScheme with ChangeNotifier {
       routeInformationParser: _routeParser,
       routeInformationProvider: PlatformRouteInformationProvider(
         initialRouteInformation: RouteInformation(
-          location: WidgetsBinding.instance.platformDispatcher.defaultRouteName,
+          uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
         ),
       ),
       backButtonDispatcher: RootBackButtonDispatcher(),
@@ -462,12 +462,12 @@ class NavigationScheme with ChangeNotifier {
       final eventualNavigator = key == '/'
           ? _rootNavigator
           : (await _routeParser
-                  .parseRouteInformation(RouteInformation(location: key)))
+                  .parseRouteInformation(RouteInformation(uri: Uri.parse(key))))
               .navigator!;
       final destinations = <Destination>[];
       for (final uri in stateMap[key]) {
         destinations.add(await _routeParser
-            .parseRouteInformation(RouteInformation(location: uri)));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse(uri))));
       }
       eventualNavigator.resetStack(destinations);
     }

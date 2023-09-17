@@ -43,14 +43,14 @@ void main() {
     test('Parsing supported uri should return a destination', () async {
       expect(
           await parser
-              .parseRouteInformation(const RouteInformation(location: '/home')),
+              .parseRouteInformation(RouteInformation(uri: Uri.parse('/home'))),
           TestDestinations.home);
     });
     test('Parsing not supported uri should return an error destination',
         () async {
       expect(
           await parser.parseRouteInformation(
-              const RouteInformation(location: '/home2')),
+              RouteInformation(uri: Uri.parse('/home2'))),
           TestDestinations.error);
     });
     test(
@@ -58,7 +58,7 @@ void main() {
         () async {
       expect(
           () async => await parserNoError.parseRouteInformation(
-              const RouteInformation(location: '/home2')),
+              RouteInformation(uri: Uri.parse('/home2'))),
           throwsA(isA<UnknownUriException>()));
     });
     test(
@@ -66,7 +66,7 @@ void main() {
         () async {
       expect(
           await parser.parseRouteInformation(
-              const RouteInformation(location: '/categories/10')),
+              RouteInformation(uri: Uri.parse('/categories/10'))),
           TestDestinations.error);
     });
     test(
@@ -74,11 +74,11 @@ void main() {
         () async {
       expect(
           () async => await parserNoError.parseRouteInformation(
-              const RouteInformation(location: '/categories/10')),
+              RouteInformation(uri: Uri.parse('/categories/10'))),
           throwsA(isA<UnknownUriException>()));
     });
     test('Restore route information from the destination', () {
-      expect(parser.restoreRouteInformation(TestDestinations.home)?.location,
+      expect(parser.restoreRouteInformation(TestDestinations.home)?.uri.toString(),
           '/home');
     });
     test(
@@ -89,7 +89,7 @@ void main() {
               .restoreRouteInformation(TestDestinations.login.withSettings(
                   TestDestinations.login.settings
                       .copyWith(updateHistory: false)))
-              ?.location,
+              ?.uri.toString(),
           null);
     });
   });

@@ -141,7 +141,7 @@ void main() {
           redirections: [
             Redirection(
               destination: TestDestinations.login.copyWith(
-                  settings: DestinationSettings.material()
+                  settings: const DestinationSettings.material()
                       .copyWith(transitionMethod: TransitionMethod.replace)),
               validator: (destination) async => isValid,
             ),

@@ -53,12 +53,12 @@ class TestDestinations {
   static final aboutWithDialogSettings = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
-    settings: DestinationSettings.dialog(),
+    settings: const DestinationSettings.dialog(),
   );
   static final aboutWithQuietSettings = Destination(
     path: '/settings/about',
     builder: dummyBuilder,
-    settings: DestinationSettings.quiet(),
+    settings: const DestinationSettings.quiet(),
   );
   static final catalog = Destination(
     path: '/catalog',

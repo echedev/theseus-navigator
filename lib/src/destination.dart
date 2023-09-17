@@ -53,7 +53,7 @@ class Destination<T extends DestinationParameters> {
                 ((T != DestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    this.settings = settings ?? DestinationSettings.material();
+    this.settings = settings ?? const DestinationSettings.material();
     _transitBuilder = null;
   }
 
@@ -76,7 +76,7 @@ class Destination<T extends DestinationParameters> {
   })  : builder = null,
         parameters = null,
         parser = const DefaultDestinationParser(),
-        settings = DestinationSettings.material(),
+        settings = const DestinationSettings.material(),
         upwardDestinationBuilder = null,
         _transitBuilder = builder;
 

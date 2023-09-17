@@ -32,7 +32,7 @@ class TheseusRouteInformationParser
   @override
   Future<Destination> parseRouteInformation(
       RouteInformation routeInformation) async {
-    final uri = routeInformation.location ?? '';
+    final uri = routeInformation.uri.toString();
     Log.d(runtimeType, 'parseRouteInformation(): $uri');
     final matchedDestination = navigationScheme.findDestination(uri);
     if (matchedDestination == null) {
@@ -63,6 +63,6 @@ class TheseusRouteInformationParser
       return null;
     }
     Log.d(runtimeType, 'restoreRouteInformation(): ${destination.uri}');
-    return RouteInformation(location: destination.uri);
+    return RouteInformation(uri: Uri.parse(destination.uri));
   }
 }

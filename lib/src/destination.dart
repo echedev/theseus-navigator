@@ -72,11 +72,12 @@ class Destination<T extends DestinationParameters> {
         builder,
     this.isHome = false,
     this.redirections = const <Redirection>[],
+    DestinationSettings? settings,
     this.tag,
   })  : builder = null,
         parameters = null,
         parser = const DefaultDestinationParser(),
-        settings = const DestinationSettings.material(),
+        settings = settings ?? const DestinationSettings.material(),
         upwardDestinationBuilder = null,
         _transitBuilder = builder;
 
@@ -249,6 +250,7 @@ class Destination<T extends DestinationParameters> {
               builder: this._transitBuilder,
               isHome: isHome,
               redirections: redirections,
+              settings: settings ?? this.settings,
               tag: tag,
             );
 

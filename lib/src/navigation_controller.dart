@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -40,7 +41,7 @@ class NavigationController with ChangeNotifier {
     this.notifyOnError = true,
     this.tag = '',
   }) {
-    _stack.add(destinations[initialDestinationIndex]);
+    _stack.add(destinations[max(destinations.indexWhere((element) => element.isHome), initialDestinationIndex)]);
   }
 
   /// List of destinations, which this navigator operate of.

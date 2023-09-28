@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'destination.dart';
@@ -76,11 +77,21 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
 
   @override
   // ignore: avoid_renaming_method_parameters
+  Future<void> setInitialRoutePath(destination) async {
+    Log.d(runtimeType, 'setInitialRoutePath(): destination=$destination');
+    return navigationScheme.goTo(
+        destination.withSettings(destination.settings.copyWith(reset: true)));
+  }
+
+  @override
+  // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
-    if (destination == navigationScheme.currentDestination) {
+    if (destination == navigationScheme.currentDestination ||
+        destination ==
+            navigationScheme.findNavigator(destination)?.currentDestination) {
       Log.d(runtimeType,
           'setNewRoutePath(): Ignore navigation to $destination. It is already the current destination.');
-      return;
+      return SynchronousFuture(null);
     }
     Log.d(runtimeType, 'setNewRoutePath(): destination=$destination');
     // The current navigation stack is reset if the new destination is not an error.
@@ -90,7 +101,9 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   }
 
   @override
-  Destination get currentConfiguration => navigationScheme.currentDestination;
+  Destination? get currentConfiguration => navigationScheme.isInitializing
+      ? null
+      : navigationScheme.currentDestination;
 
   @override
   void dispose() {
@@ -104,6 +117,8 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
         runtimeType, 'onCurrentDestinationChanged(): destination=$destination');
     // Ignore closing app request here. It is processed in the 'popRoute()' method.
     if (navigationScheme.shouldClose) {
+      Log.d(runtimeType,
+          'onCurrentDestinationChanged(): Closing the app was requested.');
       return;
     }
     notifyListeners();

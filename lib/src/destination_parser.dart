@@ -143,10 +143,11 @@ abstract class DestinationParser<T extends DestinationParameters> {
     final pathParameters = _getPathParameters(destination.path, parametersMap);
     final queryParameters = _getQueryParameters(pathParameters, parametersMap);
     final path = _fillPathParameters(destination.path, pathParameters);
-    return Uri(
+    final result = Uri(
       path: path,
       queryParameters: queryParameters.isNotEmpty ? queryParameters : null,
-    ).toString();
+    );
+    return result.toString();
   }
 
   Map<String, String> _parsePathParameters(

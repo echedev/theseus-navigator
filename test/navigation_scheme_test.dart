@@ -60,8 +60,19 @@ void main() {
       });
     });
     group('General navigation', () {
-      test('Initial destination is a first one in the list', () {
+      test(
+          'Initial destination is a one, which has "isHome" parameter set to "true" independent on its position in the destination list',
+          () {
         expect(navigationScheme.currentDestination, TestDestinations.home);
+
+        final navigationScheme1 = NavigationScheme(
+          destinations: [
+            TestDestinations.catalog,
+            TestDestinations.home,
+            TestDestinations.about,
+          ],
+        );
+        expect(navigationScheme1.currentDestination, TestDestinations.home);
       });
       test('Navigate to another primary destination', () async {
         await navigationScheme.goTo(TestDestinations.about);
@@ -141,7 +152,7 @@ void main() {
           redirections: [
             Redirection(
               destination: TestDestinations.login.copyWith(
-                  settings: DestinationSettings.material()
+                  settings: const DestinationSettings.material()
                       .copyWith(transitionMethod: TransitionMethod.replace)),
               validator: (destination) async => isValid,
             ),
@@ -264,11 +275,11 @@ void main() {
                     .containsKey(DestinationParameters.stateParameterName) ??
                 false,
             true);
-        final persistedState = jsonDecode(navigationSchemeKeepState
-                .currentDestination
-                .parameters
-                ?.map[DestinationParameters.stateParameterName] ??
-            '');
+        final encodedState = navigationSchemeKeepState.currentDestination
+                .parameters?.map[DestinationParameters.stateParameterName] ??
+            '';
+        final persistedState =
+            jsonDecode(String.fromCharCodes(base64.decode(encodedState)));
         expect(persistedState['/'].contains(upwardDestination.path), true);
       });
       test(

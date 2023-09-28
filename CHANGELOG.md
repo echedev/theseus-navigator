@@ -1,3 +1,9 @@
+### 0.8.2
+2023-09-28
+- Support latest changes in Flutter Router API, removed deprecated ones
+- Fixed: Navigation through browser history issues caused by URI encoding
+- Fixed: Some fields did not change on copying transit destinations
+
 ### 0.8.1
 2023-07-26
 - Removed unnecessary global keys

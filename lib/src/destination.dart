@@ -53,7 +53,7 @@ class Destination<T extends DestinationParameters> {
                 ((T != DestinationParameters) &&
                     parser is! DefaultDestinationParser),
             'Custom "parser" must be provided when using the parameters of type $T, but ${parser.runtimeType} was provided.') {
-    this.settings = settings ?? DestinationSettings.material();
+    this.settings = settings ?? const DestinationSettings.material();
     _transitBuilder = null;
   }
 
@@ -72,11 +72,12 @@ class Destination<T extends DestinationParameters> {
         builder,
     this.isHome = false,
     this.redirections = const <Redirection>[],
+    DestinationSettings? settings,
     this.tag,
   })  : builder = null,
         parameters = null,
         parser = const DefaultDestinationParser(),
-        settings = DestinationSettings.material(),
+        settings = settings ?? const DestinationSettings.material(),
         upwardDestinationBuilder = null,
         _transitBuilder = builder;
 
@@ -229,18 +230,29 @@ class Destination<T extends DestinationParameters> {
     Future<Destination?> Function(Destination<T> destination)?
         upwardDestinationBuilder,
   }) =>
-      Destination<T>(
-        path: path,
-        builder: builder,
-        navigator: navigator,
-        parameters: parameters ?? this.parameters,
-        parser: parser,
-        redirections: redirections,
-        settings: settings ?? this.settings,
-        tag: tag,
-        upwardDestinationBuilder:
-            upwardDestinationBuilder ?? this.upwardDestinationBuilder,
-      );
+      this._transitBuilder == null
+          ? Destination<T>(
+              path: path,
+              builder: builder,
+              isHome: isHome,
+              navigator: navigator,
+              parameters: parameters ?? this.parameters,
+              parser: parser,
+              redirections: redirections,
+              settings: settings ?? this.settings,
+              tag: tag,
+              upwardDestinationBuilder:
+                  upwardDestinationBuilder ?? this.upwardDestinationBuilder,
+            )
+          : Destination<T>.transit(
+              path: path,
+              navigator: navigator,
+              builder: this._transitBuilder,
+              isHome: isHome,
+              redirections: redirections,
+              settings: settings ?? this.settings,
+              tag: tag,
+            );
 
   /// Destinations are equal when their URI string are equal.
   ///

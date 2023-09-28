@@ -56,19 +56,21 @@ class NavigationScheme with ChangeNotifier {
         );
     _routerDelegate = TheseusRouterDelegate(navigationScheme: this);
     _routeParser = TheseusRouteInformationParser(navigationScheme: this);
+    _routeInformationProvider = PlatformRouteInformationProvider(
+        initialRouteInformation: RouteInformation(
+          uri: Uri.parse(
+              WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+        ),
+      );
     _config = RouterConfig(
       routerDelegate: _routerDelegate,
       routeInformationParser: _routeParser,
-      routeInformationProvider: PlatformRouteInformationProvider(
-        initialRouteInformation: RouteInformation(
-          location: WidgetsBinding.instance.platformDispatcher.defaultRouteName,
-        ),
-      ),
+      routeInformationProvider: _routeInformationProvider,
       backButtonDispatcher: RootBackButtonDispatcher(),
     );
     _currentDestination = _rootNavigator.currentDestination;
     _initializeNavigator(_rootNavigator);
-    _updateCurrentDestination(backFrom: null, isInitializing: true);
+    _updateCurrentDestination(backFrom: null);
   }
 
   /// The destination to redirect in case of error.
@@ -87,6 +89,12 @@ class NavigationScheme with ChangeNotifier {
       waitingOverlayBuilder;
 
   late final RouterConfig<Destination> _config;
+
+  bool _isInitializing = true;
+
+  /// Indicates if the [NavigationScheme] object is initializing.
+  /// 
+  bool get isInitializing => _isInitializing;
 
   /// A configuration for [Router] widget.
   ///
@@ -114,8 +122,12 @@ class NavigationScheme with ChangeNotifier {
 
   final _navigatorListeners = <NavigationController, VoidCallback?>{};
 
+  // A map of destinations and navigators which they belongs to
+  //
   final _navigatorMatches = <Destination, NavigationController>{};
 
+  // A map of navigators and transit destinations which own them
+  //
   final _navigatorOwners = <NavigationController, Destination>{};
 
   final _destinationCompleters = <Destination, Completer<void>>{};
@@ -139,6 +151,10 @@ class NavigationScheme with ChangeNotifier {
   /// Reference to the RouteInformationParser implementation
   ///
   TheseusRouteInformationParser get routeParser => _routeParser;
+
+  late final RouteInformationProvider _routeInformationProvider;
+
+  RouteInformationProvider get routeInformationProvider => _routeInformationProvider;
 
   /// Stores the original destination in case of redirection.
   ///
@@ -246,9 +262,10 @@ class NavigationScheme with ChangeNotifier {
   /// This allows to display a widget returned by [waitingOverlayBuilder]
   /// until the destination is resolved.
   ///
-  /// In case of validation are not passed, redirects to corresponding redirection destination.
+  /// In case of validations are not passed, redirects to corresponding redirection destination.
   ///
   Future<void> resolve() async {
+    Log.d(runtimeType, 'resolve(): currentDestination=$_currentDestination');
     Timer isResolvingTimer = Timer(
       const Duration(milliseconds: 500),
       () {
@@ -291,7 +308,12 @@ class NavigationScheme with ChangeNotifier {
       for (var destination in destinationsToComplete) {
         _completeResolvedDestination(destination);
       }
-      notifyListeners();
+      if (_isInitializing) {
+        _isInitializing = false;
+      }
+      else {
+        notifyListeners();
+      }
       return;
     }
     goTo(resolvedDestination.withSettings(resolvedDestination.settings
@@ -379,8 +401,7 @@ class NavigationScheme with ChangeNotifier {
 
   void _updateCurrentDestination({
     required Destination? backFrom,
-    bool isInitializing = false,
-  }) {
+    }) {
     // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
     _shouldClose = _rootNavigator.shouldClose;
     if (_shouldClose) {
@@ -397,7 +418,7 @@ class NavigationScheme with ChangeNotifier {
     Log.d(runtimeType,
         'updateCurrentDestination(): currentDestination=$_currentDestination, newDestination=$newDestination');
     if (_currentDestination != newDestination ||
-        isInitializing ||
+        _isInitializing ||
         newDestination.settings.reset) {
       _currentDestination = newDestination;
       if (_currentDestination == backFrom?.settings.redirectedFrom) {
@@ -407,6 +428,8 @@ class NavigationScheme with ChangeNotifier {
       resolve();
     }
   }
+
+  // Persisting navigation state in parameters
 
   Future<Destination> _saveStateInParameters(Destination destination) async {
     Future<List<String>> getCleanUris(List<Destination> stack) async {
@@ -430,8 +453,9 @@ class NavigationScheme with ChangeNotifier {
 
     final parametersWithState = await destination.parser
         .parametersFromMap(destination.parameters?.map ?? <String, String>{});
+    final encodedState = base64.encode(jsonEncode(stateMap).codeUnits);
     parametersWithState.map.addAll(<String, String>{
-      DestinationParameters.stateParameterName: jsonEncode(stateMap)
+      DestinationParameters.stateParameterName: encodedState,
     });
     return destination.withParameters(parametersWithState);
   }
@@ -449,30 +473,32 @@ class NavigationScheme with ChangeNotifier {
 
   Future<void> _restoreStateFromParameters(
       Destination destination, NavigationController navigator) async {
-    final stateValue =
+    final encodedState =
         destination.parameters?.map[DestinationParameters.stateParameterName];
-    if (stateValue == null) {
+    if (encodedState == null) {
       navigator.goTo(destination);
       return;
     }
 
-    final stateMap = jsonDecode(stateValue);
+    final stateMap = jsonDecode(String.fromCharCodes(base64.decode(encodedState)));
 
     for (final key in stateMap.keys) {
       final eventualNavigator = key == '/'
           ? _rootNavigator
           : (await _routeParser
-                  .parseRouteInformation(RouteInformation(location: key)))
+                  .parseRouteInformation(RouteInformation(uri: Uri.parse(key))))
               .navigator!;
       final destinations = <Destination>[];
       for (final uri in stateMap[key]) {
         destinations.add(await _routeParser
-            .parseRouteInformation(RouteInformation(location: uri)));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse(uri))));
       }
       eventualNavigator.resetStack(destinations);
     }
     _updateCurrentDestination(backFrom: null);
   }
+
+  // Resolving destination
 
   Future<Destination> _resolveDestination(Destination destination) async {
     // Check redirections that are defined for given destination

@@ -11,8 +11,8 @@ import 'settings/index.dart';
 
 final navigationScheme = NavigationScheme(
   destinations: [
-    PrimaryDestinations.main,
     PrimaryDestinations.login,
+    PrimaryDestinations.main,
     PrimaryDestinations.customTransition,
   ],
   errorDestination: PrimaryDestinations.error,

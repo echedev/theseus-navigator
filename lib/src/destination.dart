@@ -229,18 +229,28 @@ class Destination<T extends DestinationParameters> {
     Future<Destination?> Function(Destination<T> destination)?
         upwardDestinationBuilder,
   }) =>
-      Destination<T>(
-        path: path,
-        builder: builder,
-        navigator: navigator,
-        parameters: parameters ?? this.parameters,
-        parser: parser,
-        redirections: redirections,
-        settings: settings ?? this.settings,
-        tag: tag,
-        upwardDestinationBuilder:
-            upwardDestinationBuilder ?? this.upwardDestinationBuilder,
-      );
+      this._transitBuilder == null
+          ? Destination<T>(
+              path: path,
+              builder: builder,
+              isHome: isHome,
+              navigator: navigator,
+              parameters: parameters ?? this.parameters,
+              parser: parser,
+              redirections: redirections,
+              settings: settings ?? this.settings,
+              tag: tag,
+              upwardDestinationBuilder:
+                  upwardDestinationBuilder ?? this.upwardDestinationBuilder,
+            )
+          : Destination<T>.transit(
+              path: path,
+              navigator: navigator,
+              builder: this._transitBuilder,
+              isHome: isHome,
+              redirections: redirections,
+              tag: tag,
+            );
 
   /// Destinations are equal when their URI string are equal.
   ///

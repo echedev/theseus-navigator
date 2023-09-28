@@ -8,9 +8,19 @@ import '../common/index.dart';
 void main() {
   group('Destination Widgets', () {
     setUp(() {});
-    testWidgets('Transit destination build wrapper widget', (tester) async {
+    testWidgets('Transit destination builds wrapper widget', (tester) async {
       await tester.pumpWidget(
           _destinationWrapper(destination: TestDestinations.catalogTransit));
+      await tester.pumpAndSettle();
+      expect(find.text('Catalog'), findsOneWidget);
+    });
+
+    testWidgets('Copy of transit destination builds wrapper widget',
+        (tester) async {
+      await tester.pumpWidget(_destinationWrapper(
+          destination: TestDestinations.catalogTransit.withSettings(
+              TestDestinations.catalogTransit.settings
+                  .copyWith(transitionMethod: TransitionMethod.replace))));
       await tester.pumpAndSettle();
       expect(find.text('Catalog'), findsOneWidget);
     });

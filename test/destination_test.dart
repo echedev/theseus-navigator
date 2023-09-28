@@ -31,6 +31,7 @@ void main() {
           false);
       expect(TestDestinations.home != TestDestinations.about, true);
     });
+
     test('Matching URI', () {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1

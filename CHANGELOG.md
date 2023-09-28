@@ -1,4 +1,4 @@
-### 0.8.2
+### 0.8.3
 2023-09-28
 - Support latest changes in Flutter Router API, removed deprecated ones
 - Fixed: Navigation through browser history issues caused by URI encoding

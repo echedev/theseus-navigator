@@ -57,11 +57,11 @@ class NavigationScheme with ChangeNotifier {
     _routerDelegate = TheseusRouterDelegate(navigationScheme: this);
     _routeParser = TheseusRouteInformationParser(navigationScheme: this);
     _routeInformationProvider = PlatformRouteInformationProvider(
-        initialRouteInformation: RouteInformation(
-          uri: Uri.parse(
-              WidgetsBinding.instance.platformDispatcher.defaultRouteName),
-        ),
-      );
+      initialRouteInformation: RouteInformation(
+        uri: Uri.parse(
+            WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+      ),
+    );
     _config = RouterConfig(
       routerDelegate: _routerDelegate,
       routeInformationParser: _routeParser,
@@ -93,7 +93,7 @@ class NavigationScheme with ChangeNotifier {
   bool _isInitializing = true;
 
   /// Indicates if the [NavigationScheme] object is initializing.
-  /// 
+  ///
   bool get isInitializing => _isInitializing;
 
   /// A configuration for [Router] widget.
@@ -154,7 +154,8 @@ class NavigationScheme with ChangeNotifier {
 
   late final RouteInformationProvider _routeInformationProvider;
 
-  RouteInformationProvider get routeInformationProvider => _routeInformationProvider;
+  RouteInformationProvider get routeInformationProvider =>
+      _routeInformationProvider;
 
   /// Stores the original destination in case of redirection.
   ///
@@ -310,8 +311,7 @@ class NavigationScheme with ChangeNotifier {
       }
       if (_isInitializing) {
         _isInitializing = false;
-      }
-      else {
+      } else {
         notifyListeners();
       }
       return;
@@ -401,7 +401,7 @@ class NavigationScheme with ChangeNotifier {
 
   void _updateCurrentDestination({
     required Destination? backFrom,
-    }) {
+  }) {
     // TODO: Probably '_shouldClose' variable is not needed, we can use '_rootNavigator' directly
     _shouldClose = _rootNavigator.shouldClose;
     if (_shouldClose) {
@@ -480,7 +480,8 @@ class NavigationScheme with ChangeNotifier {
       return;
     }
 
-    final stateMap = jsonDecode(String.fromCharCodes(base64.decode(encodedState)));
+    final stateMap =
+        jsonDecode(String.fromCharCodes(base64.decode(encodedState)));
 
     for (final key in stateMap.keys) {
       final eventualNavigator = key == '/'

@@ -41,7 +41,9 @@ class NavigationController with ChangeNotifier {
     this.notifyOnError = true,
     this.tag = '',
   }) {
-    _stack.add(destinations[max(destinations.indexWhere((element) => element.isHome), initialDestinationIndex)]);
+    _stack.add(destinations[max(
+        destinations.indexWhere((element) => element.isHome),
+        initialDestinationIndex)]);
   }
 
   /// List of destinations, which this navigator operate of.

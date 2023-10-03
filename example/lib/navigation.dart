@@ -69,16 +69,19 @@ class MainDestinations {
   static final home = Destination(
     path: '/home',
     navigator: homeNavigator,
+    // ignore: prefer_const_constructors
     settings: DestinationSettings.quiet(),
   );
   static final catalog = Destination(
     path: '/catalog',
     navigator: catalogNavigator,
+    // ignore: prefer_const_constructors
     settings: DestinationSettings.quiet(),
   );
   static final settings = Destination(
     path: '/settings',
     builder: (context, parameters) => const SettingsScreen(),
+    // ignore: prefer_const_constructors
     settings: DestinationSettings.quiet(),
     redirections: [
       Redirections.login,

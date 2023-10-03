@@ -36,7 +36,9 @@ class NavigationScheme with ChangeNotifier {
     this.errorDestination,
     this.waitingOverlayBuilder,
     NavigationController? navigator,
-  })  : assert(
+  })  : assert(destinations.isNotEmpty || navigator != null,
+            'Either non-empty "destinations" list or "navigator" must be provided.'),
+        assert(
             (destinations.isEmpty ? navigator!.destinations : destinations)
                 .any((destination) => destination.isHome),
             'One of destinations must be a home destination.'),

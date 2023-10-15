@@ -48,13 +48,13 @@ abstract class DestinationParser<T extends DestinationParameters> {
   /// The destination does match when its [path] structure (URI segments number
   /// and values, including path parameters) matches given [uri] string.
   ///
-  bool isMatch(String uri, Destination<T> destination) {
-    if ((uri == '/' || uri.isEmpty)) {
+  bool isMatch(Uri uri, Destination<T> destination) {
+    if (uri.path == '/') {
       return destination.isHome;
     }
 
     final destinationUri = Uri.parse(destination.path);
-    final sourceUri = Uri.parse(uri);
+    final sourceUri = uri;
     final destinationSegments = destinationUri.pathSegments;
     final sourceSegments = sourceUri.pathSegments;
 
@@ -106,12 +106,12 @@ abstract class DestinationParser<T extends DestinationParameters> {
   /// Throws [DestinationNotMatchException] if the URI does mot match the destination.
   ///
   Future<Destination<T>> parseParameters(
-      String uri, Destination<T> matchedDestination) async {
+      Uri uri, Destination<T> matchedDestination) async {
     // TODO: Is this check really needed here?
     if (!isMatch(uri, matchedDestination)) {
       throw DestinationNotMatchException(uri, matchedDestination);
     }
-    final parsedUri = Uri.parse(uri);
+    final parsedUri = uri;
     final parametersMap = <String, String>{}
       ..addAll(_parsePathParameters(parsedUri, matchedDestination))
       ..addAll(parsedUri.queryParameters);
@@ -124,13 +124,13 @@ abstract class DestinationParser<T extends DestinationParameters> {
     return matchedDestination.withParameters(parameters);
   }
 
-  /// Returns URI string for the destination
+  /// Returns URI representaion of the destination
   ///
   /// The [Destination.path] is used for building the URI path segment.
   /// The URI query segment is built using [Destination.parameters] converted
   /// by [parametersToMap] implementation from the [Destination.parser].
   ///
-  String uri(Destination destination) {
+  Uri uri(Destination destination) {
     late final Map<String, String> parametersMap;
     if (destination.parameters == null) {
       parametersMap = const <String, String>{};
@@ -143,11 +143,12 @@ abstract class DestinationParser<T extends DestinationParameters> {
     final pathParameters = _getPathParameters(destination.path, parametersMap);
     final queryParameters = _getQueryParameters(pathParameters, parametersMap);
     final path = _fillPathParameters(destination.path, pathParameters);
-    final result = Uri(
+    var result = Uri(
       path: path,
       queryParameters: queryParameters.isNotEmpty ? queryParameters : null,
     );
-    return result.toString();
+    result = Uri.parse(Uri.decodeComponent(result.toString()));
+    return result;
   }
 
   Map<String, String> _parsePathParameters(

@@ -163,10 +163,11 @@ class Destination<T extends DestinationParameters> {
   Future<Destination?> get upwardDestination async =>
       upwardDestinationBuilder?.call(this);
 
-  /// A full URI of the destination, with parameters placeholders replaced with
-  /// actual parameter values.
+  /// A URI representaiont of the destination
+  /// 
+  /// [path] parameters placeholders are replaced with actual [parameters] values.
   ///
-  String get uri => parser.uri(this);
+  Uri get uri => parser.uri(this);
 
   /// Return a widget that display destination's content.
   ///
@@ -190,17 +191,17 @@ class Destination<T extends DestinationParameters> {
     }
   }
 
-  /// Check if the destination matches the provided URI string
+  /// Check if the destination matches the provided URI
   ///
-  bool isMatch(String uri) => parser.isMatch(uri, this);
+  bool isMatch(Uri uri) => parser.isMatch(uri, this);
 
-  /// Parses the destination from the provided URI string.
+  /// Parses the destination from the provided URI.
   ///
   /// Returns a copy of the current destination with updated parameters, parsed
   /// from the URI.
   /// If the URI doesn't match this destination, throws an [DestinationNotMatchException].
   ///
-  Future<Destination<T>> parse(String uri) =>
+  Future<Destination<T>> parse(Uri uri) =>
       parser.parseParameters(uri, this) as Future<Destination<T>>;
 
   /// Returns a copy of this destination with a different settings.
@@ -267,7 +268,7 @@ class Destination<T extends DestinationParameters> {
   int get hashCode => uri.hashCode;
 
   @override
-  String toString() => uri;
+  String toString() => uri.toString();
 }
 
 /// Encapsulates the settings attributes which are applied when the navigation state

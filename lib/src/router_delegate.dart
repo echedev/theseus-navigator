@@ -86,9 +86,7 @@ class TheseusRouterDelegate extends RouterDelegate<Destination>
   @override
   // ignore: avoid_renaming_method_parameters
   Future<void> setNewRoutePath(destination) async {
-    if (destination == navigationScheme.currentDestination ||
-        destination ==
-            navigationScheme.findNavigator(destination)?.currentDestination) {
+    if (destination == navigationScheme.currentDestination) {
       Log.d(runtimeType,
           'setNewRoutePath(): Ignore navigation to $destination. It is already the current destination.');
       return SynchronousFuture(null);

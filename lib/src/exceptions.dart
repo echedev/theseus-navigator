@@ -7,8 +7,8 @@ class DestinationNotMatchException implements Exception {
   ///
   DestinationNotMatchException(this.uri, this.destination);
 
-  /// Source URI string.
-  String uri;
+  /// Source URI.
+  Uri uri;
 
   /// A destination to match the URI.
   Destination destination;
@@ -32,6 +32,6 @@ class UnknownUriException implements Exception {
   ///
   UnknownUriException(this.uri);
 
-  /// A URI string.
-  String uri;
+  /// A URI.
+  Uri uri;
 }

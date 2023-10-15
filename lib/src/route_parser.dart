@@ -32,8 +32,7 @@ class TheseusRouteInformationParser
   @override
   Future<Destination> parseRouteInformation(
       RouteInformation routeInformation) async {
-    final uri = routeInformation.uri.toString();
-    Log.d(runtimeType, 'parseRouteInformation(): uri=$uri');
+    final uri = routeInformation.uri;
     final matchedDestination = navigationScheme.findDestination(uri);
     if (matchedDestination == null) {
       if (navigationScheme.errorDestination != null) {
@@ -58,12 +57,12 @@ class TheseusRouteInformationParser
   @override
   // ignore: avoid_renaming_method_parameters
   RouteInformation? restoreRouteInformation(Destination destination) {
+    final uri = destination.uri;
     if (!destination.settings.updateHistory) {
       Log.d(runtimeType,
-          'restoreRouteInformation(): Would not restore route information for ${destination.uri}');
+          'restoreRouteInformation(): Would not restore route information $uri');
       return null;
     }
-    final uri = Uri.parse(Uri.decodeComponent(destination.uri));
     Log.d(runtimeType, 'restoreRouteInformation(): $uri');
     return RouteInformation(uri: uri);
   }

@@ -156,6 +156,10 @@ class NavigationScheme with ChangeNotifier {
 
   late final RouteInformationProvider _routeInformationProvider;
 
+  /// Reference to the RouteInformationProvider implementation.
+  /// 
+  /// The instance of [PlatformRouteInformationProvider] is used.
+  /// 
   RouteInformationProvider get routeInformationProvider =>
       _routeInformationProvider;
 
@@ -183,7 +187,7 @@ class NavigationScheme with ChangeNotifier {
   ///
   /// Returns 'null' if no destination matching the URI was found.
   ///
-  Destination? findDestination(String uri) => _navigatorMatches.keys
+  Destination? findDestination(Uri uri) => _navigatorMatches.keys
       .firstWhereOrNull((destination) => destination.isMatch(uri));
 
   /// Returns a proper navigator in the navigation scheme for a given destination.
@@ -191,7 +195,7 @@ class NavigationScheme with ChangeNotifier {
   /// Returns 'null' if no navigator found.
   ///
   NavigationController? findNavigator(Destination destination) =>
-      _navigatorMatches[findDestination(destination.path)];
+      _navigatorMatches[findDestination(Uri.parse(destination.path))];
 
   /// Navigates to specified [destination].
   ///
@@ -438,7 +442,7 @@ class NavigationScheme with ChangeNotifier {
       final result = <String>[];
       for (final destination in stack.where(
           (destination) => destination.settings.redirectedFrom == null)) {
-        result.add((await _removeStateFromParameters(destination)).uri);
+        result.add((await _removeStateFromParameters(destination)).uri.toString());
       }
       return result;
     }

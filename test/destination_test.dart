@@ -36,10 +36,10 @@ void main() {
       final destination1 = TestDestinations.categories;
       final destination2 = destination1
           .withParameters(DestinationParameters(<String, String>{'id': '1'}));
-      expect(destination1.isMatch('/categories/1'), true);
-      expect(destination1.isMatch('/categories'), true);
-      expect(destination1.isMatch('/home'), false);
-      expect(destination2.isMatch('/categories/1'), true);
+      expect(destination1.isMatch(Uri.parse('/categories/1')), true);
+      expect(destination1.isMatch(Uri.parse('/categories')), true);
+      expect(destination1.isMatch(Uri.parse('/home')), false);
+      expect(destination2.isMatch(Uri.parse('/categories/1')), true);
     });
     test('Parsing URI', () async {
       final destination1 = TestDestinations.categories;
@@ -47,8 +47,8 @@ void main() {
           .withParameters(DestinationParameters(<String, String>{'id': '1'}));
       final destination3 = destination1
           .withParameters(DestinationParameters(<String, String>{'id': '2'}));
-      expect(await destination1.parse('/categories/1') == destination2, true);
-      expect(await destination1.parse('/categories/1') == destination3, false);
+      expect(await destination1.parse(Uri.parse('/categories/1')) == destination2, true);
+      expect(await destination1.parse(Uri.parse('/categories/1')) == destination3, false);
     });
     test('Parsing URI - typed parameters', () async {
       final destination1 = TestDestinations.categoriesTyped;
@@ -58,7 +58,7 @@ void main() {
           .withParameters(CategoriesParameters(parent: parentCategory1));
       final destination3 = destination1
           .withParameters(CategoriesParameters(parent: parentCategory2));
-      final result = await destination1.parse('/categories/1');
+      final result = await destination1.parse(Uri.parse('/categories/1'));
       expect(result == destination2, true);
       expect(result.parameters is CategoriesParameters, true);
       expect(result.parameters!.parent == parentCategory1, true);

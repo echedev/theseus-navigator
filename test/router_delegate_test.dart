@@ -17,7 +17,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   void currentDestinationListener() {
-    log.add(navigationScheme.currentDestination.uri);
+    log.add(navigationScheme.currentDestination.uri.toString());
   }
 
   group('TheseusRouterDelegate', () {

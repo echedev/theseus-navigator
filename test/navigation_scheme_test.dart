@@ -28,19 +28,19 @@ void main() {
     group('Finding destinations and navigators', () {
       test('Finding existing destination', () {
         expect(
-            navigationScheme.findDestination('/home'), TestDestinations.home);
-        expect(navigationScheme.findDestination('/catalog'),
+            navigationScheme.findDestination(Uri.parse('/home')), TestDestinations.home);
+        expect(navigationScheme.findDestination(Uri.parse('/catalog')),
             TestDestinations.catalog);
-        expect(navigationScheme.findDestination('/categories'),
+        expect(navigationScheme.findDestination(Uri.parse('/categories')),
             TestDestinations.categories);
-        expect(navigationScheme.findDestination('/categories/1'),
+        expect(navigationScheme.findDestination(Uri.parse('/categories/1')),
             TestDestinations.categories);
       });
       test('Finding home destination', () {
-        expect(navigationScheme.findDestination('/'), TestDestinations.home);
+        expect(navigationScheme.findDestination(Uri.parse('/')), TestDestinations.home);
       });
       test('Finding nonexistent destination', () {
-        expect(navigationScheme.findDestination('/login'), null);
+        expect(navigationScheme.findDestination(Uri.parse('/login')), null);
       });
       test('Finding navigator for existing destination', () {
         expect(navigationScheme.findNavigator(TestDestinations.home),
@@ -209,12 +209,12 @@ void main() {
           'When provided, the error destination is included to the navigation scheme',
           () {
         expect(
-            navigationScheme.findDestination('/error'), TestDestinations.error);
+            navigationScheme.findDestination(Uri.parse('/error')), TestDestinations.error);
       });
       test(
           'For custom root navigator, if the error destination is provided, it should be included to the navigation scheme',
           () {
-        expect(navigationSchemeCustom.findDestination('/error'),
+        expect(navigationSchemeCustom.findDestination(Uri.parse('/error')),
             TestDestinations.error);
       });
       test(
